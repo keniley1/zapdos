@@ -92,7 +92,7 @@ HeavySpeciesMod::computeQpProperties()
   else if (_calc_mobility && !_calc_diffusivity)
   {
     _diffHeavy[_qp] = getParam<Real>("diffusivity") * _time_units;
-    _muHeavy[_qp] = _user_sgnHeavy * _diffHeavy[_qp] * 1.602e-19 / (_temperatureHeavy[_qp] * 1.3807e-23); 
+    _muHeavy[_qp] = _diffHeavy[_qp] * 1.602e-19 / (_temperatureHeavy[_qp] * 1.3807e-23) * _voltage_scaling; 
   } 
   else if (!_calc_mobility && _calc_diffusivity)
   {
