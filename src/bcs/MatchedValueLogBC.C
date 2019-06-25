@@ -10,6 +10,8 @@
 
 #include "MatchedValueLogBC.h"
 
+registerMooseObject("ZapdosApp", MatchedValueLogBC);
+
 template <>
 InputParameters
 validParams<MatchedValueLogBC>()
