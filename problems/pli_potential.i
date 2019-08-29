@@ -13,27 +13,70 @@ dom1Scale=1.0
   # potential_units = V
 []
 
+#[Mesh]
+#  type = FileMesh
+#  #file = 'liquidNew.msh'
+#  #file = 'liquidMod.msh'
+#  #file = 'strong_scaling04.msh'
+#  #file = 'weak_scaling01.msh'
+#  file = 'scaling_test.msh'
+#[]
+
+# Here we generate the necessary 1D mesh, with a domain from 0 < x < 1.1 mm
+# nx = number of elements
 [Mesh]
-  type = FileMesh
-  #file = 'liquidNew.msh'
-  file = 'liquidMod.msh'
+  type = GeneratedMesh
+  dim = 1
+  nx = 556
+  xmin = 0
+  xmax = 0.0011
 []
 
+# MeshModifiers allow us to split the Mesh into different subdomains. 
+# This is useful if different regions are comprised of either different materials, 
+# boundaries, etc. 
+# In this case, a "plasma" region will be defined from 0 <= x <= 1 mm, and
+# a "liquid" region will be dfined from 1 mm < x <= 1.1 mm
 [MeshModifiers]
+  # ParsedSubdomainMeshModifier allows you to define the separate blocks.
+  # Note that if we used FileMesh (generated from something like Gmsh), these two
+  # would not be necessary. Blocks would be defined by the mesh generator itself. 
+  [./subdomain0]
+    type = ParsedSubdomainMeshModifier
+    combinatorial_geometry = 'x <= 1e-3'
+    block_id = 0 
+  [../]
+  [./subdomain1]
+    type = ParsedSubdomainMeshModifier
+    combinatorial_geometry = 'x >= 1e-3'
+    block_id = 1
+    depends_on = subdomain0
+  [../]
+
+  # Now we define the sidesets. We need two in this case because the plasma-liquid interface
+  # at x = 1 mm can have directional boundary conditions (e.g. we might have one boundary 
+  # condition acting on a variable in the plasma domain but which depends on a variable in
+  # the liquid domain, and vice-versa).
   [./interface]
     type = SideSetsBetweenSubdomains
     master_block = '0'
     paired_block = '1'
     new_boundary = 'master0_interface'
-    # depends_on = 'box'
+    depends_on = 'subdomain0 subdomain1' 
+    # We need the 'depends_on' parameter since the blocks were defined by hand.
+    # If FileMesh is used this is not necessary unless more subdomains are specified 
+    # outside of the mesh generating program.
   [../]
   [./interface_again]
     type = SideSetsBetweenSubdomains
     master_block = '1'
     paired_block = '0'
     new_boundary = 'master1_interface'
-    # depends_on = 'box'
+    depends_on = 'subdomain0 subdomain1'
   [../]
+
+  # The next two definitions create boundary conditions named 
+  # 'left' and 'right', where 'left' is at x = 0 and 'right' is at x = 1.1 mm. 
   [./left]
     type = SideSetsFromNormals
     normals = '-1 0 0'
@@ -44,12 +87,6 @@ dom1Scale=1.0
     normals = '1 0 0'
     new_boundary = 'right'
   [../]
-  # [./box]
-  #   type = SubdomainBoundingBox
-  #   bottom_left = '0.55 0 0'
-  #   top_right = '1.1 1. 0'
-  #   block_id = 1
-  # [../]
 []
 
 [Problem]
@@ -61,19 +98,25 @@ dom1Scale=1.0
   [./smp]
     type = SMP
     full = true
-#    ksp_norm = none
+    ksp_norm = none
   [../]
 []
 
 [Executioner]
   type = Transient
-  end_time = 1e-1
+  end_time = 5e-7
+  #end_time = 1e-1
   # end_time = 10
+  #num_steps = 100
   petsc_options = '-snes_converged_reason -snes_linesearch_monitor'
   # petsc_options = '-snes_test_display'
   solve_type = newton
   petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount -ksp_type -snes_linesearch_minlambda'
-  petsc_options_value = 'lu NONZERO 1.e-10 fgmres 1e-3'
+  petsc_options_value = 'lu NONZERO 1.e-10 preonly 1e-3'
+  #petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount -ksp_type -snes_linesearch_minlambda'
+  #petsc_options_value = 'lu NONZERO 1.e-10 fgmres 1e-3'
+  #petsc_options_iname = '-pc_type -sub_pc_type -pc_factor_shift_type -pc_factor_shift_amount -ksp_type -snes_linesearch_minlambda'
+  #petsc_options_value = 'asm lu NONZERO 1.e-10 fgmres 1e-3'
   # petsc_options_iname = '-pc_type -sub_pc_type'
   # petsc_options_value = 'asm lu'
   # petsc_options_iname = '-snes_type'
@@ -82,16 +125,17 @@ dom1Scale=1.0
   nl_abs_tol = 7.6e-5
   dtmin = 1e-12
   l_max_its = 20
+  dt = 1e-9
   #steady_state_detection = true
   #steady_state_tolerance = 1e-4
-  [./TimeStepper]
-    type = IterationAdaptiveDT
-    cutback_factor = 0.4
-    dt = 1e-11
-    # dt = 1.1
-    growth_factor = 1.2
-   optimal_iterations = 15
-  [../]
+  #[./TimeStepper]
+  #  type = IterationAdaptiveDT
+  #  cutback_factor = 0.4
+  #  dt = 1e-11
+  #  # dt = 1.1
+  #  growth_factor = 1.2
+  #  optimal_iterations = 15
+  #[../]
 []
 
 [Outputs]
@@ -100,9 +144,9 @@ dom1Scale=1.0
   exodus = true
 []
 
-[Debug]
-  show_var_residual_norms = true
-[]
+#[Debug]
+#  show_var_residual_norms = true
+#[]
 
 [UserObjects]
   [./data_provider]

@@ -1,29 +1,44 @@
 dom0Scale=1.0
 dom1Scale=1.0
 
+#dom0Scale=1e-3
+#dom1Scale=1e-7
 [GlobalParams]
   offset = 20
   potential_units = kV
   use_moles = true
 []
 
+#[Mesh]
+#  type = GeneratedMesh
+#  dim = 1
+#  #nx = 17792
+#  nx = 71168
+#  xmin = 0
+#  xmax = 0.0011
+#[]
+
+
 [Mesh]
-  type = GeneratedMesh
-  dim = 1
-  nx = 17792
-  xmin = 0
-  xmax = 0.0011
+  # type = GeneratedMesh
+  # nx = 2
+  # xmax = 1.1
+  # dim = 1
+  type = FileMesh
+  file = 'liquidNew2.msh'
 []
 
 [MeshModifiers]
   [./subdomain0]
     type = ParsedSubdomainMeshModifier
-    combinatorial_geometry = 'x <= 1e-3'
+    combinatorial_geometry = 'x < 1e-3'
+    #combinatorial_geometry = 'x <= 1'
     block_id = 0 
   [../]
   [./subdomain1]
     type = ParsedSubdomainMeshModifier
     combinatorial_geometry = 'x >= 1e-3'
+    #combinatorial_geometry = 'x > 1'
     block_id = 1
     depends_on = subdomain0
   [../]
@@ -69,25 +84,39 @@ dom1Scale=1.0
 
 [Executioner]
   type = Transient
-  #automatic_scaling = true
+  automatic_scaling = true
   #end_time = 5e-9
-  num_steps = 10
-  line_search = 'none'
+  #num_steps = 10
+  end_time = 1e-1
+  #line_search = 'none'
   petsc_options = '-snes_converged_reason -snes_linesearch_monitor'
   solve_type = newton 
-  petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_minlambda'
-  petsc_options_value = 'bjacobi lu 1e-3'
+  petsc_options_iname = '-pc_type -snes_linesearch_minlambda -ksp_type'
+  petsc_options_value = 'lu 1e-3 fgmres'
+  #petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_minlambda -ksp_type'
+  #petsc_options_value = 'bjacobi lu 1e-3 gmres'
+  #petsc_options_iname = '-pc_type -pc_asm_overlap -sub_pc_type -sub_pc_factor_shift_type -sub_pc_factor_shift_amount -snes_linesearch_minlambda'
+  #petsc_options_value = 'asm 2 ilu NONZERO 1e-10 1e-3'
   nl_rel_tol = 1e-4
   nl_abs_tol = 7.6e-5
   dtmin = 1e-14
   l_max_its = 20
-  dt = 1e-12
+  #dt = 1e-11
+  [./TimeStepper]
+    type = IterationAdaptiveDT
+    cutback_factor = 0.4
+    dt = 1e-11
+    # dt = 1.1
+    growth_factor = 1.2
+   optimal_iterations = 15
+  [../]
 []
 
 [Outputs]
   perf_graph = true
   # print_linear_residuals = false
-  exodus = false
+  #exodus = false
+  exodus = true
 []
 
 [Debug]
@@ -828,24 +857,41 @@ dom1Scale=1.0
     neighbor_position_units = ${dom0Scale}
   [../]
 
+  #[./water_interface]
+  #  type = InterfaceFluxConservation
+  #  neighbor_var = potential
+  #  variable = potential_liq
+  #  boundary = 'master1_interface'
+  #  region_name = 'diffpotential_liq'
+  #  neighbor_region_name = 'diffpotential'
+  #  position_units = ${dom1Scale}
+  #  neighbor_position_units = ${dom0Scale}
+  #[../]
+
   [./water_interface]
     type = InterfaceFluxConservation
-    neighbor_var = potential
-    variable = potential_liq
-    boundary = 'master1_interface'
-    region_name = 'diffpotential_liq'
-    neighbor_region_name = 'diffpotential'
-    position_units = ${dom1Scale}
-    neighbor_position_units = ${dom0Scale}
+    neighbor_var = potential_liq
+    variable = potential
+    boundary = 'master0_interface'
+    region_name = 'diffpotential'
+    neighbor_region_name = 'diffpotential_liq'
+    position_units = ${dom0Scale}
+    neighbor_position_units = ${dom1Scale}
   [../]
 []
 
 [BCs]
+  #[./potential_liq_interface]
+  #  type = MatchedValueBC
+  #  variable = potential
+  #  v = potential_liq
+  #  boundary = master0_interface
+  #[../]
   [./potential_liq_interface]
     type = MatchedValueBC
-    variable = potential
-    v = potential_liq
-    boundary = master0_interface
+    variable = potential_liq
+    v = potential
+    boundary = master1_interface
   [../]
   [./potential_liq_right]
     type = DirichletBC
@@ -1271,118 +1317,6 @@ dom1Scale=1.0
   [../]
 
   
-  #[./liquid_phase_reactions]
-  #  # removed Od1 and its two reactions:
-  #  #
-  #  # Od1 + H2O -> H2O2      : 1.8e7
-  #  # Od1 + H2O -> OH + OH   : 2.3e-13
-  #  #
-  #  species = 'emliq OHm Om O2m O3m HO2m H+ O O2_1 O3 H H2 HO2 HO3 OH H2O2'
-  #  aux_species = 'H2O O2'
-  #  use_log = true
-  #  position_units = ${dom1Scale}
-  #  block = 1
-  #  reaction_coefficient_format = 'rate'
-  #  reactions = 'H2O -> H+ + OHm  : 1.4e-3
-  #               H+ + OHm -> H2O  : 1.4e8
-  #               H2O2 -> H+ + HO2m : 1.12e-1
-  #               H+ + HO2m -> H2O2 : 5e7
-  #               HO2 -> O2m + H+   : 1.35e6
-  #               O2m + H+ -> HO2   : 5e7
-  #               OH -> Om + H+     : 1.26e-1
-  #               Om + H+ -> OH     : 1e8
-  #               OH + OHm -> H2O + Om : 1.3e7
-  #               H2O + Om -> OH + OHm : 1.7e3
-  #               H2O2 + OHm -> HO2m + H2O : 1.3e7
-  #               HO2m + H2O -> H2O2 + OHm : 5.8e4
-  #               emliq + H2O -> H + OHm : 1.9e-2
-  #               H + OHm -> H2O + emliq : 2.2e4
-  #               OH + OHm -> Om + H2O   : 1.3e7
-  #               Om + H2O -> OH + OHm   : 1.03e5
-  #               HO2 + OHm -> O2m + H2O : 5.0e7
-  #               O2m + H2O -> HO2 + OHm : 18.5767e-3
-  #               Om + O2 -> O3m         : 3.6e6
-  #               O3m -> Om + O2         : 3.3e3
-  #               OH + OH -> H2O2        : 3.6e6
-  #               H2O2 -> OH + OH        : 2.3e-7
-  #               H -> emliq + H+        : 3.9
-  #               emliq + H+ -> H        : 2.3e7
-  #               O + O2 -> O3           : 4.0e6
-  #               O + O -> O2            : 2.8e7
-  #               O2_1 + H2O -> O2 + H2O : 4.9
-  #               O2_1 + OH -> O2 + OH   : 2.2
-  #               emliq + OH -> OHm      : 3.0e7
-  #               emliq + H2O2 -> OH + OHm : 1.1e7
-  #               emliq + HO2 -> HO2m    : 2.0e7
-  #               emliq + O2 -> O2m      : 1.9e7
-  #               emliq + HO2m -> Om + OHm : 3.5e7
-  #               emliq + O3 -> O3m      : 3.6e7
-  #               H + H2O -> H2 + OH     : 1.1e7
-  #               H + Om -> OHm          : 1.0e7
-  #               H + HO2m -> OHm + OH   : 9.0e7
-  #               H + O3m -> OHm + O2    : 1.0e7
-  #               H + H -> H2            : 7.8e6
-  #               H + OH -> H2O          : 7.0e6
-  #               H + O2 -> HO2          : 2.1e7
-  #               H + H2O2 -> OH + H2O   : 9.0e4
-  #               H + HO2 -> H2O2        : 1.8e7
-  #               H + O2m -> HO2m        : 1.8e7
-  #               H + O3 -> HO3          : 3.8e7
-  #               OH + HO2 -> O2 + H2O   : 6.0e6
-  #               OH + O2m -> O2 + OHm   : 8.2e6
-  #               OH + H2 -> H + H2O     : 4.3e4
-  #               OH + H2O2 -> HO2 + H2O : 2.7e4
-  #               OH + Om -> HO2m        : 2.5e7
-  #               OH + HO2m -> HO2 + OHm : 6.0e6
-  #               OH + O3m -> O3 + OHm   : 2.6e6
-  #               OH + O3m -> O2 + O2 + H+ : 6.0e6
-  #               OH + O3 -> HO2 + O2    : 1.1e5
-  #               HO2 + O2m -> HO2m + O2 : 8.0e4
-  #               HO2 + HO2 -> H2O2 + O2 : 7.0e2
-  #               HO2 + Om -> O2 + OHm   : 6.0e6
-  #               HO2 + H2O2 -> OH + O2 + H2O : 0.5e-3
-  #               HO2 + HO2m -> OHm + OH + O2 : 0.5e-3
-  #               O2m + H2O2 -> OH + O2 + OHm : 0.13e-3
-  #               O2m + HO2m -> Om + O2 + OHm : 0.13e-3
-  #               O2m + O3 -> O3m + O2        : 1.5e6
-  #               Om + H2 -> H + OHm          : 8.0e4
-  #               Om + H2O2 -> H2O + O2m      : 5.0e5
-  #               Om + HO2m -> OHm + O2m      : 4.0e5
-  #               Om + O3m -> O2m + O2m       : 7.0e5
-  #               Om + O3 -> O2m + O2         : 5.0e6
-  #               O3m + H -> O2 + OH          : 9.0e6
-  #               HO3 -> O2 + OH              : 1.0e5
-  #               O + OHm -> HO2m             : 1.1e2
-  #               O + H2O2 -> OH + HO2        : 1.6e2
-  #               O + HO2m -> OH + O2m        : 5.3e6
-  #               O3 + H2O2 -> OH + HO2 + O2  : 3.0e6
-  #               emliq + O2m -> HO2m + OHm   : 1.3e7
-  #               emliq + H -> H2 + OHm       : 2.5e7
-  #               emliq + Om -> OHm + OHm     : 2.2e7
-  #               emliq + O3m -> O2 + OH + OH : 1.6e7
-  #               Om + O2m -> OHm + OHm + O2  : 6.0e4
-  #               O2m + O3m -> OHm + OHm + O2 + O2 : 1.0e1
-  #               Om + Om -> OHm + HO2m       : 1.0e6
-  #               emliq + emliq -> H2 + OHm + OHm : 5.5e6
-  #               O2m + O2m -> H2O2 + O2 + OHm + OHm : 1.0e-1'
-  #
-  #  # emliq + emliq + H2O + H2O : H2 + OHm + OHm : {5.5e9/(H2O^2)}
-  #  # O2m + O2m + H2O + H2O -> H2O2 + O2 + OHm + OHm : {1.0e2 / H2O^2}
-  #  # emliq + O2m + H2O -> HO2m + OHm : {1.3e10 / 55410.26}
-  #  # emliq + H + H2O -> H2 + OHm : {2.5e10 / 55410.26}
-  #  # emliq + Om + H2O -> OHm + OHm : {2.2e10/ 55410.26}
-  #  # emliq + O3m + H2O -> O2 + OH + OH : {1.6e10 / 55410.26}
-  #  # Om + O2m + H2O -> OHm + OHm + O2  : {6.0e8 / 55410.26}
-  #  # O2m + O3m + H2O -> OHm + OHm + O2 + O2 : {1.0e4 / 55410.26}
-  #  # Om + Om + H2O -> OHm + HO2m  : {1.0e9 / 55410.26}'
-  #
-  #
-  #
-##    reactions = 'emliq -> OHm : 1069.6
-##                 emliq + emliq -> OHm + OHm : 3.136e8'
-#                 #emliq + emliq + OHm -> emliq + emliq : 1'
-#  [../]
-
   [./liquid_phase_reactions]
     species = 'emliq OHm'
     use_log = true
