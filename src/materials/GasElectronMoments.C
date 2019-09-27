@@ -253,7 +253,7 @@ GasElectronMoments::computeQpProperties()
   _se_energy[_qp] = 2. * 3. / 2.; // Emi uses 2 Volts coming off the wall (presumably for Te).
                                   // Multiply by 3/2 to get mean_en
   _e[_qp] = 1.6e-19;
-  _eps[_qp] = 8.85e-12;
+  _eps[_qp] = 8.85e-12 * 81;
   _sgnem[_qp] = -1.;
   _sgnmean_en[_qp] = -1.;
   //_sgnArp[_qp] = 1.;
