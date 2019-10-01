@@ -93,8 +93,8 @@ GasElectronMoments::GasElectronMoments(const InputParameters & parameters)
     _d_muem_d_actual_mean_en(declareProperty<Real>("d_muem_d_actual_mean_en")),
     _diffem(declareProperty<Real>("diffem")),
     _d_diffem_d_actual_mean_en(declareProperty<Real>("d_diffem_d_actual_mean_en")),
-    _muArp(declareProperty<Real>("muArp")),
-    _diffArp(declareProperty<Real>("diffArp")),
+    //_muArp(declareProperty<Real>("muArp")),
+    //_diffArp(declareProperty<Real>("diffArp")),
     _rate_coeff_ion(declareProperty<Real>("rate_coeff_ion")),
     _Eiz(declareProperty<Real>("Eiz")),
     _Eex(declareProperty<Real>("Eex")),
@@ -106,7 +106,7 @@ GasElectronMoments::GasElectronMoments(const InputParameters & parameters)
     _rate_coeff_elastic(declareProperty<Real>("rate_coeff_elastic")),
     _massem(declareProperty<Real>("massem")),
     _massGas(declareProperty<Real>("massGas")),
-    _massArp(declareProperty<Real>("massArp")),
+    //_massArp(declareProperty<Real>("massArp")),
     _se_coeff(declareProperty<Real>("se_coeff")),
     _work_function(declareProperty<Real>("work_function")),
     _field_enhancement(declareProperty<Real>("field_enhancement")),
@@ -153,10 +153,10 @@ GasElectronMoments::GasElectronMoments(const InputParameters & parameters)
     _d_el_d_actual_mean_en(declareProperty<Real>("d_el_d_actual_mean_en")),
     _sgnem(declareProperty<Real>("sgnem")),
     _sgnmean_en(declareProperty<Real>("sgnmean_en")),
-    _sgnArp(declareProperty<Real>("sgnArp")),
+    //_sgnArp(declareProperty<Real>("sgnArp")),
     _diffpotential(declareProperty<Real>("diffpotential")),
     _actual_mean_energy(declareProperty<Real>("actual_mean_energy")),
-    _TArp(declareProperty<Real>("TArp")),
+    //_TArp(declareProperty<Real>("TArp")),
     _Tem(declareProperty<Real>("Tem")),
     _muu(declareProperty<Real>("muu")),
     _diffu(declareProperty<Real>("diffu")),
@@ -231,7 +231,7 @@ void
 GasElectronMoments::computeQpProperties()
 {
   _massem[_qp] = 9.11e-31;
-  _massGas[_qp] = 4.0 * 1.66e-27;
+  _massGas[_qp] = 40.0 * 1.66e-27;
   //_massArp[_qp] = 4.0 * 1.66e-27;
   _T_gas[_qp] = _user_T_gas;
   _p_gas[_qp] = _user_p_gas[_qp];
