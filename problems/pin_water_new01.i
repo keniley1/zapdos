@@ -10,6 +10,7 @@ dom1Scale=1.0
 [Mesh]
   type = FileMesh
   file = 'pin_water_new01.msh'
+  #file = 'pin_water_new02.msh'
 []
 
 [Problem]
@@ -18,7 +19,7 @@ dom1Scale=1.0
 []
 
 [Preconditioning]
-  active = fsp
+  active = smp
 
   [./smp]
     type = SMP
@@ -64,10 +65,16 @@ dom1Scale=1.0
   end_time = 1e-1
   automatic_scaling = true
   #line_search = 'basic'
-  petsc_options = '-snes_converged_reason -snes_linesearch_monitor'
+  petsc_options = '-snes_converged_reason -snes_linesearch_monitor -pc_svd_monitor'
   solve_type = newton 
-  #petsc_options_iname = '-pc_type -sub_pc_type -pc_factor_mat_solver_package -ksp_gmres_restart -sub_pc_factor_shift_type -sub_pc_factor_shift_amount'
-  #petsc_options_value = 'bjacobi ilu mumps 100 NONZERO 1e-10'
+  #petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount'
+  #petsc_options_value = 'lu NONZERO 1e-10'
+  #petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount'
+  #petsc_options_value = 'svd NONZERO 1e-10'
+
+
+  petsc_options_iname = '-pc_type -sub_pc_type -pc_factor_mat_solver_package -ksp_gmres_restart -sub_pc_factor_shift_type -sub_pc_factor_shift_amount'
+  petsc_options_value = 'bjacobi ilu mumps 100 NONZERO 1e-10'
   #petsc_options_iname = '-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap'
   #petsc_options_value = 'gmres asm lu 100 NONZERO 8'
   #petsc_options_iname = '-sub_pc_factor_shift_type -sub_pc_factor_shift_amount'
@@ -77,13 +84,13 @@ dom1Scale=1.0
   #petsc_options_iname = '-pc_factor_mat_solver_package -pc_type -pc_asm_overlap -sub_pc_type -sub_pc_factor_shift_type -sub_pc_factor_shift_amount -snes_linesearch_minlambda'
   #petsc_options_value = 'mumps asm 4 ilu NONZERO 1e-10 1e-3'
   nl_rel_tol = 1e-4
-  #nl_abs_tol = 7.6e-5
+  nl_abs_tol = 7.6e-5
   dtmin = 1e-16
   l_max_its = 20
   [./TimeStepper]
     type = IterationAdaptiveDT
     cutback_factor = 0.4
-    dt = 1e-12
+    dt = 1e-15
     growth_factor = 1.2
     optimal_iterations = 15
   [../]
@@ -313,24 +320,24 @@ dom1Scale=1.0
     boundary = bottom
     value = 0
   [../]
-  #[./potential_electrode]
-  #  type = NeumannCircuitVoltageMoles_KV
-  #  variable = potential
-  #  boundary = electrode
-  #  function = potential_bc_func
-  #  ip = Arp 
-  #  data_provider = data_provider
-  #  em = em
-  #  mean_en = mean_en
-  #  r = 0.01
-  #  position_units = ${dom0Scale}
-  #[../]
   [./potential_electrode]
-    type = DirichletBC
+    type = NeumannCircuitVoltageMoles_KV
     variable = potential
     boundary = electrode
-    value = -1.25
+    function = potential_bc_func
+    ip = Arp 
+    data_provider = data_provider
+    em = em
+    mean_en = mean_en
+    r = 0.0
+    position_units = ${dom0Scale}
   [../]
+  #[./potential_electrode]
+  #  type = DirichletBC
+  #  variable = potential
+  #  boundary = electrode
+  #  value = -1.25
+  #[../]
   [./em_physical_bottom]
     type = HagelaarElectronBC
     variable = em
@@ -443,15 +450,15 @@ dom1Scale=1.0
 [Functions]
   [./potential_bc_func]
     type = ParsedFunction
-    value = '2.00' 
+    value = '0.50' 
   [../]
   [./potential_ic_func]
     type = ParsedFunction
-    #value = '-1.00 * (1.000e-3 - x)'
+    value = '-0.50 * (1.000e-3 - y)'
     # Below is a test of a gaussian initial condition
-    vars = 'sigmax sigmay A x0 y0'
-    vals = '6e-4 1.2e-3 -2.0 0 2.5e-3'
-    value = 'A*exp(-((x-x0)^2 / (2*sigmax^2) + (y-y0)^2/(2*sigmay)^2))'
+    #vars = 'sigmax sigmay A x0 y0'
+    #vals = '6e-4 1.2e-3 -2.0 0 2.5e-3'
+    #value = 'A*exp(-((x-x0)^2 / (2*sigmax^2) + (y-y0)^2/(2*sigmay)^2))'
   [../]
   [./charged_ic_func]
     type = ParsedFunction

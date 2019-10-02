@@ -1,5 +1,5 @@
 // Gmsh project created on Thursday Aug 29 15:16:01 2019
-lc = 0.0005;
+lc = 0.002;
 
 // Point definitions defined in meters
 // Lower left
