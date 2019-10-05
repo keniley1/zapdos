@@ -1,0 +1,36 @@
+Content:
+    Zapdos:
+        root_dir: ${ROOT_DIR}/doc/content
+    moose:
+        root_dir: ${MOOSE_DIR}/framework/doc/content
+        content:
+            - js/*
+            - css/*
+            - contrib/**
+            - media/**
+            - templates/stubs/*
+
+Renderer:
+    type: MooseDocs.base.MaterializeRenderer
+    name: Zapdos
+    home: https://shannon-lab.github.io/zapdos
+    repo: https://github.com/shannon-lab/zapdos
+    extra-css:
+            - css/zapdos.css
+
+Extensions:
+    MooseDocs.extensions.navigation:
+        name: 'Zapdos'
+        home: https://shannon-lab.github.io/zapdos
+        repo: https://github.com/shannon-lab/zapdos
+        menu:
+            Getting Started: getting_started/index.md
+            Documentation: documentation.menu.md
+            Help: help.menu.md
+            Citing: citing.md
+    MooseDocs.extensions.template:
+        active: True
+    MooseDocs.extensions.appsyntax:
+        executable: ${ROOT_DIR}
+        includes:
+            - include
