@@ -38,9 +38,11 @@ protected:
   const VariableValue & _em;
   unsigned int _em_id;
   MooseVariable & _ip_var;
-  const VariableValue & _ip;
-  const VariableGradient & _grad_ip;
+  std::vector<MooseVariable *> _ip_var2;
+  std::vector<const VariableValue *> _ip;
+  std::vector<const VariableGradient *> _grad_ip;
   unsigned int _ip_id;
+  std::vector<unsigned int> _ip_id2;
 
   const MaterialProperty<Real> & _muem;
   const MaterialProperty<Real> & _d_muem_d_actual_mean_en;
@@ -49,6 +51,9 @@ protected:
   const MaterialProperty<Real> & _sgnip;
   const MaterialProperty<Real> & _muip;
   const MaterialProperty<Real> & _Dip;
+  //std::vector<const MaterialProperty<Real> *> _sgnip;
+  //std::vector<const MaterialProperty<Real> *> _muip;
+  //std::vector<const MaterialProperty<Real> *> _Dip;
   const MaterialProperty<Real> & _se_coeff;
   const MaterialProperty<Real> & _se_energy;
   const MaterialProperty<Real> & _mumean_en;

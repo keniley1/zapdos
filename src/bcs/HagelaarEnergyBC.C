@@ -40,8 +40,8 @@ HagelaarEnergyBC::HagelaarEnergyBC(const InputParameters & parameters)
     _em(coupledValue("em")),
     _em_id(coupled("em")),
     _ip_var(*getVar("ip", 0)),
-    _ip(coupledValue("ip")),
-    _grad_ip(coupledGradient("ip")),
+    //_ip(coupledValue("ip")),
+    //_grad_ip(coupledGradient("ip")),
     _ip_id(coupled("ip")),
 
     _muem(getMaterialProperty<Real>("muem")),
@@ -69,6 +69,24 @@ HagelaarEnergyBC::HagelaarEnergyBC(const InputParameters & parameters)
     _d_n_gamma_d_em(0),
     _actual_mean_en(0)
 {
+  int n = coupledComponents("ip");
+
+  _ip_var2.resize(n);
+  _ip.resize(n);
+  _grad_ip.resize(n);
+  _ip_id2.resize(n);
+  //_sgnip.resize(n);
+  //_muip.resize(n);
+  //_Dip.resize(n);
+  for (unsigned int i = 0; i < _ip.size(); ++i)
+  {
+    _ip_var2[i] = getVar("ip", i);
+    _ip[i] = &coupledValue("ip", i);
+    _grad_ip[i] = &coupledGradient("ip", i);
+    _ip_id2[i] = coupled("ip", i); 
+    std::cout << (_ip_id2[i]) << std::endl;
+    //_sgnip[i] = &getMaterialProperty<Real>("sgn" + _ip[i] 
+  }
 }
 
 Real
@@ -82,9 +100,17 @@ HagelaarEnergyBC::computeQpResidual()
   {
     _a = 0.0;
   }
+  // Real total_ion_flux;
+  _ion_flux = 0.0;
+  for (unsigned int i = 0; i < _ip.size(); ++i)
+  {
+    _ion_flux +=
+        _sgnip[_qp] * _muip[_qp] * -_grad_potential[_qp] * _r_units * std::exp((*_ip[i])[_qp]) -
+        _Dip[_qp] * std::exp((*_ip[i])[_qp]) * (*_grad_ip[i])[_qp] * _r_units;
+  }
 
-  _ion_flux = _sgnip[_qp] * _muip[_qp] * -_grad_potential[_qp] * _r_units * std::exp(_ip[_qp]) -
-              _Dip[_qp] * std::exp(_ip[_qp]) * _grad_ip[_qp] * _r_units;
+  //_ion_flux = _sgnip[_qp] * _muip[_qp] * -_grad_potential[_qp] * _r_units * std::exp(_ip[_qp]) -
+  //            _Dip[_qp] * std::exp(_ip[_qp]) * _grad_ip[_qp] * _r_units;
   // _n_gamma = (1. - _a) * _se_coeff[_qp] * _ion_flux * _normals[_qp] / (_muem[_qp] *
   // -_grad_potential[_qp] * _r_units * _normals[_qp] + std::numeric_limits<double>::epsilon());
   _v_thermal =
@@ -111,8 +137,15 @@ HagelaarEnergyBC::computeQpJacobian()
     _a = 0.0;
   }
 
-  _ion_flux = _sgnip[_qp] * _muip[_qp] * -_grad_potential[_qp] * _r_units * std::exp(_ip[_qp]) -
-              _Dip[_qp] * std::exp(_ip[_qp]) * _grad_ip[_qp] * _r_units;
+  _ion_flux = 0.0;
+  for (unsigned int i = 0; i < _ip.size(); ++i)
+  {
+    _ion_flux +=
+        _sgnip[_qp] * _muip[_qp] * -_grad_potential[_qp] * _r_units * std::exp((*_ip[i])[_qp]) -
+        _Dip[_qp] * std::exp((*_ip[i])[_qp]) * (*_grad_ip[i])[_qp] * _r_units;
+  }
+  //_ion_flux = _sgnip[_qp] * _muip[_qp] * -_grad_potential[_qp] * _r_units * std::exp(_ip[_qp]) -
+  //            _Dip[_qp] * std::exp(_ip[_qp]) * _grad_ip[_qp] * _r_units;
   // _n_gamma = (1. - _a) * _se_coeff[_qp] * _ion_flux * _normals[_qp] / (_muem[_qp] *
   // -_grad_potential[_qp] * _r_units * _normals[_qp] + std::numeric_limits<double>::epsilon());
   _actual_mean_en = std::exp(_u[_qp] - _em[_qp]);
@@ -147,10 +180,20 @@ HagelaarEnergyBC::computeQpOffDiagJacobian(unsigned int jvar)
     else
       _a = 0.0;
 
-    _ion_flux = _sgnip[_qp] * _muip[_qp] * -_grad_potential[_qp] * _r_units * std::exp(_ip[_qp]) -
-                _Dip[_qp] * std::exp(_ip[_qp]) * _grad_ip[_qp] * _r_units;
-    _d_ion_flux_d_potential =
-        _sgnip[_qp] * _muip[_qp] * -_grad_phi[_j][_qp] * _r_units * std::exp(_ip[_qp]);
+    _ion_flux = 0.0;
+    _d_ion_flux_d_potential = 0.0;
+    for (unsigned int i = 0; i < _ip.size(); ++i)
+    {
+      _ion_flux +=
+          _sgnip[_qp] * _muip[_qp] * -_grad_potential[_qp] * _r_units * std::exp((*_ip[i])[_qp]) -
+          _Dip[_qp] * std::exp((*_ip[i])[_qp]) * (*_grad_ip[i])[_qp] * _r_units;
+      _d_ion_flux_d_potential +=
+          _sgnip[_qp] * _muip[_qp] * -_grad_phi[_j][_qp] * _r_units * std::exp((*_ip[i])[_qp]);
+    }
+    //_ion_flux = _sgnip[_qp] * _muip[_qp] * -_grad_potential[_qp] * _r_units * std::exp(_ip[_qp]) -
+    //            _Dip[_qp] * std::exp(_ip[_qp]) * _grad_ip[_qp] * _r_units;
+    //_d_ion_flux_d_potential =
+    //    _sgnip[_qp] * _muip[_qp] * -_grad_phi[_j][_qp] * _r_units * std::exp(_ip[_qp]);
     // _n_gamma = (1. - _a) * _se_coeff[_qp] * _ion_flux * _normals[_qp] / (_muem[_qp] *
     // -_grad_potential[_qp] * _r_units * _normals[_qp] + std::numeric_limits<double>::epsilon());
     // _d_n_gamma_d_potential = (1. - _a) * _se_coeff[_qp] / _muem[_qp] * (_d_ion_flux_d_potential *
@@ -201,9 +244,10 @@ HagelaarEnergyBC::computeQpOffDiagJacobian(unsigned int jvar)
                      _d_mumean_en_d_actual_mean_en[_qp] * _actual_mean_en * -_phi[_j][_qp] *
                      (2. * _a - 1.) -
                  5. * _d_v_thermal_d_em) +
-            (_r - 1.) * (6. * -_grad_potential[_qp] * _r_units * _normals[_qp] * _mumean_en[_qp] *
-                             (2. * _a - 1.) -
-                         5. * _v_thermal) *
+            (_r - 1.) *
+                (6. * -_grad_potential[_qp] * _r_units * _normals[_qp] * _mumean_en[_qp] *
+                     (2. * _a - 1.) -
+                 5. * _v_thermal) *
                 -_se_energy[_qp] * _d_n_gamma_d_em);
   }
 
@@ -219,10 +263,19 @@ HagelaarEnergyBC::computeQpOffDiagJacobian(unsigned int jvar)
     }
     _v_thermal =
         std::sqrt(8 * _e[_qp] * 2.0 / 3 * std::exp(_u[_qp] - _em[_qp]) / (M_PI * _massem[_qp]));
-    _d_ion_flux_d_ip = _sgnip[_qp] * _muip[_qp] * -_grad_potential[_qp] * _r_units *
-                           std::exp(_ip[_qp]) * _phi[_j][_qp] -
-                       _Dip[_qp] * std::exp(_ip[_qp]) * _grad_phi[_j][_qp] * _r_units -
-                       _Dip[_qp] * std::exp(_ip[_qp]) * _phi[_j][_qp] * _grad_ip[_qp] * _r_units;
+
+    _d_ion_flux_d_ip = 0.0;
+    for (unsigned int i = 0; i < _ip.size(); ++i)
+    {
+    _d_ion_flux_d_ip += _sgnip[_qp] * _muip[_qp] * -_grad_potential[_qp] * _r_units *
+                           std::exp((*_ip[i])[_qp]) * _phi[_j][_qp] -
+                       _Dip[_qp] * std::exp((*_ip[i])[_qp]) * _grad_phi[_j][_qp] * _r_units -
+                       _Dip[_qp] * std::exp((*_ip[i])[_qp]) * _phi[_j][_qp] * (*_grad_ip[i])[_qp] * _r_units;
+    }
+    //_d_ion_flux_d_ip = _sgnip[_qp] * _muip[_qp] * -_grad_potential[_qp] * _r_units *
+    //                       std::exp(_ip[_qp]) * _phi[_j][_qp] -
+    //                   _Dip[_qp] * std::exp(_ip[_qp]) * _grad_phi[_j][_qp] * _r_units -
+    //                   _Dip[_qp] * std::exp(_ip[_qp]) * _phi[_j][_qp] * _grad_ip[_qp] * _r_units;
     // _d_n_gamma_d_ip = (1. - _a) * _se_coeff[_qp] * _d_ion_flux_d_ip * _normals[_qp] / (_muem[_qp]
     // * -_grad_potential[_qp] * _r_units * _normals[_qp] + std::numeric_limits<double>::epsilon());
 
