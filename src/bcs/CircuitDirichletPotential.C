@@ -66,9 +66,11 @@ Real
 CircuitDirichletPotential::computeQpResidual()
 {
   if (_convert_moles)
+    // return _surface_potential.value(_t, *_current_node) - _u[_qp] +
+    //       _current_sign * _current / std::pow(_r_units, 2.) * _resist / _voltage_scaling *
+    //           _coulomb_charge * _A * _N_A;
     return _surface_potential.value(_t, *_current_node) - _u[_qp] +
-           _current_sign * _current / std::pow(_r_units, 2.) * _resist / _voltage_scaling *
-               _coulomb_charge * _A * _N_A;
+           _current * _resist / _voltage_scaling * _A;
   else
     return _surface_potential.value(_t, *_current_node) - _u[_qp] +
            _current_sign * _current / std::pow(_r_units, 2.) * _resist / _voltage_scaling *
