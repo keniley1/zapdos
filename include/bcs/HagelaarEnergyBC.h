@@ -38,11 +38,11 @@ protected:
   const VariableValue & _em;
   unsigned int _em_id;
   MooseVariable & _ip_var;
-  std::vector<MooseVariable *> _ip_var2;
+  //std::vector<MooseVariable *> _ip_var2;
   std::vector<const VariableValue *> _ip;
   std::vector<const VariableGradient *> _grad_ip;
-  unsigned int _ip_id;
-  std::vector<unsigned int> _ip_id2;
+  //unsigned int _ip_id;
+  std::vector<unsigned int> _ip_id;
 
   const MaterialProperty<Real> & _muem;
   const MaterialProperty<Real> & _d_muem_d_actual_mean_en;
@@ -72,6 +72,8 @@ protected:
   Real _d_n_gamma_d_u;
   Real _d_n_gamma_d_em;
   Real _actual_mean_en;
+  std::vector<unsigned int>::iterator _it;
+  unsigned int _ip_num;
 };
 
 #endif // HAGELAARENERGYBC_H

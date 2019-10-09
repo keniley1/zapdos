@@ -42,7 +42,7 @@ HagelaarEnergyBC::HagelaarEnergyBC(const InputParameters & parameters)
     _ip_var(*getVar("ip", 0)),
     //_ip(coupledValue("ip")),
     //_grad_ip(coupledGradient("ip")),
-    _ip_id(coupled("ip")),
+    //_ip_id(coupled("ip")),
 
     _muem(getMaterialProperty<Real>("muem")),
     _d_muem_d_actual_mean_en(getMaterialProperty<Real>("d_muem_d_actual_mean_en")),
@@ -71,21 +71,20 @@ HagelaarEnergyBC::HagelaarEnergyBC(const InputParameters & parameters)
 {
   int n = coupledComponents("ip");
 
-  _ip_var2.resize(n);
+  //_ip_var.resize(n);
   _ip.resize(n);
   _grad_ip.resize(n);
-  _ip_id2.resize(n);
+  _ip_id.resize(n);
   //_sgnip.resize(n);
   //_muip.resize(n);
   //_Dip.resize(n);
   for (unsigned int i = 0; i < _ip.size(); ++i)
   {
-    _ip_var2[i] = getVar("ip", i);
+    //_ip_var[i] = getVar("ip", i);
     _ip[i] = &coupledValue("ip", i);
     _grad_ip[i] = &coupledGradient("ip", i);
-    _ip_id2[i] = coupled("ip", i); 
-    std::cout << (_ip_id2[i]) << std::endl;
-    //_sgnip[i] = &getMaterialProperty<Real>("sgn" + _ip[i] 
+    _ip_id[i] = coupled("ip", i);
+    //_sgnip[i] = &getMaterialProperty<Real>("sgn" + _ip[i]
   }
 }
 
@@ -251,43 +250,52 @@ HagelaarEnergyBC::computeQpOffDiagJacobian(unsigned int jvar)
                 -_se_energy[_qp] * _d_n_gamma_d_em);
   }
 
-  else if (jvar == _ip_id)
-  {
-    if (_normals[_qp] * -1.0 * -_grad_potential[_qp] > 0.0)
-    {
-      _a = 1.0;
-    }
-    else
-    {
-      _a = 0.0;
-    }
-    _v_thermal =
-        std::sqrt(8 * _e[_qp] * 2.0 / 3 * std::exp(_u[_qp] - _em[_qp]) / (M_PI * _massem[_qp]));
-
-    _d_ion_flux_d_ip = 0.0;
-    for (unsigned int i = 0; i < _ip.size(); ++i)
-    {
-    _d_ion_flux_d_ip += _sgnip[_qp] * _muip[_qp] * -_grad_potential[_qp] * _r_units *
-                           std::exp((*_ip[i])[_qp]) * _phi[_j][_qp] -
-                       _Dip[_qp] * std::exp((*_ip[i])[_qp]) * _grad_phi[_j][_qp] * _r_units -
-                       _Dip[_qp] * std::exp((*_ip[i])[_qp]) * _phi[_j][_qp] * (*_grad_ip[i])[_qp] * _r_units;
-    }
-    //_d_ion_flux_d_ip = _sgnip[_qp] * _muip[_qp] * -_grad_potential[_qp] * _r_units *
-    //                       std::exp(_ip[_qp]) * _phi[_j][_qp] -
-    //                   _Dip[_qp] * std::exp(_ip[_qp]) * _grad_phi[_j][_qp] * _r_units -
-    //                   _Dip[_qp] * std::exp(_ip[_qp]) * _phi[_j][_qp] * _grad_ip[_qp] * _r_units;
-    // _d_n_gamma_d_ip = (1. - _a) * _se_coeff[_qp] * _d_ion_flux_d_ip * _normals[_qp] / (_muem[_qp]
-    // * -_grad_potential[_qp] * _r_units * _normals[_qp] + std::numeric_limits<double>::epsilon());
-
-    return _test[_i][_qp] * _r_units / (6. * (_r + 1.)) *
-           (10. * _d_ion_flux_d_ip * _normals[_qp] * _se_energy[_qp] * _se_coeff[_qp] * (_a - 1.) *
-                (_r + 1.) +
-            (_r - 1.) * (-_se_energy[_qp] * _d_n_gamma_d_ip) *
-                (6. * -_grad_potential[_qp] * _r_units * _normals[_qp] * _mumean_en[_qp] *
-                     (2. * _a - 1.) -
-                 5. * _v_thermal));
-  }
-
+  // else if (jvar == _ip_id)
   else
-    return 0.0;
+  {
+    // First find if jvar refers to one of the ions by checking the _ip_id numbers.
+    _it = std::find(_ip_id.begin(), _ip_id.end(), jvar);
+    if (_it != _ip_id.end())
+    {
+      // If it does, store the index of that ion (_ip_num) and use to compute the relevant Jacobian
+      // terms.
+      _ip_num = std::distance(_ip_id.begin(), _it);
+      if (_normals[_qp] * -1.0 * -_grad_potential[_qp] > 0.0)
+      {
+        _a = 1.0;
+      }
+      else
+      {
+        _a = 0.0;
+      }
+      _v_thermal =
+          std::sqrt(8 * _e[_qp] * 2.0 / 3 * std::exp(_u[_qp] - _em[_qp]) / (M_PI * _massem[_qp]));
+
+      _d_ion_flux_d_ip =
+          _sgnip[_qp] * _muip[_qp] * -_grad_potential[_qp] * _r_units *
+              std::exp((*_ip[_ip_num])[_qp]) * _phi[_j][_qp] -
+          _Dip[_qp] * std::exp((*_ip[_ip_num])[_qp]) * _grad_phi[_j][_qp] * _r_units -
+          _Dip[_qp] * std::exp((*_ip[_ip_num])[_qp]) * _phi[_j][_qp] * (*_grad_ip[_ip_num])[_qp] * _r_units;
+      //_d_ion_flux_d_ip = _sgnip[_qp] * _muip[_qp] * -_grad_potential[_qp] * _r_units *
+      //                       std::exp(_ip[_qp]) * _phi[_j][_qp] -
+      //                   _Dip[_qp] * std::exp(_ip[_qp]) * _grad_phi[_j][_qp] * _r_units -
+      //                   _Dip[_qp] * std::exp(_ip[_qp]) * _phi[_j][_qp] * _grad_ip[_qp] *
+      //                   _r_units;
+      // _d_n_gamma_d_ip = (1. - _a) * _se_coeff[_qp] * _d_ion_flux_d_ip * _normals[_qp] /
+      // (_muem[_qp]
+      // * -_grad_potential[_qp] * _r_units * _normals[_qp] +
+      // std::numeric_limits<double>::epsilon());
+
+      return _test[_i][_qp] * _r_units / (6. * (_r + 1.)) *
+             (10. * _d_ion_flux_d_ip * _normals[_qp] * _se_energy[_qp] * _se_coeff[_qp] *
+                  (_a - 1.) * (_r + 1.) +
+              (_r - 1.) * (-_se_energy[_qp] * _d_n_gamma_d_ip) *
+                  (6. * -_grad_potential[_qp] * _r_units * _normals[_qp] * _mumean_en[_qp] *
+                       (2. * _a - 1.) -
+                   5. * _v_thermal));
+    }
+
+    else
+      return 0.0;
+  }
 }
