@@ -69,6 +69,7 @@ CircuitDirichletPotential::computeQpResidual()
     // return _surface_potential.value(_t, *_current_node) - _u[_qp] +
     //       _current_sign * _current / std::pow(_r_units, 2.) * _resist / _voltage_scaling *
     //           _coulomb_charge * _A * _N_A;
+    //
     return _surface_potential.value(_t, *_current_node) - _u[_qp] +
            _current * _resist / _voltage_scaling * _A;
   else
@@ -80,5 +81,6 @@ CircuitDirichletPotential::computeQpResidual()
 Real
 CircuitDirichletPotential::computeQpJacobian()
 {
-  return -1.;
+  return _surface_potential.value(_t, *_current_node) + _current + _resist / _voltage_scaling * _A;
+  //return -1.;
 }

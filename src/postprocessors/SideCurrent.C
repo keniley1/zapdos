@@ -91,6 +91,6 @@ SideCurrent::computeQpIntegral()
           (1. - _r) / (1. + _r) *
               (-(2 * _b - 1) * _mobility_coef[_qp] * -_grad_potential[_qp] * _r_units *
                    std::exp(_u[_qp]) * _normals[_qp] +
-               0.5 * _v_thermal * std::exp(_u[_qp]))) *
-         6.022e23 * 1.602e-19 / _r_units;
+               0.5 * _ve_thermal * std::exp(_u[_qp]))) *
+         6.022e23 * 1.602e-19 * _r_units;
 }

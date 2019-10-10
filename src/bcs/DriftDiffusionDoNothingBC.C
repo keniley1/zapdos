@@ -53,7 +53,7 @@ DriftDiffusionDoNothingBC::DriftDiffusionDoNothingBC(const InputParameters & par
   if (!(isCoupled("potential") || parameters.isParamSetByUser("EField")))
     mooseError("You must either couple in a potential variable or set an EField.");
 
-  auto max_qps = _fe_problem.getMaxQps();
+/*  auto max_qps = _fe_problem.getMaxQps();
   _user_diff.resize(max_qps);
   _user_mu.resize(max_qps);
   _user_sign.resize(max_qps);
@@ -67,6 +67,7 @@ DriftDiffusionDoNothingBC::DriftDiffusionDoNothingBC(const InputParameters & par
     if (!(isCoupled("potential")))
       _minus_e_field[qp] = RealGradient(-getParam<Real>("EField"));
   }
+  */
 }
 
 DriftDiffusionDoNothingBC::~DriftDiffusionDoNothingBC() {}
@@ -74,21 +75,21 @@ DriftDiffusionDoNothingBC::~DriftDiffusionDoNothingBC() {}
 Real
 DriftDiffusionDoNothingBC::computeQpResidual()
 {
-  return _mu[_qp] * _sign[_qp] * std::exp(_u[_qp]) * -_grad_potential[_qp] * _r_units *
-             _normals[_qp] * _test[_i][_qp] * _r_units -
-         _diffusivity[_qp] * std::exp(_u[_qp]) * _grad_u[_qp] * _r_units * _normals[_qp] *
-             _test[_i][_qp] * _r_units;
+  return (_mu[_qp] * _sign[_qp] * std::exp(_u[_qp]) * -_grad_potential[_qp] * _r_units *
+             -_normals[_qp] * _test[_i][_qp] * _r_units -
+         _diffusivity[_qp] * std::exp(_u[_qp]) * _grad_u[_qp] * _r_units * -_normals[_qp] *
+             _test[_i][_qp] * _r_units);
 }
 
 Real
 DriftDiffusionDoNothingBC::computeQpJacobian()
 {
-  return _mu[_qp] * _sign[_qp] * std::exp(_u[_qp]) * _phi[_j][_qp] * -_grad_potential[_qp] *
-             _r_units * _normals[_qp] * _test[_i][_qp] * _r_units -
+  return (_mu[_qp] * _sign[_qp] * std::exp(_u[_qp]) * _phi[_j][_qp] * -_grad_potential[_qp] *
+             _r_units * -_normals[_qp] * _test[_i][_qp] * _r_units -
          _diffusivity[_qp] *
              (std::exp(_u[_qp]) * _grad_phi[_j][_qp] * _r_units +
               std::exp(_u[_qp]) * _phi[_j][_qp] * _grad_u[_qp] * _r_units) *
-             _normals[_qp] * _test[_i][_qp] * _r_units;
+             -_normals[_qp] * _test[_i][_qp] * _r_units);
 }
 
 Real
@@ -96,8 +97,8 @@ DriftDiffusionDoNothingBC::computeQpOffDiagJacobian(unsigned int jvar)
 {
   if (jvar == _potential_id)
   {
-    return _mu[_qp] * _sign[_qp] * std::exp(_u[_qp]) * -_grad_phi[_j][_qp] * _r_units *
-           _normals[_qp] * _test[_i][_qp] * _r_units;
+    return (_mu[_qp] * _sign[_qp] * std::exp(_u[_qp]) * -_grad_phi[_j][_qp] * _r_units *
+           -_normals[_qp] * _test[_i][_qp] * _r_units);
   }
   else
   {

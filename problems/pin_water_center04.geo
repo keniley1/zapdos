@@ -1,9 +1,8 @@
 // Gmsh project created on Thursday Aug 29 15:16:01 2019
-dom0Mult = 1e3;
-//dom0Mult = 1.0;
+//dom0Mult = 1e3;
+dom0Mult = 1.0;
 
 lc = 0.001 * dom0Mult;
-Point(1111) = {1.068e-5, 0.00101179, 0, 1};
 
 // Point definitions defined in meters
 // Lower left
@@ -19,21 +18,21 @@ Point(3) = {0.0015 * dom0Mult, 0.002 * dom0Mult, 0.0, lc/6};
 Point(4) = {0.0015 * dom0Mult, 0, 0, lc/100}; 
 Point(43) = {0.0015 * dom0Mult, 0.0002 * dom0Mult, 0.0, lc/10};
 
-Point(6) = {0.0003625 * dom0Mult, 0.002 * dom0Mult, 0, lc/50};
+Point(6) = {0.0003625 * dom0Mult, 0.002 * dom0Mult, 0, lc/200};
 Point(8) = {0.0, 0, 0, lc/100};
 Point(81) = {0.0005 * dom0Mult, 0, 0, lc/100};
 
 // For rounded tip of electrode
 //lcp = lc / 20000.0;
 lcp = lc / 40000.0;
-Point(9) = {0.00001 * dom0Mult, 0.00101 * dom0Mult, 0, lcp};
+Point(9) = {0.00001 * dom0Mult, 0.00101 * dom0Mult, 0, lcp * 5};
 //Point(12) = {-0.00001 * dom0Mult, 0.00101 * dom0Mult, 0, lcp};
 Point(12) = {0 * dom0Mult, 0.00100294 * dom0Mult, 0, lcp};
 Point(13) = {0, 0.00101356060606 * dom0Mult, 0, lcp};
 Circle(85) = {9,13,12};
 
-Point(777) = {0, 0.0009 * dom0Mult, 0, lc/50};
-Point(888) = {0, 0.0005 * dom0Mult, 0, lc/20};
+Point(777) = {0, 0.0009 * dom0Mult, 0, lc/200};
+Point(888) = {0, 0.0005 * dom0Mult, 0, lc/40};
 Point(889) = {0.0005 * dom0Mult, 0.0005 * dom0Mult, 0, lc/10};
 
 // Create the lines defining the boundaries
@@ -59,7 +58,7 @@ Physical Surface("Inside Domain") = {0};
 Physical Curve("bottom") = {881,814};
 Physical Curve("top") = {36};
 Physical Curve("electrode") = {65,85};
-Physical Curve("right") = {34};
+Physical Curve("right") = {443,433};
 
 lcc = lc/20000;
 //Point(999) = {0.000011, 0.00101, 0, lcc};

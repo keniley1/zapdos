@@ -1,9 +1,9 @@
-dom0Scale=1.0e-3
-#dom0Scale=1.0
+#dom0Scale=1.0e-3
+dom0Scale=1.0
 #dom1Scale=1.0
 
 [GlobalParams]
-  offset = 20
+  offset = 21
   potential_units = kV
   use_moles = true
 []
@@ -15,15 +15,16 @@ dom0Scale=1.0e-3
   #file = 'pin_water_new01.msh'
   #file = 'pin_water_new02.msh'
   file = 'pin_water_center04.msh'
+  #file = 'pin_water_sim01.msh'
 []
 
 [Problem]
-  #coord_type = RZ
+  coord_type = RZ
   type = FEProblem
 []
 
 [Preconditioning]
-  active = fsp
+  active = smp
 
   [./smp]
     type = SMP
@@ -95,10 +96,15 @@ dom0Scale=1.0e-3
   type = Transient
   end_time = 1e-1
   automatic_scaling = true
+  compute_scaling_once = false
+  verbose = true
+
   #line_search = 'basic'
-  petsc_options = '-snes_converged_reason -snes_linesearch_monitor -pc_svd_monitor'
+  petsc_options = '-snes_converged_reason -snes_linesearch_monitor -pc_svd_monitor -snes_mf_operator'
   #solve_type = newton 
   solve_type = pjfnk
+  petsc_options_iname = '-snes_linesearch_type -pc_type'
+  petsc_options_value = 'basic lu'
   #petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount'
   #petsc_options_value = 'lu NONZERO 1e-10'
   #petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount'
@@ -129,6 +135,7 @@ dom0Scale=1.0e-3
 []
 
 [Outputs]
+  checkpoint = true
   perf_graph = true
   exodus = true
 []
@@ -171,6 +178,14 @@ dom0Scale=1.0e-3
     block = 0
     position_units = ${dom0Scale}
   [../]
+  #[./em_dd]
+  #  type = DriftDiffusionElectrons
+  #  variable = em
+  #  potential = potential
+  #  mean_en = mean_en
+  #  block = 0
+  #  position_units = ${dom0Scale}
+  #[../]
   [./em_log_stabilization]
     type = LogStabilizationMoles
     variable = em
@@ -368,11 +383,12 @@ dom0Scale=1.0e-3
     r = 0
     position_units = ${dom0Scale}
     boundary = 'electrode'
+    execute_on = 'nonlinear linear'
   [../]
 []
 
 [BCs]
-  [./potential_right]
+  [./potential_bottom]
     type = DirichletBC
     variable = potential
     boundary = bottom
@@ -404,7 +420,8 @@ dom0Scale=1.0e-3
     surface = 'cathode'
     resist = 2.5e5    
     position_units = ${dom0Scale}
-    A = 1.0
+    #A = 1e-3
+    #A = 1.519e-3
     current = electrode_flux
   [../]
   [./em_physical_bottom]
@@ -487,6 +504,68 @@ dom0Scale=1.0e-3
     r = 0
     position_units = ${dom0Scale}
   [../]
+
+  [./Arp_right]
+    type = DriftDiffusionDoNothingBC
+    variable = Arp
+    potential = potential
+    position_units = ${dom0Scale}
+    boundary = 'right'
+  [../]
+  [./Arp_top]
+    type = DriftDiffusionDoNothingBC
+    variable = Arp
+    potential = potential
+    position_units = ${dom0Scale}
+    boundary = 'top'
+  [../]
+
+  [./em_right]
+    type = DriftDiffusionDoNothingElectronBC
+    variable = em
+    potential = potential
+    mean_en = mean_en
+    position_units = ${dom0Scale}
+    boundary = 'right'
+  [../]
+  [./em_top]
+    type = DriftDiffusionDoNothingElectronBC
+    variable = em
+    potential = potential
+    mean_en = mean_en
+    position_units = ${dom0Scale}
+    boundary = 'top'
+  [../]
+
+  [./mean_en_right]
+    type = DoNothingEnergyBC
+    variable = mean_en
+    em = em
+    potential = potential
+    position_units = ${dom0Scale}
+    boundary = 'right'
+  [../]
+  [./mean_en_top]
+    type = DoNothingEnergyBC
+    variable = mean_en
+    em = em
+    potential = potential
+    position_units = ${dom0Scale}
+    boundary = 'top'
+  [../]
+
+  #[./potential_right]
+  #  type = DoNothingPotentialBC
+  #  variable = potential
+  #  position_units = ${dom0Scale}
+  #  boundary = 'right'
+  #[../]
+  #[./potential_top]
+  #  type = DoNothingPotentialBC
+  #  variable = potential
+  #  position_units = ${dom0Scale}
+  #  boundary = 'top'
+  #[../]
 []
 
 [ICs]
@@ -520,7 +599,7 @@ dom0Scale=1.0e-3
 [Functions]
   [./potential_bc_func]
     type = ParsedFunction
-    value = '-1.0' 
+    value = '-2.0' 
   [../]
   [./potential_ic_func]
     type = ParsedFunction
