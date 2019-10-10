@@ -65,7 +65,7 @@ DriftDiffusionDoNothingElectronBC::~DriftDiffusionDoNothingElectronBC() {}
 Real
 DriftDiffusionDoNothingElectronBC::computeQpResidual()
 {
-  return (_muem[_qp] * _sign[_qp] * std::exp(_u[_qp]) * -_grad_potential[_qp] * _r_units *
+  return (-_muem[_qp] * _sign[_qp] * std::exp(_u[_qp]) * -_grad_potential[_qp] * _r_units *
                -_normals[_qp] -
            _diffem[_qp] * std::exp(_u[_qp]) * _grad_u[_qp] * _r_units * -_normals[_qp]) *
          _test[_i][_qp] * _r_units;
@@ -79,8 +79,8 @@ DriftDiffusionDoNothingElectronBC::computeQpJacobian()
   _d_diffem_d_u =
       _d_diffem_d_actual_mean_en[_qp] * std::exp(_mean_en[_qp] - _u[_qp]) * -_phi[_j][_qp];
 
-  return ((_d_muem_d_u * _sign[_qp] * std::exp(_u[_qp]) * -_grad_potential[_qp] * _r_units *
-                -_normals[_qp] +
+  return ((-_d_muem_d_u * _sign[_qp] * std::exp(_u[_qp]) * -_grad_potential[_qp] * _r_units *
+                -_normals[_qp] -
             _muem[_qp] * _sign[_qp] * std::exp(_u[_qp]) * _phi[_j][_qp] * -_grad_potential[_qp] *
                 -_normals[_qp] * _r_units) *
                _test[_i][_qp] * _r_units -
@@ -107,7 +107,7 @@ DriftDiffusionDoNothingElectronBC::computeQpOffDiagJacobian(unsigned int jvar)
     _d_diffem_d_mean_en =
         _d_diffem_d_actual_mean_en[_qp] * std::exp(_mean_en[_qp] - _u[_qp]) * _phi[_j][_qp];
 
-    return (_d_muem_d_mean_en * _sign[_qp] * std::exp(_u[_qp]) * -_grad_potential[_qp] * _r_units *
+    return (-_d_muem_d_mean_en * _sign[_qp] * std::exp(_u[_qp]) * -_grad_potential[_qp] * _r_units *
                  -_normals[_qp] * _test[_i][_qp] * _r_units -
              _d_diffem_d_mean_en * std::exp(_u[_qp]) * _grad_u[_qp] * _r_units * -_normals[_qp] *
                  _test[_i][_qp] * _r_units);

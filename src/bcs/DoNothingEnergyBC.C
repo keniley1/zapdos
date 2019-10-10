@@ -58,7 +58,7 @@ DoNothingEnergyBC::~DoNothingEnergyBC() {}
 Real
 DoNothingEnergyBC::computeQpResidual()
 {
-  return (_muel[_qp] * _sign[_qp] * std::exp(_u[_qp]) * -_grad_potential[_qp] * _r_units *
+  return (-_muel[_qp] * _sign[_qp] * std::exp(_u[_qp]) * -_grad_potential[_qp] * _r_units *
                -_normals[_qp] * _test[_i][_qp] * _r_units -
            _diffel[_qp] * std::exp(_u[_qp]) * _grad_u[_qp] * _r_units * -_normals[_qp] *
                _test[_i][_qp] * _r_units);
@@ -71,8 +71,8 @@ DoNothingEnergyBC::computeQpJacobian()
   _d_muel_d_u = _d_muel_d_actual_mean_en[_qp] * _d_actual_mean_en_d_u;
   _d_diffel_d_u = _d_diffel_d_actual_mean_en[_qp] * std::exp(_u[_qp] - _em[_qp]) * _phi[_j][_qp];
 
-  return ((_d_muel_d_u * _sign[_qp] * std::exp(_u[_qp]) * -_grad_potential[_qp] * _r_units *
-                -_normals[_qp] +
+  return ((-_d_muel_d_u * _sign[_qp] * std::exp(_u[_qp]) * -_grad_potential[_qp] * _r_units *
+                -_normals[_qp] -
             _muel[_qp] * _sign[_qp] * std::exp(_u[_qp]) * _phi[_j][_qp] * -_grad_potential[_qp] *
                 -_normals[_qp] * _r_units) *
                _test[_i][_qp] * _r_units -
@@ -89,7 +89,7 @@ DoNothingEnergyBC::computeQpOffDiagJacobian(unsigned int jvar)
 {
   if (jvar == _potential_id)
   {
-    return -(_muel[_qp] * _sign[_qp] * std::exp(_u[_qp]) * -_grad_phi[_j][_qp] * _r_units *
+    return (-_muel[_qp] * _sign[_qp] * std::exp(_u[_qp]) * -_grad_phi[_j][_qp] * _r_units *
              -_normals[_qp] * _test[_i][_qp] * _r_units);
   }
   else if (jvar == _em_id)
@@ -99,7 +99,7 @@ DoNothingEnergyBC::computeQpOffDiagJacobian(unsigned int jvar)
     _d_diffel_d_em =
         _d_diffel_d_actual_mean_en[_qp] * std::exp(_u[_qp] - _em[_qp]) * -_phi[_j][_qp];
 
-    return (_d_muel_d_em * _sign[_qp] * std::exp(_u[_qp]) * -_grad_potential[_qp] * _r_units *
+    return (-_d_muel_d_em * _sign[_qp] * std::exp(_u[_qp]) * -_grad_potential[_qp] * _r_units *
                  -_normals[_qp] * _test[_i][_qp] * _r_units -
              _d_diffel_d_em * std::exp(_u[_qp]) * _grad_u[_qp] * _r_units * -_normals[_qp] *
                  _test[_i][_qp] * _r_units);
