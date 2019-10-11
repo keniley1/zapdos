@@ -36,11 +36,16 @@ DoNothingPotentialBC::~DoNothingPotentialBC() {}
 Real
 DoNothingPotentialBC::computeQpResidual()
 {
-  return _diffusivity[_qp] * _grad_u[_qp] * _r_units * -_normals[_qp] * _test[_i][_qp] * _r_units; 
+  return (_u[_qp] + _q_point[_qp](0) * _grad_u[_qp](0)) / _q_point[_qp](1) * _test[_i][_qp];
+  // return _diffusivity[_qp] * _grad_u[_qp] * _r_units * -_normals[_qp] * _test[_i][_qp] *
+  // _r_units;
 }
 
 Real
 DoNothingPotentialBC::computeQpJacobian()
 {
-  return _diffusivity[_qp] * _grad_phi[_j][_qp] * _r_units * -_normals[_qp] * _test[_i][_qp] * _r_units;
+  return (_phi[_j][_qp] + _q_point[_qp](0) * _grad_phi[_j][_qp](0)) / _q_point[_qp](1) *
+         _test[_i][_qp];
+  // return _diffusivity[_qp] * _grad_phi[_j][_qp] * _r_units * -_normals[_qp] * _test[_i][_qp] *
+  // _r_units;
 }
