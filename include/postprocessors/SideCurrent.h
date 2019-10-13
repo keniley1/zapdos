@@ -54,6 +54,8 @@ protected:
   const VariableValue & _mean_en;
   const VariableValue & _Arp;
   const MaterialProperty<Real> & _muArp;
+  const VariableValue & _Ar2p;
+  const MaterialProperty<Real> & _muAr2p;
 };
 
 #endif // SIDECURRENT_H

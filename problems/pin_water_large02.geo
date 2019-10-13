@@ -25,9 +25,9 @@ Point(81) = {0.0005 * dom0Mult, 0, 0, lc/100};
 // For rounded tip of electrode
 //lcp = lc / 20000.0;
 lcp = lc / 40000.0;
-Point(9) = {0.00001 * dom0Mult, 0.00101 * dom0Mult, 0, lcp * 5};
+Point(9) = {0.00001 * dom0Mult, 0.00101 * dom0Mult, 0, lcp*2};
 //Point(12) = {-0.00001 * dom0Mult, 0.00101 * dom0Mult, 0, lcp};
-Point(12) = {0 * dom0Mult, 0.00100294 * dom0Mult, 0, lcp};
+Point(12) = {0 * dom0Mult, 0.00100294555 * dom0Mult, 0, lcp/2};
 Point(13) = {0, 0.00101356060606 * dom0Mult, 0, lcp};
 Circle(85) = {9,13,12};
 

@@ -30,6 +30,7 @@ validParams<SideCurrent>()
   params.addRequiredParam<Real>("position_units", "Units of position.");
   params.addRequiredCoupledVar("mean_en", "Electron energy.");
   params.addRequiredCoupledVar("Arp", "Argon ion density. (temporary)");
+  params.addCoupledVar("Ar2p", 0, "Argon ion density. (temporary)");
   return params;
 }
 
@@ -58,7 +59,9 @@ SideCurrent::SideCurrent(const InputParameters & parameters)
     _grad_potential(coupledGradient("potential")),
     _mean_en(coupledValue("mean_en")),
     _Arp(coupledValue("Arp")),
-    _muArp(getMaterialProperty<Real>("muArp"))
+    _muArp(getMaterialProperty<Real>("muArp")),
+    _Ar2p(coupled("Ar2p") ? coupledValue("Ar2p") : _zero),
+    _muAr2p(getMaterialProperty<Real>("muAr2p"))
 {
 }
 
@@ -88,6 +91,8 @@ SideCurrent::computeQpIntegral()
           (1. - _r) / (1. + _r) *
               ((2 * _a - 1) * _sgn[_qp] * _muArp[_qp] * -_grad_potential[_qp] * _r_units *
                std::exp(_Arp[_qp]) * _normals[_qp]) +
+              ((2 * _a - 1) * _sgn[_qp] * _muAr2p[_qp] * -_grad_potential[_qp] * _r_units *
+               std::exp(_Ar2p[_qp]) * _normals[_qp]) +
           (1. - _r) / (1. + _r) *
               (-(2 * _b - 1) * _mobility_coef[_qp] * -_grad_potential[_qp] * _r_units *
                    std::exp(_u[_qp]) * _normals[_qp] +
