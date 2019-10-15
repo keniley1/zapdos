@@ -35,23 +35,24 @@ dom1Scale=1.0
   #file = 'pin_water_large03.msh'
   #file = 'pin_water_large02.msh'
   file = 'pin_water_rxn_3.msh'
-  #construct_side_set_from_node_set=true 
-  #parallel_type = replicated
+  #construct_side_list_from_node_list=true 
 []
 
 [MeshModifiers]
   [./interface]
     type = SideSetsBetweenSubdomains
     master_block = '0'
-    paired_block = '2'
+    paired_block = '1'
     new_boundary = 'master0_interface'
+    boundary = 'interface'
     # depends_on = 'box'
   [../]
   [./interface_again]
     type = SideSetsBetweenSubdomains
-    master_block = '2'
+    master_block = '1'
     paired_block = '0'
     new_boundary = 'master1_interface'
+    boundary = 'interface'
     # depends_on = 'box'
   [../]
   # [./box]
@@ -254,7 +255,7 @@ dom1Scale=1.0
   [./potential_diffusion_dom2]
     type = CoeffDiffusionLin
     variable = potential
-    block = 2
+    block = 1
     position_units = ${dom1Scale}
   [../]
 
@@ -394,43 +395,38 @@ dom1Scale=1.0
     type = ChargeSourceMoles_KV
     variable = potential
     charged = emliq
-    #block = 1
-    block = 2
+    block = 1
   [../]
   [./OHm_charge_source]
     type = ChargeSourceMoles_KV
     variable = potential
     charged = OHm
-    #block = 1
-    block = 2
+    block = 1
   [../]
 
   
   [./emliq_time_deriv]
     type = ElectronTimeDerivative
     variable = emliq
-    #block = 1
-    block = 2
+    block = 1
   [../]
   [./emliq_advection]
     type = EFieldAdvection
     variable = emliq
     potential = potential
-    #block = 1
-    block = 2
+    block = 1
     position_units = ${dom1Scale}
   [../]
   [./emliq_diffusion]
     type = CoeffDiffusion
     variable = emliq
-    #block = 1
-    block = 2
+    block = 1
     position_units = ${dom1Scale}
   [../]
   [./emliq_log_stabilization]
     type = LogStabilizationMoles
     variable = emliq
-    block = 2
+    block = 1
     #offset = 21
     #offset = 15
   [../]
@@ -438,29 +434,25 @@ dom1Scale=1.0
   [./OHm_time_deriv]
     type = ElectronTimeDerivative
     variable = OHm
-    #block = 1
-    block = 2
+    block = 1
   [../]
   [./OHm_advection]
     type = EFieldAdvection
     variable = OHm
     potential = potential
-    #block = 1
-    block = 2
+    block = 1
     position_units = ${dom1Scale}
   [../]
   [./OHm_diffusion]
     type = CoeffDiffusion
     variable = OHm
-    #block = 1
-    block = 2
+    block = 1
     position_units = ${dom1Scale}
   [../]
   [./OHm_log_stabilization]
     type = LogStabilizationMoles
     variable = OHm
-    #block = 1
-    block = 2
+    block = 1
   [../]
 []
 
@@ -513,15 +505,13 @@ dom1Scale=1.0
   [../]
 
   [./emliq]
-    #block = 1
-    block = 2
+    block = 1
     initial_condition = -20
     # scaling = 1e-5
   [../]
 
   [./OHm]
-    #block = 1
-    block = 2
+    block = 1
     initial_condition = -20
     # scaling = 1e-5
   [../]
@@ -564,14 +554,12 @@ dom1Scale=1.0
   [./emliq_lin]
     order = CONSTANT
     family = MONOMIAL
-    #block = 1
-    block = 2
+    block = 1
   [../]
   [./OHm_lin]
     order = CONSTANT
     family = MONOMIAL
-    #block = 1
-    block = 2
+    block = 1
   [../]
 []
 
@@ -621,16 +609,14 @@ dom1Scale=1.0
     convert_moles = true
     variable = OHm_lin
     density_log = emliq
-    #block = 1
-    block = 2
+    block = 1
   [../]
   [./OHm_lin]
     type = DensityMoles
     convert_moles = true
     variable = OHm_lin
     density_log = OHm
-    #block = 1
-    block = 2
+    block = 1
   [../]
 []
 
@@ -1085,7 +1071,7 @@ dom1Scale=1.0
 
  [./water_block]
    type = Water
-   block = 2
+   block = 1
    potential = potential
  [../]
 []

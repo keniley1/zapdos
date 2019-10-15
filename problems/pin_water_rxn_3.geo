@@ -2,7 +2,7 @@
 //dom0Mult = 1e3;
 dom0Mult = 1.0;
 
-lc = 0.001 * dom0Mult;
+lc = 0.0025 * dom0Mult;
 
 // Point definitions defined in meters
 // Lower left
@@ -57,46 +57,32 @@ Line(777888) = {777,888};
 Line(8888) = {888,8};
 
 // Water Boundary
-Point(40) = {0.002 * dom0Mult, -1.0e-5 * dom0Mult, 0, lc/200};
-Point(80) = {0.0, -1.0e-5 * dom0Mult, 0, lc/200};
+Point(40) = {0.002 * dom0Mult, -5.0e-5 * dom0Mult, 0, lc/200};
+Point(80) = {0.0, -5.0e-5 * dom0Mult, 0, lc/200};
 Line(440) = {4,40};
 Line(4080) = {40,80};
 Line(808) = {80,8};
 
-//Line(121) = {12,1};
-//Line Loop(1) = {881,814,443,433,36,65,85,12777,777888,8888};
-Line Loop(1) = {881,814,443,433,3663,663661,6616,65,85,12777,777888,8888};
-Plane Surface(0) = {1}; // Define the physical surface of the domain encompassed by curve loop 1
+Line Loop(5) = {881,814,443,433,3663,663661,6616,65,85,12777,777888,8888};
+Plane Surface(0) = {5}; // Define the physical surface of the domain encompassed by curve loop 1
 
-Line Loop(2) = {881,814,440,4080,808};
-Plane Surface(1) = {2};
+Line Loop(1) = {881,814,440,4080,808};
+Plane Surface(1) = {1};
 
-Physical Surface("Inside Domain") = {0};
-//Physical Curve("interface") = {881,814};
+Physical Surface(0) = {0};
+Physical Curve("interface") = {881,814};
 Physical Curve("top") = {663661};
 Physical Curve("electrode") = {6616,65,85};
 Physical Curve("right") = {443,433,3663};
 
-Physical Surface(2) = {1};
+Physical Surface(1) = {1};
 Physical Curve("bottom") = {4080};
 Physical Curve("bottom_right") = {440};
 Physical Curve("bottom_left") = {808};
 
 lcc = lc/20000;
-//Point(999) = {0.000011, 0.00101, 0, lcc};
-//Point(121212) = {-0.000011, 0.00101, 0, lcc};
-//Point(912) = {0, 0.0010018, 0, lcc};
-//Point{999} In Surface{0}; 
-//Point{121212} In Surface{0}; 
-//Point{912} In Surface{0}; 
-//Point(777) = {0, 0.0009 * dom0Mult, 0, lc/100};
-//Point(888) = {0, 0.0005 * dom0Mult, 0, lc/20};
-//Point(889) = {0.0005 * dom0Mult, 0.0005 * dom0Mult, 0, lc/10};
-//Point{777} In Surface{0};
-//Point{888} In Surface{0};
 Point{889} In Surface{0};
 Point{890} In Surface{0};
-//Point{887} In Surface{0};
 Geometry.PointNumbers=2;
 Geometry.LineNumbers=2;
 Geometry.SurfaceNumbers=2;
