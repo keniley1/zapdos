@@ -19,7 +19,7 @@ Point(4) = {0.002 * dom0Mult, 0, 0, lc/1000};
 Point(43) = {0.002 * dom0Mult, 0.0002 * dom0Mult, 0.0, lc/10};
 
 Point(6) = {0.0003625 * dom0Mult, 0.002 * dom0Mult, 0, lc/100};
-Point(8) = {0.0, 0, 0, lc/1000};
+Point(8) = {0.0, 0, 0, lc/10000};
 Point(81) = {0.0005 * dom0Mult, 0, 0, lc/200};
 
 // For rounded tip of electrode
@@ -67,10 +67,11 @@ Line Loop(5) = {881,814,443,433,3663,663661,6616,65,85,12777,777888,8888};
 Plane Surface(0) = {5}; // Define the physical surface of the domain encompassed by curve loop 1
 
 Line Loop(1) = {881,814,440,4080,808};
+//Line Loop(1) = {440,4080,808};
 Plane Surface(1) = {1};
 
 Physical Surface(0) = {0};
-Physical Curve("interface") = {881,814};
+//Physical Curve("interface") = {881,814};
 Physical Curve("top") = {663661};
 Physical Curve("electrode") = {6616,65,85};
 Physical Curve("right") = {443,433,3663};

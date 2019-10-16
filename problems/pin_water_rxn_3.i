@@ -23,6 +23,49 @@ dom1Scale=1.0
 #        [../]
 #    [../]
 #[]
+[Adaptivity]
+  initial_steps = 0
+  cycles_per_step = 1
+  marker = combo
+  initial_marker = combo
+  max_h_level = 2
+  [Indicators/indicator1]
+    type = GradientJumpIndicator
+    variable = em
+  []
+  [Indicators/indicator2]
+    type = GradientJumpIndicator
+    variable = Ar*
+  []
+  [Indicators/indicator3]
+    type = GradientJumpIndicator
+    variable = emliq
+  []
+  [Markers]
+    [./combo]
+      type = ComboMarker
+      markers = 'marker1 marker2 marker3'
+    [../]
+    [./marker1]
+      type = ErrorFractionMarker
+      indicator = indicator1
+      coarsen = 0.1
+      refine = 0.7
+    [../]
+    [./marker2]
+      type = ErrorFractionMarker
+      indicator = indicator2
+      coarsen = 0.1
+      refine = 0.7
+    [../]
+    [./marker3]
+      type = ErrorFractionMarker
+      indicator = indicator3
+      coarsen = 0.1
+      refine = 0.7
+    [../]
+  []
+[]
 
 [GlobalParams]
   offset = 24
@@ -44,7 +87,7 @@ dom1Scale=1.0
     master_block = '0'
     paired_block = '1'
     new_boundary = 'master0_interface'
-    boundary = 'interface'
+    #boundary = 'interface'
     # depends_on = 'box'
   [../]
   [./interface_again]
@@ -52,7 +95,7 @@ dom1Scale=1.0
     master_block = '1'
     paired_block = '0'
     new_boundary = 'master1_interface'
-    boundary = 'interface'
+    #boundary = 'interface'
     # depends_on = 'box'
   [../]
   # [./box]
@@ -607,8 +650,9 @@ dom1Scale=1.0
   [./emliq_lin]
     type = DensityMoles
     convert_moles = true
-    variable = OHm_lin
+    variable = emliq_lin
     density_log = emliq
+    execute_on = 'initial timestep_end'
     block = 1
   [../]
   [./OHm_lin]
@@ -616,6 +660,7 @@ dom1Scale=1.0
     convert_moles = true
     variable = OHm_lin
     density_log = OHm
+    execute_on = 'initial timestep_end'
     block = 1
   [../]
 []
@@ -855,7 +900,7 @@ dom1Scale=1.0
     variable = Ar*
     potential = potential
     position_units = ${dom0Scale}
-    boundary = 'bottom'
+    boundary = 'master0_interface'
   [../]
 
   [./em_right]
@@ -1076,6 +1121,7 @@ dom1Scale=1.0
  [../]
 []
 
+
 [Reactions]
   [./gas_phase_reactions]
     species = 'em Arp Ar*'
@@ -1102,5 +1148,16 @@ dom1Scale=1.0
                  #Ar2p + Ar -> Arp + Ar + Ar : {3.649332e12 / 300 * exp(-15130/300)}
                  #Ar* + Ar* -> Ar2p + em : 3.6132e8
                  #Arp + Ar + Ar -> Ar2p + Ar : 81595.089'
+  [../]
+
+
+  [./liquid_phase_reactions]
+    species = 'emliq OHm'
+    use_log = true
+    position_units = ${dom1Scale}
+    block = 1
+    reaction_coefficient_format = 'rate'
+    reactions = 'emliq -> OHm : 1069.6
+                 emliq + emliq -> OHm + OHm : 3.136e8'
   [../]
 []
