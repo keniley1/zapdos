@@ -24,51 +24,71 @@ dom1Scale=1.0
 #    [../]
 #[]
 [Adaptivity]
-  initial_steps = 0
+  initial_steps = 1
   cycles_per_step = 1
-  marker = combo
-  initial_marker = combo
-  max_h_level = 2
+  #marker = 'marker4'
+  marker = 'combo'
+  initial_marker = marker4
+  max_h_level = 3
   [Indicators/indicator1]
     type = GradientJumpIndicator
     variable = em
   []
   [Indicators/indicator2]
     type = GradientJumpIndicator
-    variable = Ar*
+    variable = Arp
   []
   [Indicators/indicator3]
     type = GradientJumpIndicator
-    variable = emliq
+    variable = Ar*
+    #scale_by_flux_faces = true
   []
   [Markers]
     [./combo]
       type = ComboMarker
-      markers = 'marker1 marker2 marker3'
+      #markers = 'marker1 marker2 marker3'
+      markers = 'marker1 marker2'
+    [../]
+    [./combo2]
+      type = ComboMarker
+      markers = 'marker4 marker5'
     [../]
     [./marker1]
       type = ErrorFractionMarker
       indicator = indicator1
-      coarsen = 0.1
+      coarsen = 0.2
       refine = 0.7
     [../]
     [./marker2]
       type = ErrorFractionMarker
       indicator = indicator2
-      coarsen = 0.1
+      coarsen = 0.2
       refine = 0.7
     [../]
     [./marker3]
       type = ErrorFractionMarker
       indicator = indicator3
-      coarsen = 0.1
+      coarsen = 0.2
       refine = 0.7
+    [../]
+
+    [./marker4]
+        type = ErrorToleranceMarker
+        coarsen = 1e-4
+        refine = 1e-2
+        indicator = indicator3
+    [../]
+    [./marker5]
+        type = ErrorToleranceMarker
+        coarsen = 1e-3
+        refine = 1e-1
+        indicator = indicator1
     [../]
   []
 []
 
 [GlobalParams]
-  offset = 24
+  offset = 30
   potential_units = kV
   use_moles = true
 []
@@ -77,7 +97,8 @@ dom1Scale=1.0
   type = FileMesh
   #file = 'pin_water_large03.msh'
   #file = 'pin_water_large02.msh'
-  file = 'pin_water_rxn_3.msh'
+  #file = 'pin_water_rxn_adapt.msh'
+  file = 'pwmesh.msh'
   #construct_side_list_from_node_list=true 
 []
 
@@ -193,22 +214,6 @@ dom1Scale=1.0
   solve_type = pjfnk
   petsc_options_iname = '-snes_linesearch_type -pc_type -pc_factor_shift_type'
   petsc_options_value = 'basic lu NONZERO'
-  #petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount'
-  #petsc_options_value = 'lu NONZERO 1e-10'
-  #petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount'
-  #petsc_options_value = 'svd NONZERO 1e-10'
-
-
-  #petsc_options_iname = '-pc_type -sub_pc_type -pc_factor_mat_solver_package -ksp_gmres_restart -sub_pc_factor_shift_type -sub_pc_factor_shift_amount'
-  #petsc_options_value = 'bjacobi ilu mumps 100 NONZERO 1e-10'
-  #petsc_options_iname = '-ksp_type -pc_type -sub_pc_type -snes_max_it -sub_pc_factor_shift_type -pc_asm_overlap'
-  #petsc_options_value = 'gmres asm lu 100 NONZERO 8'
-  #petsc_options_iname = '-sub_pc_factor_shift_type -sub_pc_factor_shift_amount'
-  #petsc_options_value = 'NONZERO 1e-10'
-  #petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_minlambda -sub_pc_factor_shift_type -sub_pc_factor_shift_amount'
-  #petsc_options_value = 'bjacobi ilu 1e-3 NONZERO 1e-10'
-  #petsc_options_iname = '-pc_factor_mat_solver_package -pc_type -pc_asm_overlap -sub_pc_type -sub_pc_factor_shift_type -sub_pc_factor_shift_amount -snes_linesearch_minlambda'
-  #petsc_options_value = 'mumps asm 4 ilu NONZERO 1e-10 1e-3'
   nl_rel_tol = 1e-5
   #nl_abs_tol = 7.6e-5
   dtmin = 1e-16
@@ -216,14 +221,14 @@ dom1Scale=1.0
   [./TimeStepper]
     type = IterationAdaptiveDT
     cutback_factor = 0.4
-    dt = 1e-12
+    dt = 1e-13
     growth_factor = 1.2
     optimal_iterations = 15
   [../]
 []
 
 [Outputs]
-  checkpoint = true
+  #checkpoint = true
   perf_graph = true
   exodus = true
 []
@@ -343,7 +348,7 @@ dom1Scale=1.0
     type = LogStabilizationMoles
     variable = Arp
     block = 0
-    offset = 31
+    #offset = 31
   [../]
   #[./Arp_advection_stabilization]
   #  type = EFieldArtDiff
@@ -430,7 +435,7 @@ dom1Scale=1.0
     variable = mean_en
     block = 0
     #offset = 21
-    offset = 15
+    #offset = 15
   [../]
 
 
@@ -470,6 +475,7 @@ dom1Scale=1.0
     type = LogStabilizationMoles
     variable = emliq
     block = 1
+    offset = 26
     #offset = 21
     #offset = 15
   [../]
@@ -495,6 +501,7 @@ dom1Scale=1.0
   [./OHm_log_stabilization]
     type = LogStabilizationMoles
     variable = OHm
+    offset = 26
     block = 1
   [../]
 []
@@ -511,7 +518,7 @@ dom1Scale=1.0
     #order=SECOND
     #family=LAGRANGE
     #initial_from_file_var = em
-    initial_condition = -21
+    initial_condition = -30
     block = 0
   [../]
   
@@ -520,7 +527,7 @@ dom1Scale=1.0
     #family=LAGRANGE
     #initial_from_file_var = Arp
     #initial_condition = -31
-    initial_condition = -24
+    initial_condition = -30
     block = 0
   [../]
 
@@ -536,7 +543,7 @@ dom1Scale=1.0
     #order=SECOND
     #family=LAGRANGE
     #initial_from_file_var = Arp
-    initial_condition = -24
+    initial_condition = -30
     block = 0
   [../]
 
@@ -544,18 +551,19 @@ dom1Scale=1.0
     #order=SECOND
     #family=LAGRANGE
     #initial_from_file_var = mean_en
+    initial_condition = -30
     block = 0
   [../]
 
   [./emliq]
     block = 1
-    initial_condition = -20
+    initial_condition = -26
     # scaling = 1e-5
   [../]
 
   [./OHm]
     block = 1
-    initial_condition = -20
+    initial_condition = -26
     # scaling = 1e-5
   [../]
 []
@@ -1015,13 +1023,13 @@ dom1Scale=1.0
   #  function = charged_ic_func
   #  block = 0
   #[../]
-  [./mean_en_ic]
-    type = ConstantIC
-    variable = mean_en
-    #value = -23
-    value = -20
-    block = 0
-  [../]
+  #[./mean_en_ic]
+  #  type = ConstantIC
+  #  variable = mean_en
+  #  #value = -23
+  #  value = -24
+  #  block = 0
+  #[../]
   [./potential_ic]
     type = FunctionIC
     variable = potential
