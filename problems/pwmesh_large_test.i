@@ -11,6 +11,8 @@ dom1Scale=1.0
 [Mesh]
   type = FileMesh
   file = 'pwmesh_04.msh'
+  #file = 'pwmesh_exodus_mesh.e'
+  #parallel_type = DISTRIBUTED
 []
 
 [MeshModifiers]
@@ -44,7 +46,7 @@ dom1Scale=1.0
 []
 
 [Preconditioning]
-  active = fsp
+  active = fsp_schur
 
   [./smp]
     type = SMP
@@ -54,7 +56,7 @@ dom1Scale=1.0
   [./fsp_schur]
     type = FSP
     topsplit = 'pc'
-    full = 'true'
+    #full = 'true'
     [./pc]
       splitting = 'p c'
       splitting_type = schur
@@ -63,22 +65,11 @@ dom1Scale=1.0
     [../]
     [./p]
       vars = 'potential'
-      petsc_options_iname = '-pc_type'
-      petsc_options_value = 'hypre'
-      #petsc_options_iname = '-pc_type -pc_hypre_type -pc_hypre_boomeramg_strong_threshold'
-      #petsc_options_value = 'hypre boomeramg 0.25'
+      petsc_options_iname = '-pc_type -pc_hypre_type'
+      petsc_options_value = 'hypre boomeramg'
     [../]
     [./c]
-      vars = 'em Arp mean_en'
-      #petsc_options_iname = '-pc_type -sub_pc_type -ksp_gmres_restart -sub_pc_factor_shift_type -sub_pc_factor_shift_amount'
-      #petsc_options_value = 'bjacobi ilu 100 NONZERO 1e-10'
-      #petsc_options_iname = '-pc_type -sub_pc_type -pc_factor_mat_solver_package -ksp_gmres_restart -sub_pc_factor_shift_type -sub_pc_factor_shift_amount'
-      #petsc_options_value = 'bjacobi ilu super_dist 100 NONZERO 1e-10'
-      #petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_minlambda -ksp_gmres_restart -sub_pc_factor_shift_type -sub_pc_factor_shift_amount'
-      #petsc_options_value = 'bjacobi ilu 1e-3 100 NONZERO 1e-10'
-
-      #petsc_options_iname = '-pc_factor_mat_solver_package -pc_type -pc_asm_overlap -sub_pc_type -sub_pc_factor_shift_type -sub_pc_factor_shift_amount -snes_linesearch_minlambda'
-      #petsc_options_value = 'mumps asm 4 ilu NONZERO 1e-10 1e-3'
+      vars = 'em Arp Ar* mean_en emliq OHm Om O2m O3m HO2m H+ O O2_1 O3 H H2 HO2 HO3 OH H2O2'
       petsc_options_iname = '-pc_type -pc_asm_overlap -sub_pc_type -sub_pc_factor_shift_type -sub_pc_factor_shift_amount'
       petsc_options_value = 'asm 2 ilu NONZERO 1e-10'
     [../]
@@ -94,23 +85,11 @@ dom1Scale=1.0
     [../]
     [./p]
       vars = 'potential'
-      #petsc_options_iname = '-pc_type -pc_hypre_type -pc_hypre_boomeramg_strong_threshold'
-      #petsc_options_value = 'hypre boomeramg 0.25'
       petsc_options_iname = '-pc_type -pc_hypre_type'
       petsc_options_value = 'hypre boomeramg'
-      #petsc_options_iname = '-pc_type -pc_gamg_agg_nsmooths -pc_gamg_threshold -mg_levels_ksp-type -mg_levels_pc_type -mg_levels_ksp_max_it'
-      #petsc_options_value = 'gamg 1 0.02 richardson jacobi 2'
     [../]
     [./c]
       vars = 'em Arp Ar* mean_en emliq OHm Om O2m O3m HO2m H+ O O2_1 O3 H H2 HO2 HO3 OH H2O2'
-      #petsc_options_iname = '-pc_type -sub_pc_type -ksp_gmres_restart -sub_pc_factor_shift_type -sub_pc_factor_shift_amount'
-      #petsc_options_value = 'bjacobi ilu 100 NONZERO 1e-10'
-      #petsc_options_iname = '-pc_type -sub_pc_type -snes_linesearch_minlambda -ksp_gmres_restart -sub_pc_factor_shift_type -sub_pc_factor_shift_amount'
-      #petsc_options_value = 'bjacobi ilu 1e-3 100 NONZERO 1e-10'
-
-      #petsc_options_iname = '-pc_factor_mat_solver_package -pc_type -pc_asm_overlap -sub_pc_type -sub_pc_factor_shift_type -sub_pc_factor_shift_amount -snes_linesearch_minlambda'
-      #petsc_options_value = 'mumps asm 4 ilu NONZERO 1e-10 1e-3'
-
       petsc_options_iname = '-pc_type -pc_asm_overlap -sub_pc_type -sub_pc_factor_shift_type -sub_pc_factor_shift_amount'
       petsc_options_value = 'asm 2 ilu NONZERO 1e-10'
     [../]
@@ -124,8 +103,8 @@ dom1Scale=1.0
   compute_scaling_once = false
   verbose = true
 
-  #line_search = 'basic'
-  petsc_options = '-snes_converged_reason -snes_linesearch_monitor -pc_svd_monitor -snes_mf_operator'
+  line_search = 'basic'
+  petsc_options = '-snes_converged_reason'
   #solve_type = newton 
   solve_type = pjfnk
   #petsc_options_iname = '-snes_linesearch_type -pc_type -pc_factor_shift_type'
@@ -145,7 +124,7 @@ dom1Scale=1.0
   [./TimeStepper]
     type = IterationAdaptiveDT
     cutback_factor = 0.4
-    dt = 1e-13
+    dt = 1e-12
     growth_factor = 1.2
     optimal_iterations = 15
   [../]
@@ -155,6 +134,7 @@ dom1Scale=1.0
   #checkpoint = true
   perf_graph = true
   exodus = true
+  #nemesis = true
 []
 
 [Debug]
@@ -1686,7 +1666,6 @@ dom1Scale=1.0
   [../]
 
 []
-
 
 [Reactions]
   [./gas_phase_reactions]
