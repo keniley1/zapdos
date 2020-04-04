@@ -54,6 +54,13 @@ protected:
   ADMaterialProperty(Real) & _d_diffmean_en_d_actual_mean_en;
   const ADVariableValue & _em;
   const ADVariableValue & _mean_en;
+  bool _supg;
+  const ADVariableGradient & _grad_em;
+  const ADVariableGradient & _grad_mean_en;
+  ADMaterialProperty(RealVectorValue) & _grad_muem;
+  ADMaterialProperty(RealVectorValue) & _grad_mumean_en;
+  ADMaterialProperty(RealVectorValue) & _grad_diffem;
+  ADMaterialProperty(RealVectorValue) & _grad_diffmean_en;
 
   usingMaterialMembers;
 };

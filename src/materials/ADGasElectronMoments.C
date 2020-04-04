@@ -29,6 +29,8 @@ ADGasElectronMoments<compute_stage>::validParams()
   params.addRequiredCoupledVar("em",
                                "Species concentration needed to calculate the poisson source");
   params.addRequiredCoupledVar("mean_en", "The electron mean energy in log form.");
+  params.addParam<bool>(
+      "supg", false, "Whether or not to include SUPG stabilization. Default: false.");
 
   params.addClassDescription("Material properties of electrons"
                              "(Defines reaction properties with rate coefficients)");
@@ -54,7 +56,14 @@ ADGasElectronMoments<compute_stage>::ADGasElectronMoments(const InputParameters 
     _d_diffmean_en_d_actual_mean_en(declareADProperty<Real>("d_diffmean_en_d_actual_mean_en")),
     //_massem(declareProperty<Real>("massem")),
     _em(adCoupledValue("em")),
-    _mean_en(adCoupledValue("mean_en"))
+    _mean_en(adCoupledValue("mean_en")),
+    _supg(getParam<bool>("supg")),
+    _grad_em(adCoupledGradient("em")),
+    _grad_mean_en(adCoupledGradient("mean_en")),
+    _grad_muem(declareADProperty<RealVectorValue>("grad_muem")),
+    _grad_mumean_en(declareADProperty<RealVectorValue>("grad_mumean_en")),
+    _grad_diffem(declareADProperty<RealVectorValue>("grad_diffem")),
+    _grad_diffmean_en(declareADProperty<RealVectorValue>("grad_diffmean_en"))
 {
   if (_potential_units.compare("V") == 0)
     _voltage_scaling = 1.;
@@ -135,6 +144,72 @@ ADGasElectronMoments<compute_stage>::computeQpProperties()
 
   _mumean_en[_qp].value() = 5.0 / 3.0 * _muem[_qp].value();
   _mumean_en[_qp].derivatives() = 5.0 / 3.0 * _muem[_qp].derivatives();
+
+  if (_supg)
+  {
+    for (unsigned int component = 0; component < 3; ++component)
+    {
+      _grad_muem[_qp](component).value() =
+          _mu_interpolation2->sampleDerivative(std::exp(_mean_en[_qp].value() - _em[_qp].value())) *
+          _voltage_scaling * _time_units * std::exp(_mean_en[_qp].value() - _em[_qp].value()) *
+          (_grad_mean_en[_qp](component).value() - _grad_em[_qp](component).value());
+
+      _grad_diffem[_qp](component).value() =
+          _diff_interpolation2->sampleDerivative(
+              std::exp(_mean_en[_qp].value() - _em[_qp].value())) *
+          _time_units * std::exp(_mean_en[_qp].value() - _em[_qp].value()) *
+          (_grad_mean_en[_qp](component).value() - _grad_em[_qp](component).value());
+
+      // First term is zero because the second derivative of a linear interpolation is nonsense
+      // With spline interpolations it would be more accurately tracked
+      // That said, the second derivative of transport coefficients IS probably close to zero.
+      _grad_muem[_qp](component).derivatives() =
+          _voltage_scaling * _time_units *
+          _mu_interpolation2->sampleDerivative(std::exp(_mean_en[_qp].value() - _em[_qp].value())) *
+          (0.0 +
+           std::exp(_mean_en[_qp].value() + _em[_qp].value()) *
+               (_mean_en[_qp].derivatives() - _em[_qp].derivatives()) *
+               (_grad_mean_en[_qp](component).value() - _grad_em[_qp](component).value()) +
+           std::exp(_mean_en[_qp].value() + _em[_qp].value()) *
+               (_grad_mean_en[_qp](component).derivatives() -
+                _grad_em[_qp](component).derivatives()));
+
+      _grad_diffem[_qp](component).derivatives() =
+          _time_units *
+          _diff_interpolation2->sampleDerivative(
+              std::exp(_mean_en[_qp].value() - _em[_qp].value())) *
+          (0.0 +
+           std::exp(_mean_en[_qp].value() + _em[_qp].value()) *
+               (_mean_en[_qp].derivatives() - _em[_qp].derivatives()) *
+               (_grad_mean_en[_qp](component).value() - _grad_em[_qp](component).value()) +
+           std::exp(_mean_en[_qp].value() + _em[_qp].value()) *
+               (_grad_mean_en[_qp](component).derivatives() -
+                _grad_em[_qp](component).derivatives()));
+
+      _grad_mumean_en[_qp](component).value() = _grad_muem[_qp](component).value() * 5.0 / 3.0;
+      _grad_mumean_en[_qp](component).derivatives() =
+          _grad_muem[_qp](component).derivatives() * 5.0 / 3.0;
+
+      _grad_diffmean_en[_qp](component).value() = _grad_diffem[_qp](component).value() * 5.0 / 3.0;
+      _grad_diffmean_en[_qp](component).derivatives() =
+          _grad_diffem[_qp](component).derivatives() * 5.0 / 3.0;
+    }
+  }
+  else
+  {
+    for (unsigned int component = 0; component < 3; ++component)
+    {
+      _grad_muem[_qp](component).value() = 0.0;
+      _grad_muem[_qp](component).derivatives() = 0.0;
+      _grad_diffem[_qp](component).value() = 0.0;
+      _grad_diffem[_qp](component).derivatives() = 0.0;
+
+      _grad_mumean_en[_qp](component).value() = 0.0;
+      _grad_mumean_en[_qp](component).derivatives() = 0.0;
+      _grad_diffmean_en[_qp](component).value() = 0.0;
+      _grad_diffmean_en[_qp](component).derivatives() = 0.0;
+    }
+  }
 }
 
 template <>
@@ -146,4 +221,38 @@ ADGasElectronMoments<RESIDUAL>::computeQpProperties()
                _time_units;
   _diffmean_en[_qp] = 5.0 / 3.0 * _diffem[_qp];
   _mumean_en[_qp] = 5.0 / 3.0 * _muem[_qp];
+
+  if (_supg)
+  {
+    _grad_muem[_qp] = _mu_interpolation2->sampleDerivative(std::exp(_mean_en[_qp] - _em[_qp])) *
+                      _voltage_scaling * _time_units * std::exp(_mean_en[_qp] - _em[_qp]) *
+                      (_grad_mean_en[_qp] - _grad_em[_qp]);
+
+    _grad_diffem[_qp] = _diff_interpolation2->sampleDerivative(std::exp(_mean_en[_qp] - _em[_qp])) *
+                        _time_units * std::exp(_mean_en[_qp] - _em[_qp]) *
+                        (_grad_mean_en[_qp] - _grad_em[_qp]);
+
+    _grad_mumean_en[_qp] =
+        5.0 / 3.0 * _mu_interpolation2->sampleDerivative(std::exp(_mean_en[_qp] - _em[_qp])) *
+        _voltage_scaling * _time_units * std::exp(_mean_en[_qp] - _em[_qp]) *
+        (_grad_mean_en[_qp] - _grad_em[_qp]);
+
+    _grad_diffmean_en[_qp] =
+        5.0 / 3.0 * _diff_interpolation2->sampleDerivative(std::exp(_mean_en[_qp] - _em[_qp])) *
+        _voltage_scaling * _time_units * std::exp(_mean_en[_qp] - _em[_qp]) *
+        (_grad_mean_en[_qp] - _grad_em[_qp]);
+
+    /*
+    _grad_diffem[_qp] = RealVectorValue(0.0,0.0,0.0);
+
+    _grad_diffmean_en[_qp] = RealVectorValue(0.0,0.0,0.0);
+    */
+  }
+  else
+  {
+    _grad_muem[_qp] = RealVectorValue(0.0, 0.0, 0.0);
+    _grad_mumean_en[_qp] = RealVectorValue(0.0, 0.0, 0.0);
+    _grad_diffem[_qp] = RealVectorValue(0.0, 0.0, 0.0);
+    _grad_diffmean_en[_qp] = RealVectorValue(0.0, 0.0, 0.0);
+  }
 }

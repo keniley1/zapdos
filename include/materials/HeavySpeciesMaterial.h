@@ -46,6 +46,8 @@ protected:
   Real _time_units;
   bool _calc_mobility;
   bool _calc_diffusivity;
+  MaterialProperty<RealVectorValue> & _grad_mu;
+  MaterialProperty<RealVectorValue> & _grad_diff;
 
   // MaterialProperty<Real> & _T_gas;
   // MaterialProperty<Real> & _p_gas;  // Replace with gas fraction?

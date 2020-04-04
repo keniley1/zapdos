@@ -48,7 +48,11 @@ HeavySpeciesMaterial::HeavySpeciesMaterial(const InputParameters & parameters)
     _diffHeavy(declareProperty<Real>("diff" + getParam<std::string>("heavy_species_name"))),
     _T_gas(getMaterialProperty<Real>("T_gas")),
     _p_gas(getMaterialProperty<Real>("p_gas")),
-    _time_units(getParam<Real>("time_units"))
+    _time_units(getParam<Real>("time_units")),
+    _grad_mu(
+        declareProperty<RealVectorValue>("grad_mu" + getParam<std::string>("heavy_species_name"))),
+    _grad_diff(
+        declareProperty<RealVectorValue>("grad_diff" + getParam<std::string>("heavy_species_name")))
 
 {
   if (isParamValid("mobility") && isParamValid("diffusivity"))
@@ -71,6 +75,8 @@ HeavySpeciesMaterial::HeavySpeciesMaterial(const InputParameters & parameters)
     _calc_mobility = true;
     _calc_diffusivity = true;
   }
+
+
 }
 
 void
@@ -142,4 +148,9 @@ HeavySpeciesMaterial::computeQpProperties()
         0.004 * _time_units / (760. * _p_gas[_qp] / 1.01E5); // covert to m^2 and include press
   }
   */
+
+  // Gradients of transport coefficients. Only used if SUPG stabilization is included.
+  // (Zero now, but may vary spatially when mixture-averaged diffusion is included!
+  _grad_mu[_qp] = RealVectorValue(0.0, 0.0, 0.0);
+  _grad_diff[_qp] = RealVectorValue(0.0, 0.0, 0.0);
 }
