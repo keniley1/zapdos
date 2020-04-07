@@ -147,7 +147,7 @@ dom0Scale=1.0
     species = 'Ar*'
     mass = '1'
     charge = '0'
-    offset = 40
+    #offset = 40
     #add_bcs = false
     #boundaries = 'left right'
     boundaries = 'master10_interface master12_interface'
@@ -693,7 +693,7 @@ dom0Scale=1.0
   [../]
 
   [./gas_species_0]
-    type = HeavySpeciesMaterial
+    type = ADHeavySpeciesMaterial
     heavy_species_name = Arp
     heavy_species_mass = 6.64e-26
     heavy_species_charge = 1.0
@@ -702,7 +702,7 @@ dom0Scale=1.0
     block = 1
   [../]
   [./gas_species_1]
-    type = HeavySpeciesMaterial
+    type = ADHeavySpeciesMaterial
     heavy_species_name = Ar2p
     heavy_species_mass = 1.328e-25
     heavy_species_charge = 1.0
@@ -710,7 +710,7 @@ dom0Scale=1.0
   [../]
 
   [./gas_species_2]
-    type = HeavySpeciesMaterial
+    type = ADHeavySpeciesMaterial
     heavy_species_name = Ar
     heavy_species_mass = 6.64e-26
     heavy_species_charge = 0.0
@@ -718,7 +718,7 @@ dom0Scale=1.0
   [../]
 
   [./gas_species_3]
-    type = HeavySpeciesMaterial
+    type = ADHeavySpeciesMaterial
     heavy_species_name = Ar*
     heavy_species_mass = 6.64e-26
     heavy_species_charge = 0.0

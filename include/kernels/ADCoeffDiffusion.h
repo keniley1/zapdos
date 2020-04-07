@@ -10,10 +10,34 @@
 
 #pragma once
 
-#include "ADKernel.h"
+#include "ADKernelGrad.h"
+
+template <ComputeStage>
+class ADCoeffDiffusion;
+
+declareADValidParams(ADCoeffDiffusion);
 
 template <ComputeStage compute_stage>
-class ADCoeffDiffusion : public ADKernel<compute_stage>
+class ADCoeffDiffusion : public ADKernelGrad<compute_stage>
+{
+public:
+  ADCoeffDiffusion(const InputParameters & parameters);
+  static InputParameters validParams();
+
+protected:
+  virtual ADRealVectorValue precomputeQpResidual() override;
+
+  usingKernelGradMembers;
+
+private:
+  const Real _r_units;
+
+  const ADMaterialProperty(Real) & _diffusivity;
+};
+/*
+template <ComputeStage compute_stage>
+
+class ADCoeffDiffusion : public ADKernelGrad<compute_stage>
 {
 public:
   static InputParameters validParams();
@@ -21,12 +45,12 @@ public:
   ADCoeffDiffusion(const InputParameters & parameters);
 
 protected:
-  // virtual ADRealVectorValue precomputeQpResidual() override;
-  virtual ADReal computeQpResidual();
+  virtual ADRealVectorValue precomputeQpResidual() override;
+  // virtual ADReal computeQpResidual();
 
-  // usingKernelGradMembers;
+  usingKernelGradMembers;
   // using ADKernelGrad<compute_stage>::getPostprocessorValue;
-  usingKernelMembers;
+  //usingKernelMembers;
 
 private:
   /// Position units
@@ -35,3 +59,4 @@ private:
   /// The diffusion coefficient (either constant or mixture-averaged)
   const ADMaterialProperty(Real) & _diffusivity;
 };
+*/
