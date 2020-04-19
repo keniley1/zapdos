@@ -41,15 +41,15 @@ ADGasElectronMoments::ADGasElectronMoments(const InputParameters & parameters)
     _time_units(getParam<Real>("time_units")),
     _use_moles(getParam<bool>("use_moles")),
     _muem(declareADProperty<Real>("muem1")),
-    _d_muem_d_actual_mean_en(declareADProperty<Real>("d_muem_d_actual_mean_en1")),
+    _d_muem_d_actual_mean_en(declareProperty<Real>("d_muem_d_actual_mean_en1")),
     _diffem(declareADProperty<Real>("diffem1")),
-    _d_diffem_d_actual_mean_en(declareADProperty<Real>("d_diffem_d_actual_mean_en1")),
+    _d_diffem_d_actual_mean_en(declareProperty<Real>("d_diffem_d_actual_mean_en1")),
     _mumean_en(declareADProperty<Real>("mumean_en1")),
     _diffmean_en(declareADProperty<Real>("diffmean_en1")),
     _sgnmean_en(declareProperty<Real>("sgnmean_en1")),
     _sgnem(declareProperty<Real>("sgnem1")),
-    _d_mumean_en_d_actual_mean_en(declareADProperty<Real>("d_mumean_en_d_actual_mean_en1")),
-    _d_diffmean_en_d_actual_mean_en(declareADProperty<Real>("d_diffmean_en_d_actual_mean_en1")),
+    _d_mumean_en_d_actual_mean_en(declareProperty<Real>("d_mumean_en_d_actual_mean_en1")),
+    _d_diffmean_en_d_actual_mean_en(declareProperty<Real>("d_diffmean_en_d_actual_mean_en1")),
     //_massem(declareProperty<Real>("massem")),
     _em(adCoupledValue("em")),
     _mean_en(adCoupledValue("mean_en"))
@@ -103,9 +103,9 @@ ADGasElectronMoments::computeQpProperties()
    * In normal kernels the AD versions are used.
    */
   _d_diffem_d_actual_mean_en[_qp] =
-      _diff_interpolation.sampleDerivative(std::exp(_mean_en[_qp] - _em[_qp])) * _time_units;
+      _diff_interpolation.sampleDerivative(std::exp(_mean_en[_qp].value() - _em[_qp].value())) * _time_units;
   _d_muem_d_actual_mean_en[_qp] =
-      _mu_interpolation.sampleDerivative(std::exp(_mean_en[_qp] - _em[_qp])) * _voltage_scaling *
+      _mu_interpolation.sampleDerivative(std::exp(_mean_en[_qp].value() - _em[_qp].value())) * _voltage_scaling *
       _time_units;
   _d_mumean_en_d_actual_mean_en[_qp] = 5.0 / 3.0 * _d_muem_d_actual_mean_en[_qp];
   _d_diffmean_en_d_actual_mean_en[_qp] = 5.0 / 3.0 * _d_diffem_d_actual_mean_en[_qp];

@@ -116,4 +116,4 @@ def read_bolsig(bolsigdatafile, XSdatafile, runs, gas_density, coefficient_type=
 # rate_factor multiplies the Bolsig+ output rates by whatever factor you 
 # want. This can be used to scale the units appropriately, e.g. m^-3 -> cm^-3.
 #read_bolsig("argon_out.dat", "cs.txt", gas_density=2.445692e25, coefficient_type="townsend", transport_factor=1e4, rate_factor=1e6)
-read_bolsig("argon_out.dat", "cs.txt", runs=200, gas_density=2.445692e25, coefficient_type="townsend", transport_factor=1, rate_factor=1)
+read_bolsig("argon_out.dat", "cs.txt", runs=1000, gas_density=2.445692e25, coefficient_type="townsend", transport_factor=1, rate_factor=1)
