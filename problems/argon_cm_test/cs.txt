@@ -1,0 +1,190 @@
+LXCat, www.lxcat.net
+Generated on 13 Mar 2020. All rights reserved.
+
+RECOMMENDED REFERENCE FORMAT
+- TRINITI database, www.lxcat.net, retrieved on March 13, 2020.
+
+CROSS SECTION DATA FORMAT
+In downloaded files, each collision process is defined by a block consisting of
+1st line
+Keyword in capitals indicating the type of the collision. Possible collision types are elastic, effective, excitation,
+ionization, or attachment (capital letters required, key words are case sensitive), where "elastic" is used to denote
+the elastic momentum transfer cross section and where "effective" denotes the total momentum transfer cross section (sum
+of elastic momentum transfer and total inelastic cross sections).  The latter is useful for solving the Boltzmann
+equation in the 2-term approximation.
+2nd line
+Name of the target particle species. This name is a character string, freely chosen by the user, e.g. "Ar". Optionally
+for excitation processes, the name of the corresponding excited state can be specified on the same line, separated from
+the first name either by arrow "->" (dash + greater than) or by double-head arrow "<->" (less than + dash +
+greater than), e.g. "Ar -> Ar*" and "Ar <-> Ar*", respectively. In the later case BOLSIG+ will automatically
+define the inverse superelastic process, constructing the superelastic cross-section by detailed balancing, and
+considering the indicated excited state as the target. In this case, the ratio of statistical weights must be input in
+the 3rd line (see below).
+3rd line
+For elastic and effective collisions, the ratio of the electron mass to the target particle mass. For excitation or
+ionization collisions, the electron energy loss (nominally the threshold energy) in eV. For attachment, the 3rd line is
+missing. In case of an excitation process where an excited state has been indicated on the 2nd line using double-head
+arrow "<->", the 3rd line must specify also ratio of the statistical weights of the final state to the initial state
+as the second parameter in 3rd line this is needed by BOLSIG+ to calculate the de-excitation cross-section. The
+statistical weight ratio, if given, will also be used by the automatic superelastics option in BOLSIG+. If this ratio is
+not provided then BOLSIG+ will assume it unity.
+from 4th line (optionally)
+User comments and reference information, maximum 100 lines. The only constraint on format is that these comment lines
+must not start with a number.
+Finally
+Table of the cross section as a function of energy. The table starts and ends by a line of dashes "------" (at least 5),
+and has otherwise two numbers per line: the energy in eV and the cross section in m2.
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+DATABASE:         TRINITI database
+PERMLINK:         www.lxcat.net/TRINITI
+DESCRIPTION:      These cross sections retrieved from the EEDF software package for calculations of electron energy
+                  distribution function developed by Prof. Napartovich A. P. and  Drs. Dyatko N. A., Kochetov I. V.,
+                  Sukharev A. G. from The State Science Center Troitsk Institute for Innovation and Fusion Research,
+                  Russia
+CONTACT:          Contact person is Dr. Igor Kochetov
+                  kochet@@triniti.ru
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+************************************************************************************************************************
+
+
+********************************************************** Ar **********************************************************
+
+EFFECTIVE
+Ar
+ 1.361500e-5
+SPECIES: e / Ar
+PROCESS: E + Ar -> E + Ar, Effective
+PARAM.:  m/M = 0.000013615, complete set
+COMMENT: Pack J.L.et al.,J.Appl.Phys.v71,5363,1992          QT   M=40.
+UPDATED: 2017-01-18 10:50:58
+COLUMNS: Energy (eV) | Cross section (m2)
+-----------------------------
+ 0.000000e+0	1.000000e-19
+ 1.000000e-3	8.350000e-20
+ 5.000000e-3	6.610000e-20
+ 1.000000e-2	5.600000e-20
+ 2.000000e-2	4.150000e-20
+ 3.000000e-2	3.000000e-20
+ 7.000000e-2	1.130000e-20
+ 1.000000e-1	5.900000e-21
+ 1.500000e-1	2.300000e-21
+ 1.700000e-1	1.600000e-21
+ 2.000000e-1	1.000000e-21
+ 2.500000e-1	9.100000e-22
+ 3.000000e-1	1.500000e-21
+ 3.500000e-1	2.350000e-21
+ 4.000000e-1	3.300000e-21
+ 5.000000e-1	5.100000e-21
+ 7.000000e-1	8.600000e-21
+ 1.000000e+0	1.380000e-20
+ 1.200000e+0	1.660000e-20
+ 1.300000e+0	1.820000e-20
+ 1.700000e+0	2.320000e-20
+ 2.100000e+0	2.850000e-20
+ 2.500000e+0	3.370000e-20
+ 3.000000e+0	4.100000e-20
+ 3.600000e+0	5.000000e-20
+ 4.000000e+0	6.000000e-20
+ 5.000000e+0	7.600000e-20
+ 7.000000e+0	1.100000e-19
+ 8.000000e+0	1.400000e-19
+ 1.200000e+1	1.520000e-19
+ 1.500000e+1	1.410000e-19
+ 1.700000e+1	1.200000e-19
+ 2.000000e+1	9.500000e-20
+ 2.500000e+1	7.400000e-20
+ 3.000000e+1	6.000000e-20
+ 5.000000e+1	3.500000e-20
+ 7.500000e+1	2.300000e-20
+ 1.000000e+2	1.700000e-20
+-----------------------------
+
+EXCITATION
+Ar <-> Ar*
+ 1.154000e+1
+SPECIES: e / Ar
+PROCESS: E + Ar -> E + Ar(1s5), Excitation
+PARAM.:  E = 11.54 eV, complete set
+COMMENT: DUPLICATE OF Ar(1s5) EXCITATION
+UPDATED: 2017-01-18 10:50:58
+COLUMNS: Energy (eV) | Cross section (m2)
+-----------------------------
+ 1.154000e+1	0.000000e+0
+ 1.207000e+1	5.916000e-23
+ 1.252000e+1	1.268000e-22
+ 1.280000e+1	1.859000e-22
+ 1.304000e+1	2.366000e-22
+ 1.312000e+1	2.958000e-22
+ 1.325000e+1	2.366000e-22
+ 1.345000e+1	2.028000e-22
+ 1.389000e+1	2.366000e-22
+ 1.446000e+1	3.296000e-22
+ 1.519000e+1	4.732000e-22
+ 1.564000e+1	5.830000e-22
+ 1.641000e+1	7.352000e-22
+ 1.710000e+1	8.112000e-22
+ 1.775000e+1	8.198000e-22
+ 1.848000e+1	7.690000e-22
+ 1.994000e+1	6.760000e-22
+ 2.189000e+1	5.916000e-22
+ 2.420000e+1	5.070000e-22
+ 2.615000e+1	4.394000e-22
+ 3.004000e+1	3.464000e-22
+ 3.906000e+1	1.510000e-22
+ 5.022000e+1	7.074000e-23
+ 7.320000e+1	2.460000e-23
+-----------------------------
+
+IONIZATION
+Ar <-> Ar(+)
+ 1.580000e+1
+SPECIES: e / Ar
+PROCESS: E + Ar -> E + E + Ar(+), Ionization
+PARAM.:  E = 15.8 eV, complete set
+COMMENT: AR iOH. 15.8EV pEBgOB 1978.
+UPDATED: 2017-01-18 10:50:58
+COLUMNS: Energy (eV) | Cross section (m2)
+-----------------------------
+ 1.580000e+1	0.000000e+0
+ 1.600000e+1	2.000000e-22
+ 1.700000e+1	1.340000e-21
+ 1.800000e+1	2.900000e-21
+ 1.900000e+1	4.600000e-21
+ 2.000000e+1	6.300000e-21
+ 2.100000e+1	7.900000e-21
+ 2.200000e+1	9.300000e-21
+ 2.300000e+1	1.060000e-20
+ 2.400000e+1	1.180000e-20
+ 2.600000e+1	1.410000e-20
+ 3.000000e+1	1.800000e-20
+ 3.400000e+1	2.110000e-20
+ 4.000000e+1	2.400000e-20
+ 5.000000e+1	2.530000e-20
+ 1.000000e+2	2.000000e-20
+-----------------------------
+
+********************************************************** Ar* **********************************************************
+
+IONIZATION
+Ar* -> Ar(+)
+ 4.200000e+0
+SPECIES: e / Ar*
+PROCESS: E + Ar* -> E + E + Ar(+), Ionization
+PARAM.:  E = 4.2 eV
+COMMENT: 4.2 EV |KCp.  A.J.DIXON..J.PHYS.B9,2617,1976.
+UPDATED: 2017-01-18 10:50:58
+COLUMNS: Energy (eV) | Cross section (m2)
+-----------------------------
+ 4.200000e+0	0.000000e+0
+ 6.000000e+0	5.000000e-20
+ 8.000000e+0	8.000000e-20
+ 1.000000e+1	8.500000e-20
+ 1.500000e+1	8.200000e-20
+ 2.000000e+1	8.000000e-20
+ 4.000000e+1	6.700000e-20
+ 1.000000e+2	4.000000e-20
+ 3.000000e+2	2.000000e-20
+-----------------------------
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
