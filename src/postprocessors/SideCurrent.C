@@ -94,19 +94,28 @@ SideCurrent::computeQpIntegral()
 
   _ion_flux = 0.0;
 
+  Real electron_flux;
+  electron_flux = -(2 * _b - 1) * _mobility_coef[_qp] * -_grad_potential[_qp] * _r_units *
+                      std::exp(_u[_qp]) * _normals[_qp] +
+                  0.5 * _ve_thermal * std::exp(_u[_qp]);
+
   for (unsigned int i = 0; i < _num_ions; ++i)
     _ion_flux += 0.5 *
                      std::sqrt(8 * _kb[_qp] * (*_T_ions[i])[_qp] / (M_PI * (*_mass_ions[i])[_qp])) *
                      std::exp((*_ions[i])[_qp]) +
                  (2 * _a - 1) * (*_sgn_ions[i])[_qp] * (*_mu_ions[i])[_qp] * -_grad_potential[_qp] *
                      _r_units * std::exp((*_ions[i])[_qp]) * _normals[_qp];
-
+  _ion_flux *= (1. - _r) / (1. + _r);
+  return (_ion_flux - electron_flux)*6.022e23*1.602e-19;
+  
+  /*
   return ((1. - _r) / (1. + _r) * _ion_flux +
           (1. - _r) / (1. + _r) *
               (-(2 * _b - 1) * _mobility_coef[_qp] * -_grad_potential[_qp] * _r_units *
                    std::exp(_u[_qp]) * _normals[_qp] +
                0.5 * _ve_thermal * std::exp(_u[_qp]))) *
          6.022e23 * 1.602e-19 * _r_units;
+  */
   /*
   return ((1. - _r) / (1. + _r) * 0.5 * _v_thermal * std::exp(_Arp[_qp]) +
           (1. - _r) / (1. + _r) *

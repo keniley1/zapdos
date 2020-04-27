@@ -32,6 +32,13 @@ protected:
   SplineInterpolation _alphaEl_interpolation;
   SplineInterpolation _mu_interpolation;
   SplineInterpolation _diff_interpolation;
+  /*
+  LinearInterpolation _alpha_interpolation;
+  LinearInterpolation _alphaEx_interpolation;
+  LinearInterpolation _alphaEl_interpolation;
+  LinearInterpolation _mu_interpolation;
+  LinearInterpolation _diff_interpolation;
+  */
   /* LinearInterpolation _d_alpha_d_actual_mean_energy_interpolation; */
 
   /* bool _townsend; */

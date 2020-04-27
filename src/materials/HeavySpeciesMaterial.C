@@ -118,12 +118,16 @@ HeavySpeciesMaterialTempl<is_ad>::computeQpProperties()
   {
     // If no mobility or diffusivity values are given, values are computed for Argon based on
     // Richards and Sawin paper
+    /*
     _muHeavy[_qp] =
         1444. * _voltage_scaling * _time_units /
         (10000. * 760. * _p_gas[_qp] / 1.01E5); // units of m^2/(kV*s) if _voltage_scaling = 1000
 
     _diffHeavy[_qp] =
         0.004 * _time_units / (760. * _p_gas[_qp] / 1.01E5); // covert to m^2 and include press
+        */
+    _diffHeavy[_qp] = 1.8697e-5; // m^2/s
+    _muHeavy[_qp] = _diffHeavy[_qp] * 1.602e-19 / (_temperatureHeavy[_qp] * 1.3807e-23) * _voltage_scaling;
   }
 
   /*

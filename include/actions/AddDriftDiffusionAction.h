@@ -50,4 +50,8 @@ protected:
                          const int & component);
 
   // virtual void addEEDFCoefficient(const unsigned & reaction_num);
+  
+  bool _use_ad;
+  std::string _ad_prepend;
+
 };

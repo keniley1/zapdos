@@ -4,6 +4,7 @@ dom2Scale=1
 
 [GlobalParams]
   #offset = 20
+  #offset = 30
   offset = 40
   # offset = 0
   potential_units = kV
@@ -90,15 +91,15 @@ dom2Scale=1
   automatic_scaling = true
   #compute_scaling_once = false
   #end_time = 5e-3
-  end_time = 8e-5
+  end_time = 4e-5
   petsc_options = '-snes_converged_reason -snes_linesearch_monitor'
   #solve_type = NEWTON
   solve_type = PJFNK
   line_search = 'basic'
   petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount -snes_stol -ksp_gmres_restart'
   petsc_options_value = 'lu NONZERO 1.e-10 0 40'
-  nl_rel_tol = 1e-5
-  nl_abs_tol = 1e-9
+  nl_rel_tol = 1e-6
+  nl_abs_tol = 1e-8
   dtmin = 1e-18
   dtmax = 1e-7
   l_max_its = 40
@@ -193,6 +194,7 @@ dom2Scale=1
     block = 2
     position_units = ${dom0Scale}
   [../]
+
   [./Arp_charge_source]
     type = ChargeSourceMoles_KV
     variable = potential
@@ -249,33 +251,31 @@ dom2Scale=1
     block = 1
   [../]
 
-  [./Ar_time_deriv]
-    #type = ADTimeDerivativeLog
-    type = ElectronTimeDerivative
-    variable = Ar
-    block = 1
-  [../]
-  #[./Ar_diffusion]
-  #  #type = CoeffDiffusion
-  #  type = ADCoeffDiffusion
+  #[./Ar_time_deriv]
+  #  #type = ADTimeDerivativeLog
+  #  type = ElectronTimeDerivative
   #  variable = Ar
-  #  position_units = ${dom0Scale}
+  #  block = 1
   #[../]
-  [./Ar_log_stabilization]
-    type = LogStabilizationMoles
-    variable = Ar
-    block = 1
-  [../]
+  ##[./Ar_diffusion]
+  ##  #type = CoeffDiffusion
+  ##  type = ADCoeffDiffusion
+  ##  variable = Ar
+  ##  position_units = ${dom0Scale}
+  ##[../]
+  #[./Ar_log_stabilization]
+  #  type = LogStabilizationMoles
+  #  variable = Ar
+  #  block = 1
+  #[../]
 
   [./mean_en_time_deriv]
     type = ElectronTimeDerivative
-    #type = ADTimeDerivativeLog
     variable = mean_en
     block = 1
   [../]
   [./mean_en_advection]
     type = EFieldAdvectionEnergy
-    #type = ADEFieldAdvection
     variable = mean_en
     potential = potential
     em = em
@@ -284,7 +284,6 @@ dom2Scale=1
   [../]
   [./mean_en_diffusion]
     type = CoeffDiffusionEnergy
-    #type = ADCoeffDiffusion
     variable = mean_en
     em = em
     block = 1
@@ -292,7 +291,6 @@ dom2Scale=1
   [../]
   [./mean_en_joule_heating]
     type = JouleHeating
-    #type = ADJouleHeating
     variable = mean_en
     potential = potential
     em = em
@@ -303,37 +301,38 @@ dom2Scale=1
     type = LogStabilizationMoles
     variable = mean_en
     block = 1
+    offset = 25
     #offset = 15
     #offset = 40
   [../]
 []
 
 [Variables]
-  [./Ar]
-    initial_condition = 3.70109
-    block = 1
-  [../]
+  #[./Ar]
+  #  initial_condition = 3.70109
+  #  block = 1
+  #[../]
   [./potential]
   [../]
 
   [./em]
-    initial_condition = -24
+    initial_condition = -20
     block = 1
   [../]
 
   [./Arp]
-    initial_condition = -24
+    initial_condition = -20
     block = 1
   [../]
 
   [./Ar*]
-    initial_condition = -21
+    initial_condition = -20
     block = 1
   [../]
 
   [./mean_en]
     block = 1
-    initial_condition = -24
+    initial_condition = -20
   [../]
 []
 
@@ -353,12 +352,12 @@ dom2Scale=1
   #  order = CONSTANT
   #  family = MONOMIAL
   #[../]
-  #[./Ar]
-  #  block = 1
-  #  order = CONSTANT
-  #  family = MONOMIAL
-  #  initial_condition = 3.70109
-  #[../]
+  [./Ar]
+    block = 1
+    order = CONSTANT
+    family = MONOMIAL
+    initial_condition = 3.70109
+  [../]
   [./e_temp]
     block = 1
     order = CONSTANT
@@ -627,31 +626,33 @@ dom2Scale=1
     r = 0
     position_units = ${dom0Scale}
   [../]
-  #[./secondary_energy_left]
-  #  type = ADSecondaryElectronEnergyBC
-  #  variable = mean_en
-  #  #boundary = 'left'
-  #  boundary = 'master10_interface'
-  #  potential = potential
-  #  em = em
-  #  #ip = 'Arp Ar2p'
-  #  ip = 'Arp'
-  #  se_coeff = 0.01
-  #  r = 0
-  #  position_units = ${dom0Scale}
-  #[../]
-  #[./secondary_energy_right]
-  #  type = ADSecondaryElectronEnergyBC
-  #  variable = mean_en
-  #  #boundary = 'left'
-  #  boundary = 'master12_interface'
-  #  potential = potential
-  #  em = em
-  #  ip = 'Arp'
-  #  se_coeff = 0.01
-  #  r = 0
-  #  position_units = ${dom0Scale}
-  #[../]
+  [./secondary_energy_left]
+    #type = ADSecondaryElectronEnergyBC
+    type = SecondaryElectronEnergyBC
+    variable = mean_en
+    #boundary = 'left'
+    boundary = 'master10_interface'
+    potential = potential
+    em = em
+    #ip = 'Arp Ar2p'
+    ip = 'Arp'
+    se_coeff = 0.01
+    r = 0
+    position_units = ${dom0Scale}
+  [../]
+  [./secondary_energy_right]
+    #type = ADSecondaryElectronEnergyBC
+    type = SecondaryElectronEnergyBC
+    variable = mean_en
+    #boundary = 'left'
+    boundary = 'master12_interface'
+    potential = potential
+    em = em
+    ip = 'Arp'
+    se_coeff = 0.01
+    r = 0
+    position_units = ${dom0Scale}
+  [../]
 
   [./em_physical_right]
     #type = ADHagelaarElectronBC
@@ -676,32 +677,34 @@ dom2Scale=1
     r = 0
     position_units = ${dom0Scale}
   [../]
-  #[./sec_electrons_left]
-  #  type = ADSecondaryElectronBC
-  #  variable = em
-  #  #boundary = 'left'
-  #  boundary = 'master10_interface'
-  #  potential = potential
-  #  #ip = 'Arp Ar2p'
-  #  ip = 'Arp'
-  #  se_coeff = 0.01
-  #  mean_en = mean_en
-  #  r = 0
-  #  position_units = ${dom0Scale}
-  #[../]
-  #[./sec_electrons_right]
-  #  type = ADSecondaryElectronBC
-  #  variable = em
-  #  #boundary = 'left'
-  #  boundary = 'master12_interface'
-  #  potential = potential
-  #  #ip = 'Arp Ar2p'
-  #  ip = 'Arp'
-  #  se_coeff = 0.01
-  #  mean_en = mean_en
-  #  r = 0
-  #  position_units = ${dom0Scale}
-  #[../]
+  [./sec_electrons_left]
+    #type = ADSecondaryElectronBC
+    type = SecondaryElectronBC
+    variable = em
+    #boundary = 'left'
+    boundary = 'master10_interface'
+    potential = potential
+    #ip = 'Arp Ar2p'
+    ip = 'Arp'
+    se_coeff = 0.01
+    mean_en = mean_en
+    r = 0
+    position_units = ${dom0Scale}
+  [../]
+  [./sec_electrons_right]
+    #type = ADSecondaryElectronBC
+    type = SecondaryElectronBC
+    variable = em
+    #boundary = 'left'
+    boundary = 'master12_interface'
+    potential = potential
+    #ip = 'Arp Ar2p'
+    ip = 'Arp'
+    se_coeff = 0.01
+    mean_en = mean_en
+    r = 0
+    position_units = ${dom0Scale}
+  [../]
 
   [./potential_left]
     type = FunctionDirichletBC
@@ -801,18 +804,18 @@ dom2Scale=1
   [../]
   [./potential_ic_func]
     type = ParsedFunction
-    value = '-0.1 * (1.0001e-3 - x)'
+    value = '-0.1 * (1.0001e-4 - x)'
   [../]
 []
 
 [Materials]
-  [./electron_moments_ad]
-    type = ADGasElectronMoments
-    block = 1
-    em = em
-    mean_en = mean_en
-    property_tables_file = 'argon_cm_test/electron_mobility_diffusion.txt'
-  [../]
+  #[./electron_moments_ad]
+  #  type = ADGasElectronMoments
+  #  block = 1
+  #  em = em
+  #  mean_en = mean_en
+  #  property_tables_file = 'argon_cm_test/electron_mobility_diffusion.txt'
+  #[../]
   #[./gas_constants]
   #  type = GenericConstantMaterial
   #  block = 1
@@ -825,6 +828,7 @@ dom2Scale=1
     block = 1
     em = em
     mean_en = mean_en
+    user_se_coeff = 0.01
     potential = potential
     user_p_gas = 101325
     property_tables_file = 'argon_cm_test/electron_mobility_diffusion.txt'
@@ -884,9 +888,11 @@ dom2Scale=1
   # Example: "Micro-cathode sustained discharged in Ar"
   [./Argon]
     #species = 'em Arp Ar2p Ar*'
-    species = 'em Arp Ar* Ar'
-    #aux_species = 'Ar'
-    reaction_coefficient_format = 'townsend'
+    #species = 'em Arp Ar* Ar'
+    species = 'em Arp Ar*'
+    aux_species = 'Ar'
+    #reaction_coefficient_format = 'townsend'
+    reaction_coefficient_format = 'rate'
     gas_species = 'Ar'
     electron_energy = 'mean_en'
     electron_density = 'em'

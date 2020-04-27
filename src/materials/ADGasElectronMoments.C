@@ -40,16 +40,16 @@ ADGasElectronMoments::ADGasElectronMoments(const InputParameters & parameters)
     _potential_units(getParam<std::string>("potential_units")),
     _time_units(getParam<Real>("time_units")),
     _use_moles(getParam<bool>("use_moles")),
-    _muem(declareADProperty<Real>("muem1")),
-    _d_muem_d_actual_mean_en(declareProperty<Real>("d_muem_d_actual_mean_en1")),
-    _diffem(declareADProperty<Real>("diffem1")),
-    _d_diffem_d_actual_mean_en(declareProperty<Real>("d_diffem_d_actual_mean_en1")),
-    _mumean_en(declareADProperty<Real>("mumean_en1")),
-    _diffmean_en(declareADProperty<Real>("diffmean_en1")),
-    _sgnmean_en(declareProperty<Real>("sgnmean_en1")),
-    _sgnem(declareProperty<Real>("sgnem1")),
-    _d_mumean_en_d_actual_mean_en(declareProperty<Real>("d_mumean_en_d_actual_mean_en1")),
-    _d_diffmean_en_d_actual_mean_en(declareProperty<Real>("d_diffmean_en_d_actual_mean_en1")),
+    _muem(declareADProperty<Real>("muem")),
+    _d_muem_d_actual_mean_en(declareProperty<Real>("d_muem_d_actual_mean_en")),
+    _diffem(declareADProperty<Real>("diffem")),
+    _d_diffem_d_actual_mean_en(declareProperty<Real>("d_diffem_d_actual_mean_en")),
+    _mumean_en(declareADProperty<Real>("mumean_en")),
+    _diffmean_en(declareADProperty<Real>("diffmean_en")),
+    _sgnmean_en(declareProperty<Real>("sgnmean_en")),
+    _sgnem(declareProperty<Real>("sgnem")),
+    _d_mumean_en_d_actual_mean_en(declareProperty<Real>("d_mumean_en_d_actual_mean_en")),
+    _d_diffmean_en_d_actual_mean_en(declareProperty<Real>("d_diffmean_en_d_actual_mean_en")),
     //_massem(declareProperty<Real>("massem")),
     _em(adCoupledValue("em")),
     _mean_en(adCoupledValue("mean_en"))
@@ -102,6 +102,10 @@ ADGasElectronMoments::computeQpProperties()
    * InterfaceAdvection... Unfortunate, but hopefully temporary.
    * In normal kernels the AD versions are used.
    */
+  if (std::isnan(std::exp(_mean_en[_qp].value() - _em[_qp].value())))
+  {
+    mooseException("'nan' detected. Solve failed. Cutting timestep.");
+  }
   _d_diffem_d_actual_mean_en[_qp] =
       _diff_interpolation.sampleDerivative(std::exp(_mean_en[_qp].value() - _em[_qp].value())) * _time_units;
   _d_muem_d_actual_mean_en[_qp] =

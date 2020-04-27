@@ -29,9 +29,9 @@ VAR       / Electric field / N (Td)
 0         / Manual grid: 0=No; 1=Linear; 2=Parabolic
 1000.      / Manual maximum energy (eV)
 1e-10     / Precision
-1e-4      / Convergence
+1e-6      / Convergence
 1000      / Maximum # of iterations
-0.9999999 0.0000001  / Gas composition fractions
+0.999999999 0.000000001  / Gas composition fractions
 1         / Normalize composition to unity: 0=No; 1=Yes
 
 RUN
@@ -41,8 +41,8 @@ CLEARRUNS
 RUNSERIES
 1          / Variable: 1=E/N; 2=Mean energy; 3=Maxwellian energy
 0.001  1000.  / Min Max
-1000         / Number
-2          / Type: 1=Linear; 2=Quadratic; 3=Exponential
+500         / Number
+3          / Type: 1=Linear; 2=Quadratic; 3=Exponential
 
 /SAVERESULTS can be called multiple times to write in different formats
 

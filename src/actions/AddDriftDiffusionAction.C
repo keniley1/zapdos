@@ -83,6 +83,7 @@ validParams<AddDriftDiffusionAction>()
       "offset", 20.0, "The offset parameter that goes into the exponential function");
   params.addRequiredParam<std::string>("potential_units", "Units of potential");
   params.addRequiredParam<bool>("use_moles", "Whether to convert from units of moles to #.");
+  params.addParam<bool>("use_ad", false, "Whether or not to use AD kernels.");
   params.addParam<std::vector<std::string>>(
       "Additional_Outputs",
       "Current list of available ouputs options in this action: Current, ElectronTemperature,"
@@ -90,7 +91,14 @@ validParams<AddDriftDiffusionAction>()
   return params;
 }
 
-AddDriftDiffusionAction::AddDriftDiffusionAction(InputParameters params) : Action(params) {}
+AddDriftDiffusionAction::AddDriftDiffusionAction(InputParameters params)
+  : Action(params), _use_ad(getParam<bool>("use_ad"))
+{
+  if (_use_ad)
+    _ad_prepend = "AD";
+  else
+    _ad_prepend = "";
+}
 
 void
 AddDriftDiffusionAction::act()
@@ -168,6 +176,11 @@ AddDriftDiffusionAction::act()
 
   if (_current_task == "add_variable")
   {
+    if (em_present)
+    {
+      _problem->addVariable(type, em_name, var_params);
+      _problem->addAuxVariable(type, em_name + "_density", aux_params);
+    }
     // Add the ion variables and their density aux variables
     for (unsigned int cur_num = 0; cur_num < number_ions; cur_num++)
     {
@@ -185,15 +198,11 @@ AddDriftDiffusionAction::act()
     }
 
     // Adding electrons, mean energy, and potential variables
-    if (em_present)
-    {
-      _problem->addVariable(type, em_name, var_params);
-      _problem->addAuxVariable(type, em_name + "_density", aux_params);
-    }
     if (mean_en_present)
     {
       _problem->addVariable(type, mean_en_name, var_params);
     }
+
     if (New_potential && potential_present)
     {
       _problem->addVariable(type, potential_name, var_params);
@@ -387,7 +396,6 @@ AddDriftDiffusionAction::act()
     {
       std::string neutral_name = Neutrals[cur_num];
       addDensityLog(neutral_name);
-      ;
     }
     for (unsigned int cur_num = 0; cur_num < number_sec_particle; cur_num++)
     {
@@ -461,10 +469,28 @@ AddDriftDiffusionAction::addElectronKernels(const std::string & em_name,
                                             const std::string & mean_en_name,
                                             const bool & Using_offset)
 {
+  std::string dt_name;
+  std::string adv_name;
+  std::string diff_name;
+  if (_use_ad)
+  {
+    dt_name = "ADTimeDerivativeLog";
+    adv_name = "ADEFieldAdvection";
+    diff_name = "ADCoeffDiffusion";
+    _problem->haveADObjects(true);
+  }
+  else
+  {
+    dt_name = "ElectronTimeDerivative";
+    adv_name = "EFieldAdvectionElectrons";
+    diff_name = "CoeffDiffusionElectrons";
+  }
+
   InputParameters params = _factory.getValidParams("ElectronTimeDerivative");
   params.set<NonlinearVariableName>("variable") = {em_name};
   params.set<std::vector<SubdomainName>>("block") = getParam<std::vector<SubdomainName>>("block");
-  _problem->addKernel("ElectronTimeDerivative", em_name + "_time_deriv", params);
+  //_problem->addKernel("ElectronTimeDerivative", em_name + "_time_deriv", params);
+  _problem->addKernel(dt_name, em_name + "_time_deriv", params);
 
   InputParameters params1 = _factory.getValidParams("EFieldAdvectionElectrons");
   params1.set<NonlinearVariableName>("variable") = {em_name};
@@ -472,14 +498,16 @@ AddDriftDiffusionAction::addElectronKernels(const std::string & em_name,
   params1.set<std::vector<VariableName>>("mean_en") = {mean_en_name};
   params1.set<Real>("position_units") = getParam<Real>("position_units");
   params1.set<std::vector<SubdomainName>>("block") = getParam<std::vector<SubdomainName>>("block");
-  _problem->addKernel("EFieldAdvectionElectrons", em_name + "_advection", params1);
+  //_problem->addKernel("EFieldAdvectionElectrons", em_name + "_advection", params1);
+  _problem->addKernel(adv_name, em_name + "_advection", params1);
 
   InputParameters params2 = _factory.getValidParams("CoeffDiffusionElectrons");
   params2.set<NonlinearVariableName>("variable") = {em_name};
   params2.set<std::vector<VariableName>>("mean_en") = {mean_en_name};
   params2.set<Real>("position_units") = getParam<Real>("position_units");
   params2.set<std::vector<SubdomainName>>("block") = getParam<std::vector<SubdomainName>>("block");
-  _problem->addKernel("CoeffDiffusionElectrons", em_name + "_diffusion", params2);
+  //_problem->addKernel("CoeffDiffusionElectrons", em_name + "_diffusion", params2);
+  _problem->addKernel(diff_name, em_name + "_diffusion", params2);
 
   if (Using_offset)
   {
@@ -509,20 +537,26 @@ AddDriftDiffusionAction::addChargedParticlesKernels(const std::string & ion_name
   InputParameters params = _factory.getValidParams("ElectronTimeDerivative");
   params.set<NonlinearVariableName>("variable") = ion_name;
   params.set<std::vector<SubdomainName>>("block") = getParam<std::vector<SubdomainName>>("block");
-  _problem->addKernel("ElectronTimeDerivative", ion_name + "_time_deriv", params);
+  if (_use_ad)
+  {
+    _problem->addKernel("ADTimeDerivativeLog", ion_name + "_time_deriv", params);
+    _problem->haveADObjects(true);
+  }
+  else
+    _problem->addKernel("ElectronTimeDerivative", ion_name + "_time_deriv", params);
 
   InputParameters params1 = _factory.getValidParams("EFieldAdvection");
   params1.set<NonlinearVariableName>("variable") = ion_name;
   params1.set<std::vector<VariableName>>("potential") = {potential_name};
   params1.set<Real>("position_units") = getParam<Real>("position_units");
   params1.set<std::vector<SubdomainName>>("block") = getParam<std::vector<SubdomainName>>("block");
-  _problem->addKernel("EFieldAdvection", ion_name + "_advection", params1);
+  _problem->addKernel(_ad_prepend + "EFieldAdvection", ion_name + "_advection", params1);
 
   InputParameters params2 = _factory.getValidParams("CoeffDiffusion");
   params2.set<NonlinearVariableName>("variable") = ion_name;
   params2.set<Real>("position_units") = getParam<Real>("position_units");
   params2.set<std::vector<SubdomainName>>("block") = getParam<std::vector<SubdomainName>>("block");
-  _problem->addKernel("CoeffDiffusion", ion_name + "_diffusion", params2);
+  _problem->addKernel(_ad_prepend + "CoeffDiffusion", ion_name + "_diffusion", params2);
 
   if (Using_offset)
   {
@@ -550,13 +584,20 @@ AddDriftDiffusionAction::addNeutralParticlesKernels(const std::string & neutral_
   InputParameters params = _factory.getValidParams("ElectronTimeDerivative");
   params.set<NonlinearVariableName>("variable") = neutral_name;
   params.set<std::vector<SubdomainName>>("block") = getParam<std::vector<SubdomainName>>("block");
-  _problem->addKernel("ElectronTimeDerivative", neutral_name + "_time_deriv", params);
+  if (_use_ad)
+  {
+    _problem->addKernel("ADTimeDerivativeLog", neutral_name + "_time_deriv", params);
+    _problem->haveADObjects(true);
+  }
+  else
+    _problem->addKernel("ElectronTimeDerivative", neutral_name + "_time_deriv", params);
+    
 
   InputParameters params1 = _factory.getValidParams("CoeffDiffusion");
   params1.set<NonlinearVariableName>("variable") = neutral_name;
   params1.set<Real>("position_units") = getParam<Real>("position_units");
   params1.set<std::vector<SubdomainName>>("block") = getParam<std::vector<SubdomainName>>("block");
-  _problem->addKernel("CoeffDiffusion", neutral_name + "_diffusion", params1);
+  _problem->addKernel(_ad_prepend + "CoeffDiffusion", neutral_name + "_diffusion", params1);
 
   if (Using_offset)
   {
@@ -582,10 +623,28 @@ AddDriftDiffusionAction::addMeanEnergyKernels(const std::string & em_name,
                                               const std::string & mean_en_name,
                                               const bool & Using_offset)
 {
+  std::string dt_name;
+  std::string adv_name;
+  std::string diff_name;
+  if (_use_ad)
+  {
+    dt_name = "ADTimeDerivativeLog";
+    adv_name = "ADEFieldAdvection";
+    diff_name = "ADCoeffDiffusion";
+    _problem->haveADObjects(true);
+  }
+  else
+  {
+    dt_name = "ElectronTimeDerivative";
+    adv_name = "EFieldAdvectionEnergy";
+    diff_name = "CoeffDiffusionEnergy";
+  }
+
   InputParameters params = _factory.getValidParams("ElectronTimeDerivative");
   params.set<NonlinearVariableName>("variable") = {mean_en_name};
   params.set<std::vector<SubdomainName>>("block") = getParam<std::vector<SubdomainName>>("block");
-  _problem->addKernel("ElectronTimeDerivative", mean_en_name + "_time_deriv", params);
+  //_problem->addKernel("ElectronTimeDerivative", mean_en_name + "_time_deriv", params);
+  _problem->addKernel(dt_name, mean_en_name + "_time_deriv", params);
 
   InputParameters params1 = _factory.getValidParams("EFieldAdvectionEnergy");
   params1.set<NonlinearVariableName>("variable") = {mean_en_name};
@@ -593,14 +652,16 @@ AddDriftDiffusionAction::addMeanEnergyKernels(const std::string & em_name,
   params1.set<std::vector<VariableName>>("em") = {em_name};
   params1.set<Real>("position_units") = getParam<Real>("position_units");
   params1.set<std::vector<SubdomainName>>("block") = getParam<std::vector<SubdomainName>>("block");
-  _problem->addKernel("EFieldAdvectionEnergy", mean_en_name + "_advection", params1);
+  //_problem->addKernel("EFieldAdvectionEnergy", mean_en_name + "_advection", params1);
+  _problem->addKernel(adv_name, mean_en_name + "_advection", params1);
 
   InputParameters params2 = _factory.getValidParams("CoeffDiffusionEnergy");
   params2.set<NonlinearVariableName>("variable") = {mean_en_name};
   params2.set<std::vector<VariableName>>("em") = {em_name};
   params2.set<Real>("position_units") = getParam<Real>("position_units");
   params2.set<std::vector<SubdomainName>>("block") = getParam<std::vector<SubdomainName>>("block");
-  _problem->addKernel("CoeffDiffusionEnergy", mean_en_name + "_diffusion", params2);
+  //_problem->addKernel("CoeffDiffusionEnergy", mean_en_name + "_diffusion", params2);
+  _problem->addKernel(diff_name, mean_en_name + "_diffusion", params2);
 
   InputParameters params3 = _factory.getValidParams("JouleHeating");
   params3.set<NonlinearVariableName>("variable") = {mean_en_name};
@@ -609,7 +670,8 @@ AddDriftDiffusionAction::addMeanEnergyKernels(const std::string & em_name,
   params3.set<std::string>("potential_units") = getParam<std::string>("potential_units");
   params3.set<Real>("position_units") = getParam<Real>("position_units");
   params3.set<std::vector<SubdomainName>>("block") = getParam<std::vector<SubdomainName>>("block");
-  _problem->addKernel("JouleHeating", mean_en_name + "_joule_heating", params3);
+  //_problem->addKernel("JouleHeating", mean_en_name + "_joule_heating", params3);
+  _problem->addKernel(_ad_prepend + "JouleHeating", mean_en_name + "_joule_heating", params3);
 
   if (Using_offset)
   {

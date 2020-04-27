@@ -235,7 +235,7 @@ void
 GasElectronMoments::computeQpProperties()
 {
   _massem[_qp] = 9.11e-31;
-  _massGas[_qp] = 4.0 * 1.66e-27;
+  _massGas[_qp] = 40.0 * 1.66e-27;
   //_massArp[_qp] = 4.0 * 1.66e-27;
   _T_gas[_qp] = _user_T_gas;
   _p_gas[_qp] = _user_p_gas[_qp];
