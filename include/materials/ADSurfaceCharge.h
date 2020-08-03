@@ -26,13 +26,21 @@ protected:
   void computeHagelaarFlux();
   void computeSakiyamaFlux();
   void computeLymberopoulosFlux();
+  void computeComsolFlux();
 
   int _bc_type;
   ADMaterialProperty<Real> & _sigma;
+  MaterialProperty<Real> & _test_gamma;
+  //ADMaterialProperty<Real> & _sigma_electron;
+  //ADMaterialProperty<Real> & _sigma_ion;
   const MaterialProperty<Real> & _sigma_old;
+  //const MaterialProperty<Real> & _sigma_electron_old;
+  //const MaterialProperty<Real> & _sigma_ion_old;
   MaterialProperty<Real> & _plasma_current;
+  MaterialProperty<Real> & _electron_energy;
 
   const bool _include_secondary_electrons;
+  const bool _include_electron_emission;
   const MaterialProperty<Real> & _se_coeff;
 
   const ADMaterialProperty<Real> & _muem;
@@ -51,6 +59,7 @@ protected:
   Real _b;
 
   const ADVariableGradient & _grad_potential;
+  const ADVariableValue & _potential;
   const ADVariableValue & _mean_en;
   const ADVariableValue & _em;
   const ADVariableGradient & _grad_em;
@@ -78,4 +87,11 @@ protected:
   Real _q_times_NA;
   Real _r_factor_ion;
   Real _r_factor_electron;
+
+  Real _energy_max;
+  Real _gamma_max;
+  ADReal _gamma_e;
+  ADReal _e_ratio;
+  ADReal _emitted_electron_flux;
+  ADReal _secondary_electron_flux;
 };
