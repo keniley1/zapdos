@@ -15,8 +15,7 @@ dom1Scale=1.0
 [Mesh]
   [./geo]
     type = FileMeshGenerator
-    #file = 'gopalakrishnan_100um.msh'
-    file = 'gopalakrishnan_1um.msh'
+    file = 'argon_water.msh'
   [../]
 
   [./interface1]
@@ -97,6 +96,7 @@ dom1Scale=1.0
   end_time = 1e6
   automatic_scaling = true
   compute_scaling_once = false
+  num_steps = 1
   #resid_vs_jac_scaling_param = 1
   line_search = 'basic'
   petsc_options = '-snes_converged_reason'
@@ -114,7 +114,7 @@ dom1Scale=1.0
   [./TimeStepper]
     type = IterationAdaptiveDT
     cutback_factor = 0.4
-    dt = 1e-14
+    dt = 1e-16
     growth_factor = 1.4
     optimal_iterations = 10
   [../]
@@ -656,7 +656,7 @@ dom1Scale=1.0
    potential = potential
    mean_en = mean_en
    user_se_coeff = 0.05
-   property_tables_file = '/home/shane/projects/zapdos/problems/argon_water_prelim_files/electron_mobility_diffusion.txt'
+   property_tables_file = 'electron_mobility_diffusion.txt'
    block = 0
  [../]
 
