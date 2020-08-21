@@ -4,14 +4,14 @@ meshThickness = squareSide / 10;
 gridSize = squareSide / 20;
 
 // All numbering counterclockwise from bottom-left corner
-Point(1) = {-squareSide/2, -squareSide/2, 0, gridSize};
-Point(2) = {squareSide/2, -squareSide/2, 0, gridSize};
-Point(3) = {squareSide/2, squareSide/2, 0, gridSize};
-Point(4) = {-squareSide/2, squareSide/2, 0, gridSize};
+Point(1) = {0, 0, 0, gridSize};
+Point(2) = {squareSide, 0, 0, gridSize};
+Point(3) = {squareSide, squareSide, 0, gridSize};
+Point(4) = {0, squareSide, 0, gridSize};
 
 // Add points at x = 0, dividing the domain into 2 equal subdomains
-Point(5) = {0, -squareSide/2, 0, gridSize};
-Point(6) = {0, squareSide/2, 0, gridSize};
+Point(5) = {squareSide/2, 0, 0, gridSize};
+Point(6) = {squareSide/2, squareSide, 0, gridSize};
 
 // Now we need to add lines connecting the points
 Line(1) = {1, 5};

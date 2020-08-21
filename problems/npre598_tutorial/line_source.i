@@ -1,19 +1,10 @@
 [Mesh]
-  [gmg]
-    type = GeneratedMeshGenerator
-    dim = 2
-    nx = 50
-    ny = 50
-  []
-  [subdomain1]
-    input = gmg
-    type = SubdomainBoundingBoxGenerator
-    bottom_left = '0.5 0 0'
-    top_right = '0.5 1.0 0'
-    block_id = 1
+  [fmg]
+    type = FileMeshGenerator
+    file = 'square_two_region.msh'
   []
   [interface_left]
-    input = subdomain1
+    input = fmg
     type = SideSetsBetweenSubdomainsGenerator
     primary_block = '0'
     paired_block = '1'
@@ -29,7 +20,7 @@
 []
 
 [Variables]
-  [var1]
+  [u]
     order = FIRST
     family = LAGRANGE
   []
@@ -38,60 +29,78 @@
 [Kernels]
   #[dt]
   #  type = TimeDerivative
-  #  variable = var1
+  #  variable = u
   #[]
   [diff]
     type = Diffusion
-    variable = var1
+    variable = u
   []
   #[force]
   #  type = BodyForce
-  #  variable = var1
+  #  variable = u
   #  value = 1
   #  function = gaussian
   #[]
 []
 
 [BCs]
-  [bottom]
-    type = DirichletBC
-    variable = var1
-    boundary = 'bottom'
+  [bottom_left]
+    type = FunctionNeumannBC
+    variable = u
+    boundary = 'bottom_left'
     value = 0
+    function = 0
   []
 
-  [top]
-    type = DirichletBC
-    variable = var1
-    boundary = 'top'
+  [bottom_right]
+    type = FunctionNeumannBC
+    variable = u
+    boundary = 'bottom_left'
     value = 0
+    function = 0
+  []
+
+  [top_left]
+    type = FunctionNeumannBC
+    variable = u
+    boundary = 'top_left'
+    value = 0
+    function = 0
+  []
+
+  [top_right]
+    type = FunctionNeumannBC
+    variable = u
+    boundary = 'top_right'
+    value = 0
+    function = 0
   []
 
   [left]
     type = DirichletBC
-    variable = var1
+    variable = u
     boundary = 'left'
     value = 0
   []
 
   [right]
     type = DirichletBC
-    variable = var1
+    variable = u
     boundary = 'right'
     value = 0
   []
 
   [surface_source_left]
     type = FunctionNeumannBC
-    variable = var1
+    variable = u
     boundary = 'left_interface'
-    function = surface_source
+    function = surface_source_fcn
   []
   [surface_source_right]
     type = FunctionNeumannBC
-    variable = var1
+    variable = u
     boundary = 'right_interface'
-    function = surface_source
+    function = surface_source_fcn
   []
 []
 

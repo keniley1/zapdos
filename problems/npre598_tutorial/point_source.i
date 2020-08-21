@@ -6,7 +6,7 @@
 []
 
 [Variables]
-  [var1]
+  [u]
     order = FIRST
     family = LAGRANGE
   []
@@ -15,15 +15,15 @@
 [Kernels]
   #[dt]
   #  type = TimeDerivative
-  #  variable = var1
+  #  variable = u
   #[]
   [diff]
     type = Diffusion
-    variable = var1
+    variable = u
   []
   #[force]
   #  type = BodyForce
-  #  variable = var1
+  #  variable = u
   #  value = 1
   #  function = gaussian
   #[]
@@ -32,13 +32,13 @@
 [DiracKernels]
   [./point_source]
     type = FunctionDiracSource
-    variable = var1
+    variable = u
     function = 1
     point = '0.25 0.25 0.0'
   [../]
   [./point_source2]
     type = FunctionDiracSource
-    variable = var1
+    variable = u
     function = 1
     point = '0.6 0.6 0.0'
   [../]
@@ -47,28 +47,32 @@
 [BCs]
   [bottom]
     type = DirichletBC
-    variable = var1
+    variable = u
     boundary = 'bottom'
     value = 0
   []
 
   [top]
-    type = DirichletBC
-    variable = var1
+    #type = DirichletBC
+    type = FunctionNeumannBC
+    function = 0
+    variable = u
     boundary = 'top'
     value = 0
   []
 
   [left]
     type = DirichletBC
-    variable = var1
+    variable = u
     boundary = 'left'
     value = 0
   []
 
   [right]
-    type = DirichletBC
-    variable = var1
+    #type = DirichletBC
+    type = FunctionNeumannBC
+    function = 0
+    variable = u
     boundary = 'right'
     value = 0
   []
