@@ -987,6 +987,9 @@ dom1Scale=1.0
     use_ad = true
     block = 0
 
+    # Ar*    - Ar(1s1), Ar(1s3) (metastable states of Ar(1s) manifold)
+    # Ar**   - Ar(1s2), Ar(1s4) (radiative states of Ar(1s) manifold)
+    # Ar***  - Ar(4p) and higher states
     reactions = 'em + Ar -> em + Ar               : EEDF [elastic] (reaction1)
                  em + Ar -> em + Ar*              : EEDF [-11.5]   (reaction2)
                  em + Ar -> em + em + Arp         : EEDF [-15.76]  (reaction3)
@@ -998,8 +1001,24 @@ dom1Scale=1.0
                  Arp + em + em -> Ar + em         : {3.17314235e9 * (e_temp/11600)^(-4.5)}
                  Ar* + Ar + Ar -> Ar + Ar + Ar    : 5077.02776
                  Arp + Ar + Ar -> Ar2p + Ar       : {81595.089 * (Tgas/300)^(-0.4)}
-                 Ar* + H2O -> Ar + OH + H         : 2.89056e8'
-                 #Arp + Ar + Ar -> Ar2p + Ar       : {81595.089 * (Tgas/300)^(-0.4)}'
+                 #########################
+                 # Ar-H2O reactions
+                 #########################
+                 Arp + H2O -> Ar + H2Op                  : 1.5e-10
+                 Ar2p + H2O -> Ar + Ar + H2Op            : 1.5e-10
+                 Ar* + H2O -> Ar + OH + H                : 4.8e-10
+                 #Ar** + H2O -> Ar + OH + H              : 4.8e-10
+                 #Ar*** + H2O -> Ar + OH* + H            : 4.8e-10
+                 #Ar2* + H2O  -> Ar + OH + H             : 4.8e-10
+                 #Ar2* + H2O  -> Ar + OH* + H            : 4.8e-10
+                 Arp + Om + Ar -> Ar + Ar + Ar          : {2e-25 * (Tgas/300)^(-2.5)}
+                 Arp + Om + H2O -> Ar + Ar + H2O        : {2e-25 * (Tgas/300)^(-2.5)}
+                 Ar2p + Om + Ar -> Ar + Ar + Ar         : {2e-25 * (Tgas/300)^(-2.5)} 
+                 Ar2p + Om + H2O -> Ar + Ar + H2O       : {2e-25 * (Tgas/300)^(-2.5)} 
+                 Arp + OHm + Ar -> Ar + Ar + OH         : {2e-25 * (Tgas/300)^(-2.5)}
+                 Arp + OHm + H2O -> Ar + H2O + OH       : {2e-25 * (Tgas/300)^(-2.5)}
+                 Ar2p + OHm + Ar -> Ar + Ar + OH        : {2e-25 * (Tgas/300)^(-2.5)}
+                 Ar2p + OHm + H2O -> Ar + Ar + H2O + OH : {2e-25 * (Tgas/300)^(-2.5)}'
   [../]
 
 
@@ -1011,9 +1030,49 @@ dom1Scale=1.0
     track_rates = false
     block = 1
     reaction_coefficient_format = 'rate'
-    #reactions = 'emliq + H2O -> H + OH-               : 1.9e-2
-    #             emliq + emliq -> H2 + OH- + OH-      : 3.0703e8'
-    reactions = 'emliq + emliq -> H2 + OH- + OH-       : 3.0703e8'
-                 #emliq + OH_aq -> OH-                     : 3e7'
+    reactions = 'emliq + H2O -> H + OH-               : 1.9e-2
+                 emliq + H2O+ -> H + OH               : 6e8
+                 #emliq + emliq -> H2 + OH- + OH-      : 5.5e9
+                 emliq + emliq -> H2 + OH- + OH-      : 3.0703e8
+                 emliq + H + H2O -> H2 + OH-          : 2.5e4
+                 emliq + OH -> OH-                    : 3e7
+                 emliq + O- + H2O -> OH + OH          : 2.2e4
+                 emliq + H3O+ -> H + H2O              : 2.3e7
+                 emliq + H2O2 -> OH + OH-             : 1.1e7
+                 emliq + HO2- + H2O -> OH + OH- + OH- : 3.5e3
+                 emliq + O2 -> O2-                    : 1.9e7
+                 emliq + O -> O-                      : 1.9e7
+                 H + H2O -> H2 + OH                   : 1e-2
+                 H + H -> H2                          : 7.5e6
+                 H + OH -> H2O                        : 7e6
+                 H + OH- -> H2O + emliq               : 2.2e4
+                 H + H2O2 -> H2O + OH                 : 9e4
+                 H2 + H2O2 -> H2O + OH + H            : 6e3
+                 H + O2 -> HO2                        : 2.1e7
+                 H + HO2 -> H2O2                      : 1e7
+                 O + H2O -> OH + OH                   : 1.3e1
+                 O + O2 -> O3                         : 3e6
+                 OH + OH -> H2O2                      : 5.5e6
+                 OH + O- -> HO2-                      : 2e8
+                 OH + H2 -> H + H2O                   : 4.2e4
+                 OH + OH- -> O- + H2O                 : 1.3e7
+                 OH + HO2 -> O2 + H2O                 : 6e6
+                 OH + O2- -> O2 + OH-                 : 8e6
+                 O- + H2O -> OH- + OH                 : 1.8e3
+                 O- + H2 -> OH- + H                   : 8e4
+                 O- + H2O2 -> O2- + H2O               : 5e5
+                 O- + HO2- -> O2- + OH-               : 4e5
+                 O- + O2 -> O3-                       : 3.6e6
+                 O- + O2- + H2O -> OH- + OH- + O2     : 6e2
+                 OH + H2O2 -> H2O + HO2               : 2.7e4
+                 OH + HO2- -> OH- + HO2               : 7.5e6
+                 H2O+ + H2O -> H3O+ + OH              : 6
+                 H3O+ + OH- -> H2O + H + OH           : 6e7
+                 HO2 + H2O -> H3O+ + O2-              : 2
+                 H3O+ + O2- -> H2O + HO2              : 6e-2
+                 #emliq + NO2- -> NO2_2-               : 5.2e6
+                 #emliq + NO3- -> NO3_2-               : 7e6
+                 H2O -> H+ + OH-                      : 1.3963e-3
+                 H+ + OH- -> H2O                      : 1.3973e8'
   [../]
 []
