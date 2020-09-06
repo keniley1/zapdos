@@ -1,0 +1,96 @@
+
+
+Framework Information:
+MOOSE Version:           git commit 743076ef6c on 2020-04-17
+LibMesh Version:         6ea63ee8feebd078341bd89b7c80cd047fea001f
+PETSc Version:           3.12.5
+SLEPc Version:           3.12.1
+Current Time:            Sat Jun  6 21:53:17 2020
+Executable Timestamp:    Sat Jun  6 21:25:43 2020
+
+Parallelism:
+  Num Processors:          4
+  Num Threads:             1
+
+Mesh: 
+  Parallel Type:           replicated
+  Mesh Dimension:          1
+  Spatial Dimension:       1
+  Nodes:                   
+    Total:                 1593
+    Local:                 399
+  Elems:                   
+    Total:                 1592
+    Local:                 398
+  Num Subdomains:          2
+  Num Partitions:          4
+  Partitioner:             metis
+
+Nonlinear System:
+  Num DOFs:                15553
+  Num Local DOFs:          1596
+  Variables:               { "Arp" "em" "mean_en" } { "emliq" "OHm" "Om" "O2m" "O3m" ... "H2" "HO2" "HO3" 
+                             "OH" "H2O2" } "potential" 
+  Finite Element Types:    "LAGRANGE" "LAGRANGE" "LAGRANGE" 
+  Approximation Orders:    "FIRST" "FIRST" "FIRST" 
+
+Auxiliary System:
+  Num DOFs:                51763
+  Num Local DOFs:          8359
+  Variables:               { "Arp_density" "em_density" "position0" } { "emliq_density" "OHm_density" 
+                             "Om_density" "O2m_density" "O3m_density" ... "HO2_density" "HO3_density" 
+                             "OH_density" "H2O2_density" "position1" } "Ar" { "H2O" "O2" "H2O_lin" "Om_lin" 
+                             "O2m_lin" ... "H2_lin" "HO2_lin" "HO3_lin" "OH_lin" "H2O2_lin" } "e_temp" 
+                             "x" "x_node" "rho" "rholiq" "em_lin" "emliq_lin" "Arp_lin" "OHm_lin" "Efield" 
+                             "Current_em" "Current_emliq" "Current_Arp" "Current_OHm" "tot_gas_current" 
+                             { "tot_liq_current" "tot_flux_OHm" } { "EFieldAdvAux_em" "DiffusiveFlux_em" 
+                             } { "EFieldAdvAux_emliq" "DiffusiveFlux_emliq" } { "PowerDep_em" "PowerDep_Arp" 
+                             "ProcRate_el" "ProcRate_ex" "ProcRate_iz" } 
+  Finite Element Types:    "MONOMIAL" "MONOMIAL" "MONOMIAL" "MONOMIAL" "MONOMIAL" "MONOMIAL" "LAGRANGE" 
+                             "MONOMIAL" "MONOMIAL" "MONOMIAL" "MONOMIAL" "MONOMIAL" "MONOMIAL" "MONOMIAL" 
+                             "MONOMIAL" "MONOMIAL" "MONOMIAL" "MONOMIAL" "MONOMIAL" "MONOMIAL" "MONOMIAL" 
+                             "MONOMIAL" "MONOMIAL" 
+  Approximation Orders:    "CONSTANT" "CONSTANT" "CONSTANT" "CONSTANT" "CONSTANT" "CONSTANT" "FIRST" 
+                             "CONSTANT" "CONSTANT" "CONSTANT" "CONSTANT" "CONSTANT" "CONSTANT" "CONSTANT" 
+                             "CONSTANT" "CONSTANT" "CONSTANT" "CONSTANT" "CONSTANT" "CONSTANT" "CONSTANT" 
+                             "CONSTANT" "CONSTANT" 
+
+Execution Information:
+  Executioner:             Transient
+  TimeStepper:             IterationAdaptiveDT
+  Solver Mode:             NEWTON
+  MOOSE Preconditioner:    SMP
+
+[31mLEGACY MODES ENABLED:[39m
+ Default for parameter preset = false for all DirichletBC and ADDirichletBC objects.
+ Set use_legacy_dirichlet_bc = false in the application to change to the preferred behavior.
+[39m
+
+[33m
+*** Warning ***
+/home/shane/projects/zapdos/problems/argon_water_prelim_files/argon_water_model_prelim.i:8: unused parameter 'GlobalParams/offset'
+/home/shane/projects/zapdos/problems/argon_water_prelim_files/argon_water_model_prelim.i:163: unused parameter 'DriftDiffusionAction/Plasma/is_potential_unique'
+      Did you mean 'Is_potential_unique'?
+/home/shane/projects/zapdos/problems/argon_water_prelim_files/argon_water_model_prelim.i:175: unused parameter 'DriftDiffusionAction/Water/is_potential_unique'
+      Did you mean 'Is_potential_unique'?
+[39m
+
+Time Step 0, time = 0
+
+Time Step 1, time = 1e-12, dt = 1e-12
+
+Performing automatic scaling calculation
+
+ 0 Nonlinear |R| = [32m4.246031e+01[39m
+      0 Linear |R| = [32m4.246031e+01[39m
+      1 Linear |R| = [32m8.566126e-13[39m
+Nonlinear solve did not converge due to DIVERGED_FNORM_NAN iterations 0
+[31m Solve Did NOT Converge![39m
+Aborting as solve did not converge
+
+Solve failed, cutting timestep.
+
+Time Step 1, time = 4e-13, dt = 4e-13
+ 0 Nonlinear |R| = [32m4.246031e+01[39m
+[mpiexec@Bleabot] Sending Ctrl-C to processes as requested
+[mpiexec@Bleabot] Press Ctrl-C again to force abort
