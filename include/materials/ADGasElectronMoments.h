@@ -24,10 +24,12 @@ public:
 protected:
   virtual void computeQpProperties() override;
 
-  ADLinearInterpolation _mu_interpolation;
-  ADLinearInterpolation _diff_interpolation;
-  std::unique_ptr<LinearInterpolation> _mu_interpolation2;
-  std::unique_ptr<LinearInterpolation> _diff_interpolation2;
+  SplineInterpolation _mu_interpolation;
+  SplineInterpolation _diff_interpolation;
+  //ADLinearInterpolation _mu_interpolation;
+  //ADLinearInterpolation _diff_interpolation;
+  //std::unique_ptr<LinearInterpolation> _mu_interpolation2;
+  //std::unique_ptr<LinearInterpolation> _diff_interpolation2;
 
   /* bool _townsend; */
   std::string _potential_units;

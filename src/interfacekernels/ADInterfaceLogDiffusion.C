@@ -21,10 +21,12 @@ InputParameters
 ADInterfaceLogDiffusion::validParams()
 {
   InputParameters params = ADInterfaceKernel::validParams();
+  /*
   params.addRequiredCoupledVar("mean_en_neighbor",
                                "The log of the product of the mean energy and "
                                "electron density on the slave side of the "
                                "interface.");
+                               */
   params.addRequiredParam<Real>("position_units", "Units of position.");
   params.addRequiredParam<Real>("neighbor_position_units",
                                 "The units of position in the neighboring domain.");

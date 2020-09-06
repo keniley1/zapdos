@@ -101,8 +101,10 @@ dom1Scale=1.0
   petsc_options = '-snes_converged_reason'
   solve_type = newton
   #solve_type = pjfnk
-  petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount -pc_factor_mat_solver_package'
-  petsc_options_value = 'lu NONZERO 1.e-10 superlu_dist'
+  petsc_options_iname = '-pc_type -pc_factor_shift-type -pc_factor_shift_amount'
+  petsc_options_value = 'lu NONZERO 1.e-10'
+  #petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount -pc_factor_mat_solver_package'
+  #petsc_options_value = 'lu NONZERO 1.e-10 superlu_dist'
   #petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount -pc_factor_mat_solver_package -snes_stol'
   #petsc_options_value = 'lu NONZERO 1.e-10 mumps 0'
   #petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount -snes_stol'
@@ -132,7 +134,8 @@ dom1Scale=1.0
   #[./m3_kV_1um_02]
   #[./m2_kV_1um_02]
   #[./m1_kV_1um_02]
-  [m1_kV_1um_02]
+  #[m1_kV_1um_02]
+  [out_01]
     type = Exodus
   [../]
 []
@@ -157,8 +160,8 @@ dom1Scale=1.0
 [DriftDiffusionActionAD]
   [./Plasma]
     electrons = em
-    charged_particle = 'Arp Ar2p'
-    Neutrals = 'Ar* H2O OH'
+    charged_particle = 'Arp Ar2p H2Op'
+    Neutrals = 'Ar* Ar** Ar*** Ar2* H2O OH'
     mean_energy = mean_en
     potential = potential
     #Is_potential_unique = false
@@ -187,6 +190,10 @@ dom1Scale=1.0
   [H2O]
     block = 0
     #initial_condition = 0.0367321
+  []
+  [H2Op]
+    block = 0
+    initial_condition = -25
   []
   [./potential]
     #block = 0
@@ -228,6 +235,26 @@ dom1Scale=1.0
     block = 0
     initial_condition = -25
   [../]
+  [./Ar**]
+    block = 0
+    initial_condition = -25
+  [../]
+  [./Ar***]
+    block = 0
+    initial_condition = -25
+  [../]
+  [./Ar2*]
+    block = 0
+    initial_condition = -25
+  [../]
+  #[./Om]
+  #  block = 0
+  #  initial_condition = -25
+  #[../]
+  #[./OHm]
+  #  block = 0
+  #  initial_condition = -25
+  #[../]
 
   [./mean_en]
     block = 0
@@ -273,7 +300,7 @@ dom1Scale=1.0
     initial_condition = 0
   [../]
 
-  [./e_temp]
+  [./Te]
     block = 0
     order  = CONSTANT
     family = MONOMIAL
@@ -416,7 +443,7 @@ dom1Scale=1.0
   [../]
   [./e_temp]
     type = ElectronTemperature
-    variable = e_temp
+    variable = Te
     electron_density = em
     execute_on = 'initial timestep_end'
     mean_en = mean_en
@@ -587,6 +614,54 @@ dom1Scale=1.0
 []
 
 [BCs]
+  # H2O+ boundary conditions
+  [./H2Op_physical_diffusion]
+    type = ADHagelaarIonDiffusionBC
+    variable = H2Op 
+    boundary = 'left master0_interface'
+    r = 0
+    position_units = ${dom0Scale}
+  [../]
+  [./H2Op_physical_right_advection]
+    type = ADHagelaarIonAdvectionBC
+    variable = H2Op
+    boundary = 'left master0_interface'
+    potential = potential
+    r = 0
+    position_units = ${dom0Scale}
+  [../]
+  # O- and OH- boundary conditions
+  #[./Om_physical_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = Om 
+  #  boundary = 'left master0_interface'
+  #  r = 0
+  #  position_units = ${dom0Scale}
+  #[../]
+  #[./Om_physical_advection]
+  #  type = ADHagelaarIonAdvectionBC
+  #  variable = Om
+  #  boundary = 'left master0_interface'
+  #  potential = potential
+  #  r = 0
+  #  position_units = ${dom0Scale}
+  #[../]
+  #[./OHm_physical_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = OHm 
+  #  boundary = 'left master0_interface'
+  #  r = 0
+  #  position_units = ${dom0Scale}
+  #[../]
+  #[./OHm_physical_advection]
+  #  type = ADHagelaarIonAdvectionBC
+  #  variable = OHm
+  #  boundary = 'left master0_interface'
+  #  potential = potential
+  #  r = 0
+  #  position_units = ${dom0Scale}
+  #[../]
+
   # H2O evaporation boundary condition
   [H2O_interface]
     type = DirichletBC
@@ -622,6 +697,27 @@ dom1Scale=1.0
     r = 0
     position_units = ${dom0Scale}
   [../]
+  [./Arex2_physical_diffusion]
+    type = ADHagelaarIonDiffusionBC
+    variable = Ar**
+    boundary = 'left master0_interface'
+    r = 0
+    position_units = ${dom0Scale}
+  [../]
+  [./Arex3_physical_diffusion]
+    type = ADHagelaarIonDiffusionBC
+    variable = Ar***
+    boundary = 'left master0_interface'
+    r = 0
+    position_units = ${dom0Scale}
+  [../]
+  [./Ar2ex_physical_diffusion]
+    type = ADHagelaarIonDiffusionBC
+    variable = Ar2*
+    boundary = 'left master0_interface'
+    r = 0
+    position_units = ${dom0Scale}
+  [../]
   #[./Arex_henry]
   #  type = MatchedValueLogBC
   #  variable = Ar_aq
@@ -649,7 +745,7 @@ dom1Scale=1.0
     variable = potential
     boundary = left
     function = potential_bc_func
-    ip = Arp
+    ip = 'Arp Ar2p H2Op'
     data_provider = data_provider
     em = em
     mean_en = mean_en
@@ -712,7 +808,7 @@ dom1Scale=1.0
     variable = em
     boundary = 'left'
     potential = potential
-    ip = 'Arp Ar2p'
+    ip = 'Arp Ar2p H2Op'
     mean_en = mean_en
     r = 0
     position_units = ${dom0Scale}
@@ -722,7 +818,7 @@ dom1Scale=1.0
     variable = mean_en
     boundary = 'left'
     potential = potential
-    ip = 'Arp Ar2p'
+    ip = 'Arp Ar2p H2Op'
     em = em
     r = 0
     position_units = ${dom0Scale}
@@ -860,9 +956,8 @@ dom1Scale=1.0
    potential = potential
    mean_en = mean_en
    user_se_coeff = 0.05
-   #property_tables_file = cpc_test/e_vals_test.txt
-   #property_tables_file = '/home/shane/projects/zapdos/problems/argon_water_prelim_files/electron_mobility_diffusion.txt'
-   property_tables_file = '/home/shane/projects/zapdos/problems/argon_cm_test/electron_mobility_diffusion.txt'
+   #property_tables_file = '/home/shane/projects/zapdos/problems/argon_cm_test/electron_mobility_diffusion.txt'
+   property_tables_file = 'lumped_argon_rates/electron_mobility_diffusion.txt'
    block = 0
  [../]
  [gas_constants]
@@ -872,13 +967,20 @@ dom1Scale=1.0
    block = 0
  []
 
- [H2O_mat]
-   type = ADHeavySpeciesMaterial
-   heavy_species_name = H2O
-   heavy_species_mass = 2.9907e-26
-   heavy_species_charge = 0
-   diffusivity = 2.3e-5
- []
+  [H2O_mat]
+    type = ADHeavySpeciesMaterial
+    heavy_species_name = H2O
+    heavy_species_mass = 2.9907e-26
+    heavy_species_charge = 0
+    diffusivity = 2.3e-5
+  []
+  [H2Op_mat]
+    type = ADHeavySpeciesMaterial
+    heavy_species_name = H2Op
+    heavy_species_mass = 2.9907e-26
+    heavy_species_charge = 1
+    diffusivity = 2.3e-5
+  []
 
   [./gas_species_0]
     type = ADHeavySpeciesMaterial
@@ -908,6 +1010,27 @@ dom1Scale=1.0
     heavy_species_charge = 0
     block = 0
   [../]
+  [./gas_species_3]
+    type = ADHeavySpeciesMaterial
+    heavy_species_name = Ar**
+    heavy_species_mass = 6.64e-26
+    heavy_species_charge = 0
+    block = 0
+  [../]
+  [./gas_species_4]
+    type = ADHeavySpeciesMaterial
+    heavy_species_name = Ar***
+    heavy_species_mass = 6.64e-26
+    heavy_species_charge = 0
+    block = 0
+  [../]
+  [./gas_species_5]
+    type = ADHeavySpeciesMaterial
+    heavy_species_name = Ar2*
+    heavy_species_mass = 6.64e-26
+    heavy_species_charge = 0
+    block = 0
+  [../]
 
   [./OH-_mat]
     type = ADHeavySpeciesMaterial
@@ -924,6 +1047,22 @@ dom1Scale=1.0
     heavy_species_mass = 2.82420e-26
     heavy_species_charge = 0 
     diffusivity = 4e-5
+    block = 0
+  []
+  [OHm_mat]
+    type = ADHeavySpeciesMaterial
+    heavy_species_name = OHm
+    heavy_species_mass = 2.82420e-26
+    heavy_species_charge = -1
+    diffusivity = 4e-5
+    block = 0
+  []
+  [Om_mat]
+    type = ADHeavySpeciesMaterial
+    heavy_species_name = Om
+    heavy_species_mass = 2.82420e-26
+    heavy_species_charge = -1 
+    diffusivity = 5e-5
     block = 0
   []
 
@@ -970,17 +1109,18 @@ dom1Scale=1.0
 
 [Reactions]
   [./Argon]
-    species = 'em Arp Ar2p Ar* OH'
-    aux_species = 'Ar H2O'
+    species = 'em Arp Ar2p Ar* Ar** Ar*** OH H2O'
+    aux_species = 'Ar'
     reaction_coefficient_format = 'townsend'
     gas_species = 'Ar'
     electron_energy = 'mean_en'
     electron_density = 'em'
     include_electrons = true
-    file_location = 'argon_chemistry_rates'
-    equation_constants = 'Tgas'
-    equation_values = '300'
-    equation_variables = 'e_temp'
+    #file_location = 'argon_chemistry_rates'
+    file_location = 'lumped_argon_rates'
+    equation_constants = 'Tgas Tn'
+    equation_values = '300 1'
+    equation_variables = 'Te'
     potential = 'potential'
     use_log = true
     position_units = ${dom0Scale}
@@ -990,39 +1130,101 @@ dom1Scale=1.0
     # Ar*    - Ar(1s1), Ar(1s3) (metastable states of Ar(1s) manifold)
     # Ar**   - Ar(1s2), Ar(1s4) (radiative states of Ar(1s) manifold)
     # Ar***  - Ar(4p) and higher states
-    reactions = 'em + Ar -> em + Ar               : EEDF [elastic] (reaction1)
-                 em + Ar -> em + Ar*              : EEDF [-11.5]   (reaction2)
-                 em + Ar -> em + em + Arp         : EEDF [-15.76]  (reaction3)
-                 em + Ar* -> em + Ar              : EEDF [11.5]    (reaction4)
-                 em + Ar* -> em + em + Arp        : EEDF [-4.3]    (reaction5)
-                 Ar2p + em -> Ar* + Ar            : {5.1187e11 * (e_temp/300)^(-0.67)}
-                 Ar2p + Ar -> Arp + Ar + Ar       : {3.649332e12 / Tgas * exp(-15130/Tgas)}
-                 Ar* + Ar* -> Ar2p + em           : {3.6132e8}
-                 Arp + em + em -> Ar + em         : {3.17314235e9 * (e_temp/11600)^(-4.5)}
-                 Ar* + Ar + Ar -> Ar + Ar + Ar    : 5077.02776
-                 Arp + Ar + Ar -> Ar2p + Ar       : {81595.089 * (Tgas/300)^(-0.4)}
+    #reactions = 'em + Ar -> em + Ar               : EEDF [elastic] (reaction1)
+    #             em + Ar -> em + Ar*              : EEDF [-11.5]   (reaction2)
+    #             em + Ar -> em + em + Arp         : EEDF [-15.76]  (reaction3)
+    #             em + Ar* -> em + Ar              : EEDF [11.5]    (reaction4)
+    #             em + Ar* -> em + em + Arp        : EEDF [-4.3]    (reaction5)
+    #             Ar2p + em -> Ar* + Ar            : {5.1187e11 * (e_temp/300)^(-0.67)}
+    #             Ar2p + Ar -> Arp + Ar + Ar       : {3.649332e12 / Tgas * exp(-15130/Tgas)}
+    #             Ar* + Ar* -> Ar2p + em           : {3.6132e8}
+    #             Arp + em + em -> Ar + em         : {3.17314235e9 * (e_temp/11600)^(-4.5)}
+    #             Ar* + Ar + Ar -> Ar + Ar + Ar    : 5077.02776
+    #             Arp + Ar + Ar -> Ar2p + Ar       : {81595.089 * (Tgas/300)^(-0.4)}
+    reactions = 'em + Ar -> em + Ar                       : EEDF [elastic] (C1_Ar_Elastic)
+                 em + Ar -> em + Ar*                      : EEDF [-11.549] (C2_Ar_Excitation_11.55_eV)
+                 em + Ar -> em + Ar*                      : EEDF [-11.723] (C4_Ar_Excitation_11.72_eV)
+                 em + Ar -> em + Ar**                     : EEDF [-11.624] (C3_Ar_Excitation_11.62_eV)
+                 em + Ar -> em + Ar**                     : EEDF [-11.828] (C5_Ar_Excitation_11.83_eV)
+                 em + Ar -> em + Ar***                    : EEDF [-13.074] (C6_Ar_Excitation_13.07_eV)
+                 em + Ar -> em + Ar***                    : EEDF [-13.204] (C7_Ar_Excitation_13.20_eV)
+                 em + Ar -> em + Ar***                    : EEDF [-13.227] (C8_Ar_Excitation_13.23_eV)
+                 em + Ar -> em + Ar***                    : EEDF [-13.276] (C9_Ar_Excitation_13.28_eV)
+                 em + Ar -> em + Ar***                    : EEDF [-13.299] (C10_Ar_Excitation_13.30_eV)
+                 em + Ar -> em + Ar***                    : EEDF [-13.396] (C11_Ar_Excitation_13.40_eV)
+                 em + Ar -> em + Ar***                    : EEDF [-13.397] (C12_Ar_Excitation_13.40_eV)
+                 em + Ar -> em + Ar***                    : EEDF [-13.418] (C13_Ar_Excitation_13.42_eV)
+                 em + Ar -> em + Ar***                    : EEDF [-13.442] (C14_Ar_Excitation_13.44_eV)
+                 em + Ar -> em + Ar***                    : EEDF [-13.594] (C15_Ar_Excitation_13.59_eV)
+                 em + Ar* -> em + Ar**                    : EEDF [-0.075] (C27_Ar1s5_Excitation_0.075_eV)
+                 em + Ar* -> em + Ar**                    : EEDF [-0.279] (C28_Ar1s5_Excitation_0.28_eV)
+                 #em + Ar** -> em + Ar*                    : EEDF [] (C_Ar_Excitation__eV)
+                 em + Ar* -> em + Ar***                   : EEDF [-1.525] (C29_Ar1s5_Excitation_1.52_eV)
+                 em + Ar* -> em + Ar***                   : EEDF [-1.655] (C30_Ar1s5_Excitation_1.66_eV)
+                 em + Ar* -> em + Ar***                   : EEDF [-1.678] (C31_Ar1s5_Excitation_1.68_eV)
+                 em + Ar* -> em + Ar***                   : EEDF [-1.727] (C32_Ar1s5_Excitation_1.73_eV)
+                 em + Ar* -> em + Ar***                   : EEDF [-1.75] (C33_Ar1s5_Excitation_1.75_eV)
+                 #em + Ar*** -> em + Ar*                   : EEDF [] (C_Ar_Excitation__eV)
+                 em + Ar** -> em + Ar***                  : EEDF [-1.45] (C17_Ar1s4_Excitation_1.45_eV)
+                 em + Ar** -> em + Ar***                  : EEDF [-1.58] (C18_Ar1s4_Excitation_1.58_eV)
+                 em + Ar** -> em + Ar***                  : EEDF [-1.60] (C19_Ar1s4_Excitation_1.60_eV)
+                 em + Ar** -> em + Ar***                  : EEDF [-1.65] (C20_Ar1s4_Excitation_1.65_eV)
+                 em + Ar** -> em + Ar***                  : EEDF [-1.68] (C21_Ar1s4_Excitation_1.68_eV)
+                 #em + Ar*** -> em + Ar**                  : EEDF [] (C_Ar_Excitation__eV)
+                 em + Ar -> em + em + Arp                 : EEDF [-15.76] (C16_Ar_Ionization_15.76_eV)
+                 em + Ar* -> em + em + Arp                : EEDF [-4.21] (C38_Ar1s5_Ionization_4.21_eV)
+                 em + Ar** -> em + em + Arp               : EEDF [-4.14] (C26_Ar1s4_Ionization_4.14_eV)
+                 #em + Ar*** -> em + em + Arp              : EEDF [] (C_Ar_Ionization__eV)
+                 em + Arp -> Ar***                        : {4e-13*Te^(-0.5)}
+                 em + em + Arp -> Ar*** + em              : {5e-27 * Te^(-4.5)}
+                 em + Ar2* -> Ar2p + em + em              : {9e-8*Te^0.7}
+                 em + Ar2* -> Ar + Ar + em                : 1e-7
+                 em + Ar2p -> Ar*** + Ar                  : {5.38e-8*Te^(-0.66)}
+                 Ar* + Ar* -> Ar + Arp + em               : {5e-10*Tn^0.5}
+                 Ar** + Ar** -> Ar + Arp + em             : {5e-10*Tn^0.5}
+                 Ar*** + Ar*** -> Ar + Arp + em           : {5e-10*Tn^0.5}
+                 #Arp + Ar -> Ar + Arp                     : {5.66e-10*Tn^0.5}
+                 Arp + Ar + Ar -> Ar + Ar2p               : {1.41e-31*Tn^(-0.5)}
+                 Ar* + Ar + Ar -> Ar + Ar2*               : {1.14e-32}
+                 Ar** + Ar + Ar -> Ar + Ar2*              : {1.14e-32}
+                 Ar*** + Ar + Ar -> Ar + Ar2*             : {1.14e-32}
                  #########################
                  # Ar-H2O reactions
                  #########################
                  Arp + H2O -> Ar + H2Op                  : 1.5e-10
                  Ar2p + H2O -> Ar + Ar + H2Op            : 1.5e-10
                  Ar* + H2O -> Ar + OH + H                : 4.8e-10
-                 #Ar** + H2O -> Ar + OH + H              : 4.8e-10
-                 #Ar*** + H2O -> Ar + OH* + H            : 4.8e-10
-                 #Ar2* + H2O  -> Ar + OH + H             : 4.8e-10
-                 #Ar2* + H2O  -> Ar + OH* + H            : 4.8e-10
-                 Arp + Om + Ar -> Ar + Ar + Ar          : {2e-25 * (Tgas/300)^(-2.5)}
-                 Arp + Om + H2O -> Ar + Ar + H2O        : {2e-25 * (Tgas/300)^(-2.5)}
-                 Ar2p + Om + Ar -> Ar + Ar + Ar         : {2e-25 * (Tgas/300)^(-2.5)} 
-                 Ar2p + Om + H2O -> Ar + Ar + H2O       : {2e-25 * (Tgas/300)^(-2.5)} 
-                 Arp + OHm + Ar -> Ar + Ar + OH         : {2e-25 * (Tgas/300)^(-2.5)}
-                 Arp + OHm + H2O -> Ar + H2O + OH       : {2e-25 * (Tgas/300)^(-2.5)}
-                 Ar2p + OHm + Ar -> Ar + Ar + OH        : {2e-25 * (Tgas/300)^(-2.5)}
-                 Ar2p + OHm + H2O -> Ar + Ar + H2O + OH : {2e-25 * (Tgas/300)^(-2.5)}'
+                 Ar** + H2O -> Ar + OH + H              : 4.8e-10
+                 Ar*** + H2O -> Ar + OH* + H            : 4.8e-10
+                 Ar2* + H2O  -> Ar + OH + H             : 4.8e-10
+                 Ar2* + H2O  -> Ar + OH* + H            : 4.8e-10
+                 #Arp + Om + Ar -> Ar + Ar + Ar          : {2e-25 * (Tgas/300)^(-2.5)}
+                 #Arp + Om + H2O -> Ar + Ar + H2O        : {2e-25 * (Tgas/300)^(-2.5)}
+                 #Ar2p + Om + Ar -> Ar + Ar + Ar         : {2e-25 * (Tgas/300)^(-2.5)} 
+                 #Ar2p + Om + H2O -> Ar + Ar + H2O       : {2e-25 * (Tgas/300)^(-2.5)} 
+                 #Arp + OHm + Ar -> Ar + Ar + OH         : {2e-25 * (Tgas/300)^(-2.5)}
+                 #Arp + OHm + H2O -> Ar + H2O + OH       : {2e-25 * (Tgas/300)^(-2.5)}
+                 #Ar2p + OHm + Ar -> Ar + Ar + OH        : {2e-25 * (Tgas/300)^(-2.5)}
+                 #Ar2p + OHm + H2O -> Ar + Ar + H2O + OH : {2e-25 * (Tgas/300)^(-2.5)}
+                 #########################
+                 # H2O, OH, and H reactions
+                 # (only a select few for now)
+                 #########################
+                 #OHm + H2Op + Ar -> OH + H2O + Ar       : {2e-25*Tn^(-2.5)}
+                 #OHm + H2Op + H2O -> OH + H2O + H2O     : {2e-25*Tn^(-2.5)}
+                 #Om + H2Op + Ar -> O + H2O + Ar         : {2e-25*Tn^(-2.5)}
+                 #Om + H2Op + H2O -> O + H2O + H2O       : {2e-25*Tn^(-2.5)}
+                 #########################
+                 # Radiative Transitions
+                 #########################
+                 Ar*** -> Ar*                           : 3.3e7
+                 Ar*** -> Ar                            : 3.1e5
+                 Ar** -> Ar                             : 5.3e5
+                 Ar2* -> Ar + Ar                        : 6e7'
   [../]
 
 
-  [./liquid_phase_reactions]
+  [./water_reactions]
     species = 'emliq OH- OH_aq'
     aux_species = 'H2O_aq'
     use_log = true
@@ -1030,49 +1232,49 @@ dom1Scale=1.0
     track_rates = false
     block = 1
     reaction_coefficient_format = 'rate'
-    reactions = 'emliq + H2O -> H + OH-               : 1.9e-2
-                 emliq + H2O+ -> H + OH               : 6e8
+    reactions = 'emliq + H2O_aq -> H + OH-               : 1.9e-2
+                 #emliq + H2O+ -> H + OH               : 6e8
                  #emliq + emliq -> H2 + OH- + OH-      : 5.5e9
-                 emliq + emliq -> H2 + OH- + OH-      : 3.0703e8
-                 emliq + H + H2O -> H2 + OH-          : 2.5e4
-                 emliq + OH -> OH-                    : 3e7
-                 emliq + O- + H2O -> OH + OH          : 2.2e4
-                 emliq + H3O+ -> H + H2O              : 2.3e7
-                 emliq + H2O2 -> OH + OH-             : 1.1e7
-                 emliq + HO2- + H2O -> OH + OH- + OH- : 3.5e3
-                 emliq + O2 -> O2-                    : 1.9e7
-                 emliq + O -> O-                      : 1.9e7
-                 H + H2O -> H2 + OH                   : 1e-2
-                 H + H -> H2                          : 7.5e6
-                 H + OH -> H2O                        : 7e6
-                 H + OH- -> H2O + emliq               : 2.2e4
-                 H + H2O2 -> H2O + OH                 : 9e4
-                 H2 + H2O2 -> H2O + OH + H            : 6e3
-                 H + O2 -> HO2                        : 2.1e7
-                 H + HO2 -> H2O2                      : 1e7
-                 O + H2O -> OH + OH                   : 1.3e1
-                 O + O2 -> O3                         : 3e6
-                 OH + OH -> H2O2                      : 5.5e6
-                 OH + O- -> HO2-                      : 2e8
-                 OH + H2 -> H + H2O                   : 4.2e4
-                 OH + OH- -> O- + H2O                 : 1.3e7
-                 OH + HO2 -> O2 + H2O                 : 6e6
-                 OH + O2- -> O2 + OH-                 : 8e6
-                 O- + H2O -> OH- + OH                 : 1.8e3
-                 O- + H2 -> OH- + H                   : 8e4
-                 O- + H2O2 -> O2- + H2O               : 5e5
-                 O- + HO2- -> O2- + OH-               : 4e5
-                 O- + O2 -> O3-                       : 3.6e6
-                 O- + O2- + H2O -> OH- + OH- + O2     : 6e2
-                 OH + H2O2 -> H2O + HO2               : 2.7e4
-                 OH + HO2- -> OH- + HO2               : 7.5e6
-                 H2O+ + H2O -> H3O+ + OH              : 6
-                 H3O+ + OH- -> H2O + H + OH           : 6e7
-                 HO2 + H2O -> H3O+ + O2-              : 2
-                 H3O+ + O2- -> H2O + HO2              : 6e-2
-                 #emliq + NO2- -> NO2_2-               : 5.2e6
-                 #emliq + NO3- -> NO3_2-               : 7e6
-                 H2O -> H+ + OH-                      : 1.3963e-3
-                 H+ + OH- -> H2O                      : 1.3973e8'
+                 emliq + emliq -> H2 + OH- + OH-      : 3.0703e8'
+                 #emliq + H + H2O_aq -> H2 + OH-          : 2.5e4
+                 #emliq + OH -> OH-                    : 3e7
+                 #emliq + O- + H2O_aq -> OH + OH          : 2.2e4
+                 #emliq + H3O+ -> H + H2O_aq              : 2.3e7
+                 #emliq + H2O2 -> OH + OH-             : 1.1e7
+                 #emliq + HO2- + H2O_aq -> OH + OH- + OH- : 3.5e3
+                 #emliq + O2 -> O2-                    : 1.9e7
+                 #emliq + O -> O-                      : 1.9e7
+                 #H + H2O_aq -> H2 + OH                   : 1e-2
+                 #H + H -> H2                          : 7.5e6
+                 #H + OH -> H2O_aq                        : 7e6
+                 #H + OH- -> H2O_aq + emliq               : 2.2e4
+                 #H + H2O2 -> H2O_aq + OH                 : 9e4
+                 #H2 + H2O2 -> H2O_aq + OH + H            : 6e3
+                 #H + O2 -> HO2                        : 2.1e7
+                 #H + HO2 -> H2O2                      : 1e7
+                 #O + H2O_aq -> OH + OH                   : 1.3e1
+                 #O + O2 -> O3                         : 3e6
+                 #OH + OH -> H2O2                      : 5.5e6
+                 #OH + O- -> HO2-                      : 2e8
+                 #OH + H2 -> H + H2O_aq                   : 4.2e4
+                 #OH + OH- -> O- + H2O_aq                 : 1.3e7
+                 #OH + HO2 -> O2 + H2O_aq                 : 6e6
+                 #OH + O2- -> O2 + OH-                 : 8e6
+                 #O- + H2O_aq -> OH- + OH                 : 1.8e3
+                 #O- + H2 -> OH- + H                   : 8e4
+                 #O- + H2O2 -> O2- + H2O_aq               : 5e5
+                 #O- + HO2- -> O2- + OH-               : 4e5
+                 #O- + O2 -> O3-                       : 3.6e6
+                 #O- + O2- + H2O_aq -> OH- + OH- + O2     : 6e2
+                 #OH + H2O2 -> H2O_aq + HO2               : 2.7e4
+                 #OH + HO2- -> OH- + HO2               : 7.5e6
+                 #H2O+ + H2O_aq -> H3O+ + OH              : 6
+                 #H3O+ + OH- -> H2O_aq + H + OH           : 6e7
+                 #HO2 + H2O_aq -> H3O+ + O2-              : 2
+                 #H3O+ + O2- -> H2O_aq + HO2              : 6e-2
+                 ##emliq + NO2- -> NO2_2-               : 5.2e6
+                 ##emliq + NO3- -> NO3_2-               : 7e6
+                 #H2O_aq -> H+ + OH-                      : 1.3963e-3
+                 #H+ + OH- -> H2O_aq                      : 1.3973e8'
   [../]
 []
