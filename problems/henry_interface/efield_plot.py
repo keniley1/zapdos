@@ -95,16 +95,18 @@ def line_plot(x, y, time, include_potential=False, potential=0):
     exit()
 
 
-#voltage = ['1', '1old', '2', '3', '4', '5']
-voltage = ['1']
+voltage = ['1', '2', '3', '4', '5']
+#voltage = ['1']
 num = 0
 je_interface = np.empty(shape=(len(voltage)))
 l_ne_aq = np.empty(shape=(len(voltage)), dtype='int')
 
+color_cycle = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
 
 f, (ax1, ax2) = plt.subplots(1, 2, sharey=True, figsize=(12,10))
 for v in voltage:
-    exopy = ExodusRead('/home/shane/projects/zapdos/problems/henry_interface/argon_water_henry_salt_out_07.e')
+    #exopy = ExodusRead('/home/shane/projects/zapdos/problems/argon_water_prelim_files/argon_water_model_prelim_V_m'+v+'_kV_10um.e')
+    exopy = ExodusRead('/home/shane/projects/zapdos/problems/argon_water_prelim_files/argon_water_with_O2_V_m'+v+'_kV_10um.e')
 
     plt_num = '001'
 
@@ -118,8 +120,9 @@ for v in voltage:
     dt_start = 0
     dt_end = -1
 
-    gas_species = ['OH']
-    liquid_species = ['OH_aq']
+    gas_species = ['Arp', 'em']
+    liquid_species = ['emliq', 'OHm', 'Om', 'O2m', 'O3m', 'HO2m', 'H+', 
+                  'O', 'O2_1', 'O3', 'H', 'H2', 'HO2', 'OH', 'H2O2']
 
     #print(exopy.exodus.variables.keys())
 
@@ -132,66 +135,65 @@ for v in voltage:
     block0 = exopy.split_block('x', 0)
     block1 = exopy.split_block('x', 1)
 
-    x0 = xgrid[block0]
-    x1 = xgrid[block1]
+    cblock0 = block0[0:-1]
+    cblock1 = block1[0:-1]
+
+    # Get element data from nodes
+    xcell = np.zeros(shape=(num_cells))
+    for i in range(num_cells):
+        xcell[i] = (xgrid[total_connect[i][1]-1] + xgrid[total_connect[i][0]-1])/2.0
+
+
+    Eb0 = exopy.get_vals('Efield', data_type='element', block=0)
+    Eb1 = exopy.get_vals('Efield', data_type='element', block=1)
+    Efield = np.hstack((Eb0, Eb1))
 
     time = exopy.time[:]
 
     xb0, tb0 = np.meshgrid(xgrid[block0], exopy.time[:]*time_scale)
     xb1, tb1 = np.meshgrid(xgrid[block1], exopy.time[:]*time_scale)
 
+    xc0, tb0 = np.meshgrid(xcell[block0[0:-2]], exopy.time[:]*time_scale)
+    xc1, tc1 = np.meshgrid(xcell[block1[0:-2]], exopy.time[:]*time_scale)
+    xc, tb = np.meshgrid(xcell, exopy.time[:]*time_scale)
+
+
     time_index = np.arange(len(exopy.time[:]))
 
-    OH_density = np.exp(exopy.get_vals('OH', data_type='node')[:,block0])*6.022e23
+    ax1.plot(xcell[cblock0]*1e3, Eb0[-1, :], color_cycle[num])
 
-    emliq_density = np.exp(exopy.get_vals('em_aq', data_type='node')[:,block1])*6.022e23
-    OHm_density = np.exp(exopy.get_vals('OHm_aq', data_type='node')[:,block1])*6.022e23
-    OH_aq_density = np.exp(exopy.get_vals('OH_aq', data_type='node')[:,block1])*6.022e23
-    #jemliq = exopy.get_vals('Current_emliq', data_type='element', block=1)
-    #jem = exopy.get_vals('Current_em', data_type='element', block=0)
+    ax2.plot(xcell[cblock1]*1e3, Eb1[-1, :], color_cycle[num])
 
-    # color cycle:
-    color_cycle = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
-
-    ax1.semilogy(x0*1e3, OH_density[-1, :], 'r', linewidth=3, label='OH$_g$')
-    ax1.set_ylabel('Density (m$^{-3}$)', fontsize=16)
-    ax1.set_xlim([0, 1])
-    #ax1.set_xlim([0.8, 1])
-    #ax1.set_ylim([1e14, 1e17])
-    ax1.legend(loc='best', frameon=False)
-
-    #ax2.semilogy(x1*1e3, emliq_density[-1, :], 'k', label='e$_{aq}$')
-    ax2.semilogy(x1*1e3, OH_aq_density[-1, :], 'r', linewidth=3, label='OH$_{aq}$')
-    ax2.set_xlim([1, 2])
-    ax2.legend(loc='best', frameon=False, ncol=3)
-    #ax2.set_xlim([1, 1.0001])
-
-    xticks = ax1.xaxis.get_major_ticks()
-    xticks[-1].label1.set_visible(False)
-
-    #ax2.axes.tick_params(axis='y', which='both', bottom=False, top=False)
-    ax2.yaxis.set_visible(False)
-
-    ax1.xaxis.set_major_formatter(mtick.FormatStrFormatter('%1.3f'))
-    ax2.xaxis.set_major_formatter(mtick.FormatStrFormatter('%1.3f'))
-    #xfmt = mtick.ScalarFormatterForceFormat()
-    #xfmt.set_powerlimits((0,0))
-    #ax1.xaxis.set_major_formatter(xfmt)
-    ax1.tick_params(axis='both', labelsize=15)
-    ax2.tick_params(axis='both', labelsize=15)
-
-    f.text(0.5, 0.04, 'X [mm]', ha='center', fontsize=18)
-    f.text(0.5, 0.9, 'V$_{DC}$ = -1 kV', ha='center', fontsize=18)
-    f.subplots_adjust(wspace=0)
 
     num += 1
+ax1.set_ylabel('Electric Field (V m$^{-1}$)', fontsize=16)
+ax1.set_xlim([0, 1])
+#ax1.set_xlim([0.8, 1])
+#ax1.set_ylim([1e14, 2e24])
 
-plt.plot()
-#plt.show()
-#exit()
-plt.savefig('plots/oh_interface.png', dpi=200, bbox_inches='tight')
-plt.close()
+ax2.set_xlim([1, 1.01])
+ax2.legend(loc='best', frameon=False, ncol=5)
+#ax2.set_xlim([1, 1.0001])
+xticks = ax1.xaxis.get_major_ticks()
+xticks[-1].label1.set_visible(False)
+
+#ax2.axes.tick_params(axis='y', which='both', bottom=False, top=False)
+ax2.yaxis.set_visible(False)
+
+ax1.xaxis.set_major_formatter(mtick.FormatStrFormatter('%1.3f'))
+ax2.xaxis.set_major_formatter(mtick.FormatStrFormatter('%1.3f'))
+#xfmt = mtick.ScalarFormatterForceFormat()
+#xfmt.set_powerlimits((0,0))
+#ax1.xaxis.set_major_formatter(xfmt)
+
+f.text(0.5, 0.04, 'X [mm]', ha='center', fontsize=16)
+#f.text(0.5, 0.9, 'V$_{DC}$ = 1 kV', ha='center', fontsize=18)
+f.subplots_adjust(wspace=0)
+
+plt.show()
 exit()
+plt.savefig('plots/all_species_1kv.png', dpi=200, bbox_inches='tight')
+plt.close()
 
 # Interface layer time!
 plt.semilogy(xcell[cblock1]*1e3, emliq_density[-1, :], 'k', label='e$_{aq}$')

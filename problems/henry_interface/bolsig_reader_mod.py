@@ -17,16 +17,16 @@ def create_k_file(reaction_name):
     f.close()
     return filename
 
-def read_bolsig(bolsigdatafile, XSdatafile, runs, gas_density, coefficient_type="rate", transport_factor=1.0, rate_factor=1.0): #Takes name of bolsig data file as input
+def read_bolsig(bolsigdatafile, runs, gas_density, coefficient_type="rate", transport_factor=1.0, rate_factor=1.0): #Takes name of bolsig data file as input
     '''
     transport_factor : factor which multiplies the transport coefficients to scale the units.
     rate_factor      : factor which multiplies the rate coefficients to scale the units.
     '''
-    with open(XSdatafile,"r") as fXS:
-        rxns = []
-        for line in fXS:
-            if line.find("PROCESS:") != -1:
-                rxns.append(line[11:line.find(",")])
+    #with open(XSdatafile,"r") as fXS:
+    #    rxns = []
+    #    for line in fXS:
+    #        if line.find("PROCESS:") != -1:
+    #            rxns.append(line[11:line.find(",")])
 
     with open(bolsigdatafile,"r") as fbolsig:
         lines = fbolsig.readlines()
@@ -113,4 +113,5 @@ def read_bolsig(bolsigdatafile, XSdatafile, runs, gas_density, coefficient_type=
     return None
 
 #read_bolsig("bolsigdb_out.dat", "argon_cs_data.dat", runs=100, gas_density=2.445692e25, coefficient_type="townsend", transport_factor=1, rate_factor=1)
-read_bolsig("bolsigdb_out.dat", "total_cross_sections_paschen.txt", runs=100, gas_density=2.445692e25, coefficient_type="townsend", transport_factor=1, rate_factor=1)
+#read_bolsig("bolsigdb_out.dat", "total_cross_sections_paschen.txt", runs=100, gas_density=2.445692e25, coefficient_type="townsend", transport_factor=1, rate_factor=1)
+read_bolsig("bolsigdb_out.dat", runs=100, gas_density=2.445692e25, coefficient_type="townsend", transport_factor=1, rate_factor=1)

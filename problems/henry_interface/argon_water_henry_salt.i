@@ -15,19 +15,20 @@ dom1Scale=1.0
 [Mesh]
   [./geo]
     type = FileMeshGenerator
-    file = 'mesh.msh'
+    #file = 'mesh_100um.msh'
+    file = 'mesh_1000um.msh'
   [../]
 
   [./interface1]
     type = SideSetsBetweenSubdomainsGenerator
-    master_block = '0'
+    primary_block = '0'
     paired_block = '1'
     new_boundary = 'gas_right'
     input = geo
   [../]
   [./interface2]
     type = SideSetsBetweenSubdomainsGenerator
-    master_block = '1'
+    primary_block = '1'
     paired_block = '0'
     new_boundary = 'water_left'
     input = interface1
@@ -113,7 +114,7 @@ dom1Scale=1.0
   #[./m2_kV_1um_02]
   #[./m1_kV_1um_02]
   #[m1_kV_1um_02]
-  [out_02]
+  [out_012]
     type = Exodus
   [../]
 []
@@ -156,6 +157,7 @@ dom1Scale=1.0
     # Missing Na+, Cl-, NO2-, NO2_2-, NO3-, NO3_2-
     #charged_particle = 'em_aq OHm_aq'
     #Neutrals = 'OH_aq'
+    #charged_particle = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq Nap Clm'
     charged_particle = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq'
     Neutrals = 'H_aq H2O2_aq OH_aq O2_aq O_aq H2_aq HO2_aq O3_aq HO3_aq'
     #Is_potential_unique = false
@@ -166,9 +168,30 @@ dom1Scale=1.0
     position_units = ${dom1Scale}
     block = 1
   [../]
+  [./Salt]
+    # Different offset
+    charged_particle = 'Nap Clm'
+    #Is_potential_unique = false
+    First_DriftDiffusionActionAD_in_block = false
+    potential = potential
+    using_offset = true
+    offset = 13
+    use_ad = true
+    position_units = ${dom1Scale}
+    block = 1
+  [../]
 []
 
 [Variables]
+  # Salts!
+  [./Nap]
+    block = 1
+    initial_condition = 4.60517
+  [../]
+  [./Clm]
+    block = 1
+    initial_condition = 4.60517
+  [../]
   [H2O]
     block = 0
     #initial_condition = 0.0367321
@@ -607,7 +630,7 @@ dom1Scale=1.0
   [rholiq_calc]
     type = ChargeDensity
     variable = rholiq
-    charged = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq'
+    charged = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq Nap Clm'
     execute_on = 'INITIAL TIMESTEP_END'
     block = 1
   []
@@ -825,9 +848,235 @@ dom1Scale=1.0
     neighbor_position_units = ${dom0Scale}
     boundary = 'water_left'
   []
+
+  # Ions are either allowed to enter directly or charge exchange 
+  # at the interface (essentially reacting with a sticking coefficient of
+  # 1) em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq
+  # IONS - 
+  # Arp  -> H2Op_aq
+  # Ar2p -> H2Op_aq
+  # H2Op -> H2Op_aq
+  # OHp  -> H2Op_aq
+  # OHm  -> OHm_aq
+  # Om   -> Om_aq
+  # O2m  -> O2m_aq
+  # O2p  -> H2Op_aq
+  # Hp   -> H3Op_aq
+  # 
+  [./Arp_advection]
+    type = ADInterfaceAdvection
+    potential_neighbor = potential
+    neighbor_var = Arp
+    variable = H2Op_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+  [./Arp_diffusion]
+    #type = InterfaceLogDiffusionElectrons
+    type = ADInterfaceLogDiffusion
+    neighbor_var = Arp
+    variable = H2Op_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+
+  [./Ar2p_advection]
+    type = ADInterfaceAdvection
+    potential_neighbor = potential
+    neighbor_var = Ar2p 
+    variable = H2Op_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+  [./Ar2p_diffusion]
+    #type = InterfaceLogDiffusionElectrons
+    type = ADInterfaceLogDiffusion
+    neighbor_var = Ar2p 
+    variable = H2Op_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+
+  [./H2Op_advection]
+    type = ADInterfaceAdvection
+    potential_neighbor = potential
+    neighbor_var = H2Op 
+    variable = H2Op_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+  [./H2Op_diffusion]
+    #type = InterfaceLogDiffusionElectrons
+    type = ADInterfaceLogDiffusion
+    neighbor_var = H2Op
+    variable = H2Op_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+
+  [./OHp_advection]
+    type = ADInterfaceAdvection
+    potential_neighbor = potential
+    neighbor_var = OHp
+    variable = H2Op_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+  [./OHp_diffusion]
+    #type = InterfaceLogDiffusionElectrons
+    type = ADInterfaceLogDiffusion
+    neighbor_var = OHp
+    variable = H2Op_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+
+  [./OHm_advection]
+    type = ADInterfaceAdvection
+    potential_neighbor = potential
+    neighbor_var = OHm 
+    variable = OHm_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+  [./OHm_diffusion]
+    #type = InterfaceLogDiffusionElectrons
+    type = ADInterfaceLogDiffusion
+    neighbor_var = OHm 
+    variable = OHm_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+
+  [./Om_advection]
+    type = ADInterfaceAdvection
+    potential_neighbor = potential
+    neighbor_var = Om 
+    variable = Om_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+  [./Om_diffusion]
+    #type = InterfaceLogDiffusionElectrons
+    type = ADInterfaceLogDiffusion
+    neighbor_var = Om
+    variable = Om_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+
+  [./O2m_advection]
+    type = ADInterfaceAdvection
+    potential_neighbor = potential
+    neighbor_var = O2m
+    variable = O2m_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+  [./O2m_diffusion]
+    #type = InterfaceLogDiffusionElectrons
+    type = ADInterfaceLogDiffusion
+    neighbor_var = O2m 
+    variable = O2m_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+
+  [./O2p_advection]
+    type = ADInterfaceAdvection
+    potential_neighbor = potential
+    neighbor_var = O2p 
+    variable = H2Op_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+  [./O2p_diffusion]
+    #type = InterfaceLogDiffusionElectrons
+    type = ADInterfaceLogDiffusion
+    neighbor_var = O2p 
+    variable = H2Op_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+
+  [./Hp_advection]
+    type = ADInterfaceAdvection
+    potential_neighbor = potential
+    neighbor_var = Hp 
+    variable = H3Op_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+  [./Hp_diffusion]
+    #type = InterfaceLogDiffusionElectrons
+    type = ADInterfaceLogDiffusion
+    neighbor_var = Hp
+    variable = H3Op_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+
 []
 
 [BCs]
+  #[Nap_right]
+  #  type = DirichletBC
+  #  variable = Nap
+  #  value = 4.60517
+  #  boundary = right
+  #[]
+  #[Clm_right]
+  #  type = DirichletBC
+  #  variable = Clm
+  #  value = 4.60517
+  #  boundary = right
+  #[]
+  [./Nap_right]
+    type = ADDCIonBC
+    variable = Nap
+    boundary = 'right'
+    potential = potential
+    position_units = ${dom1Scale}
+  [../]
+  [./Clm_right]
+    type = ADDCIonBC
+    variable = Clm
+    boundary = 'right'
+    potential = potential
+    position_units = ${dom1Scale}
+  [../]
+  #[Nap_right]
+  #  type = ADDriftDiffusionOpenBC
+  #  variable = Nap
+  #  potential = potential
+  #  boundary = 'right'
+  #  position_units = ${dom1Scale}
+  #[]
+  #[Clm_right]
+  #  type = ADDriftDiffusionOpenBC
+  #  variable = Clm
+  #  potential = potential
+  #  boundary = 'right'
+  #  position_units = ${dom1Scale}
+  #[]
   # H2O+ boundary conditions
   [./H2Op_physical_diffusion]
     type = ADHagelaarIonDiffusionBC
@@ -1335,6 +1584,23 @@ dom1Scale=1.0
 []
 
 [Materials]
+  # Salts!
+  [./Nap_mat]
+    type = ADHeavySpeciesMaterial
+    heavy_species_name = Nap
+    heavy_species_mass = 3.816e-26
+    heavy_species_charge = 1.0
+    diffusivity = 2e-9
+    block = 1
+  [../]
+  [./Clm_mat]
+    type = ADHeavySpeciesMaterial
+    heavy_species_name = Clm
+    heavy_species_mass = 5.887e-26
+    heavy_species_charge = -1.0
+    diffusivity = 2e-9
+    block = 1
+  [../]
   [./se_coefficient]
     type = GenericConstantMaterial
     prop_names = 'se_coeff'
