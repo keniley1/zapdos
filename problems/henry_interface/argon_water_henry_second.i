@@ -15,10 +15,7 @@ dom1Scale=1.0
 [Mesh]
   [./geo]
     type = FileMeshGenerator
-    #file = 'mesh.msh'
-    #file = 'mesh_1000um.msh'
-    #file = 'mesh_10um.msh'
-    file = 'mesh_10um_2.msh'
+    file = 'mesh_10um_second.msh'
   [../]
 
   [./interface1]
@@ -100,7 +97,7 @@ dom1Scale=1.0
   [./TimeStepper]
     type = IterationAdaptiveDT
     cutback_factor = 0.4
-    dt = 2e-16
+    dt = 2e-15
     #dt = 2.56e-13
     growth_factor = 1.4
     optimal_iterations = 10
@@ -116,8 +113,7 @@ dom1Scale=1.0
   #[./m2_kV_1um_02]
   #[./m1_kV_1um_02]
   #[m1_kV_1um_02]
-  #[out_011]
-  [out_08_4]
+  [out_09]
     type = Exodus
   [../]
 []
@@ -130,10 +126,9 @@ dom1Scale=1.0
   [./data_provider]
     type = ProvideMobility
     electrode_area = 5.02e-7 # Formerly 3.14e-6
-    ballast_resist = 1e6
-    #ballast_resist = 5e5
+    #ballast_resist = 1e6
+    ballast_resist = 5e5
     #ballast_resist = 2.5e5
-    #ballast_resist = 1e5
     e = 1.6e-19
     # electrode_area = 1.1
     # ballast_resist = 1.1
@@ -154,8 +149,8 @@ dom1Scale=1.0
     using_offset = true
     offset = 30
     use_ad = true
-    order = FIRST 
     position_units = ${dom0Scale}
+    order = SECOND 
     block = 0
   [../]
 
@@ -170,7 +165,7 @@ dom1Scale=1.0
     using_offset = true
     offset = 30
     use_ad = true
-    order = FIRST 
+    order = SECOND 
     position_units = ${dom1Scale}
     block = 1
   [../]
@@ -180,17 +175,21 @@ dom1Scale=1.0
   [H2O]
     block = 0
     #initial_condition = 0.0367321
+    order = SECOND
   []
   [H2Op]
     block = 0
     initial_condition = -25
+    order = SECOND
   []
   [Hp]
     block = 0
     initial_condition = -30
+    order = SECOND
   []
   [./potential]
     #block = 0
+    order = SECOND
   [../]
   #[./potential_liq]
   #  block = 1
@@ -198,44 +197,54 @@ dom1Scale=1.0
   [./em]
     block = 0
     initial_condition = -20
+    order = SECOND
   [../]
 
   [./Arp]
     block = 0
     initial_condition = -20.693147
+    order = SECOND
   [../]
   [./Ar2p]
     block = 0
     initial_condition = -20.693147
+    order = SECOND
   [../]
   [O2]
     block = 0
     initial_condition = -30
+    order = SECOND
   []
   [OHp]
     block = 0
     initial_condition = -30
+    order = SECOND
   []
   [OHm]
     block = 0
     initial_condition = -30
+    order = SECOND
   []
 
   [./Ars]
     block = 0
     initial_condition = -25
+    order = SECOND
   [../]
   [./Arss]
     block = 0
     initial_condition = -25
+    order = SECOND
   [../]
   [./Arsss]
     block = 0
     initial_condition = -25
+    order = SECOND
   [../]
   [./Ar2s]
     block = 0
     initial_condition = -25
+    order = SECOND
   [../]
   #[./Om]
   #  block = 0
@@ -250,64 +259,79 @@ dom1Scale=1.0
     block = 0
     initial_condition = -20
     # scaling = 1e-1
+    order = SECOND
   [../]
 
   # Humid Species (H2O, H2, O2, and their derivatives)
   [O2s]
     block = 0
     initial_condition = -30
+    order = SECOND
   []
   [O]
     block = 0
     initial_condition = -30
+    order = SECOND
   []
   [Om]
     block = 0
     initial_condition = -30
+    order = SECOND
   []
   [O2p]
     block = 0
     initial_condition = -30
+    order = SECOND
   []
   [O2m]
     block = 0
     initial_condition = -30
+    order = SECOND
   []
   [Os]
     block = 0
     initial_condition = -30
+    order = SECOND
   []
   [OH]
     block = 0
     initial_condition = -30
+    order = SECOND
   []
   [OHs]
     block = 0
     initial_condition = -30
+    order = SECOND
   []
   [H2]
     block = 0
     initial_condition = -30
+    order = SECOND
   []
   [H]
     block = 0
     initial_condition = -30
+    order = SECOND
   []
   [Hs]
     block = 0
     initial_condition = -30
+    order = SECOND
   []
   [O3]
     block = 0
     initial_condition = -30
+    order = SECOND
   []
   [HO2]
     block = 0
     initial_condition = -30
+    order = SECOND
   []
   [H2O2]
     block = 0
     initial_condition = -30
+    order = SECOND
   []
 
 
@@ -321,6 +345,7 @@ dom1Scale=1.0
     #initial_condition = -24
     #initial_condition = -20
     initial_condition = -16
+    order = SECOND
   [../]
 
   [./OHm_aq]
@@ -330,68 +355,84 @@ dom1Scale=1.0
     #initial_condition = -21
     #initial_condition = -9.210340
     initial_condition = -14
+    order = SECOND
   [../]
 
   [./OH_aq]
     block = 1
     initial_condition = -20
+    order = SECOND
   [../]
   [./H3Op_aq]
     block = 1
     #initial_condition = -20
     initial_condition = -14
+    order = SECOND
   [../]
   [./O2m_aq]
     block = 1
     initial_condition = -20
+    order = SECOND
   [../]
   [./HO2m_aq]
     block = 1
     initial_condition = -20
+    order = SECOND
   [../]
   [./H2Op_aq]
     block = 1
     initial_condition = -20
+    order = SECOND
   [../]
   [./O3m_aq]
     block = 1
     initial_condition = -20
+    order = SECOND
   [../]
   [./H_aq]
     block = 1
     initial_condition = -20
+    order = SECOND
   [../]
   [./H2O2_aq]
     block = 1
     initial_condition = -20
+    order = SECOND
   [../]
   [./O2_aq]
     block = 1
     initial_condition = -20
+    order = SECOND
   [../]
   [./O_aq]
     block = 1
     initial_condition = -20
+    order = SECOND
   [../]
   [./H2_aq]
     block = 1
     initial_condition = -20
+    order = SECOND
   [../]
   [./HO2_aq]
     block = 1
     initial_condition = -20
+    order = SECOND
   [../]
   [./HO3_aq]
     block = 1
     initial_condition = -20
+    order = SECOND
   [../]
   [./O3_aq]
     block = 1
     initial_condition = -20
+    order = SECOND
   [../]
   [./Om_aq]
     block = 1
     initial_condition = -20
+    order = SECOND
   [../]
 []
 
@@ -719,42 +760,6 @@ dom1Scale=1.0
 []
 
 [InterfaceKernels]
-  #[H2_g_to_l]
-  #  type = ADHenryDiffusion
-  #  variable = H2_aq
-  #  neighbor_var = H2 
-  #  h = 1.8e-2
-  #  position_units = ${dom1Scale}
-  #  neighbor_position_units = ${dom0Scale}
-  #  boundary = 'water_left'
-  #[]
-  #[H2_l_to_g]
-  #  type = ADHenryDiffusion
-  #  variable = H2
-  #  neighbor_var = H2_aq 
-  #  h = 55.5556
-  #  position_units = ${dom0Scale}
-  #  neighbor_position_units = ${dom1Scale}
-  #  boundary = 'gas_right'
-  #[]
-  #[H2_henry]
-  #  type = ADHenryInterface
-  #  variable = H2_aq
-  #  neighbor_var = H2 
-  #  h = 1.8e-2
-  #  position_units = ${dom1Scale}
-  #  neighbor_position_units = ${dom0Scale}
-  #  boundary = 'water_left'
-  #[]
-  #[H2_henry_liquid_to_gas]
-  #  type = ADHenryInterface
-  #  variable = H2
-  #  neighbor_var = H2_aq 
-  #  h = 55
-  #  position_units = ${dom1Scale}
-  #  neighbor_position_units = ${dom0Scale}
-  #  boundary = 'water_left'
-  #[]
   [./em_advection]
     type = ADInterfaceAdvection
     mean_en_neighbor = mean_en
@@ -832,6 +837,15 @@ dom1Scale=1.0
     variable = H_aq
     neighbor_var = H
     h = 6.48e3
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+    boundary = 'water_left'
+  []
+  [H2_henry]
+    type = ADHenryInterface
+    variable = H2_aq
+    neighbor_var = H2 
+    h = 1.8e-2
     position_units = ${dom1Scale}
     neighbor_position_units = ${dom0Scale}
     boundary = 'water_left'
@@ -1052,28 +1066,6 @@ dom1Scale=1.0
 []
 
 [BCs]
-  #[H2_henry_test]
-  #  type = MatchedValueLogBC
-  #  variable = H2
-  #  v = H2_aq
-  #  H = 55
-  #  boundary = 'gas_right'
-  #[]
-  [H2_aq_open]
-    type = ADDriftDiffusionOpenBC
-    variable = H2_aq
-    potential = potential
-    position_units = ${dom1Scale}
-    boundary = 'right'
-  []
-  [H2_bc_diffusion]
-    type = ADHagelaarIonDiffusionBC
-    variable = H2
-    boundary = 'left gas_right'
-    #boundary = 'left'
-    r = 0
-    position_units = ${dom0Scale}
-  []
   # H2O+ boundary conditions
   [./H2Op_physical_diffusion]
     type = ADHagelaarIonDiffusionBC
@@ -1234,6 +1226,13 @@ dom1Scale=1.0
   [Os_bc_diffusion]
     type = ADHagelaarIonDiffusionBC
     variable = Os
+    boundary = 'left gas_right'
+    r = 0
+    position_units = ${dom0Scale}
+  []
+  [H2_bc_diffusion]
+    type = ADHagelaarIonDiffusionBC
+    variable = H2
     boundary = 'left gas_right'
     r = 0
     position_units = ${dom0Scale}
@@ -2019,6 +2018,7 @@ dom1Scale=1.0
 []
 
 [Reactions]
+  active = 'Argon water2'
   [./Argon]
     #species = 'em Arp Ar2p Ars Arss Arsss OH H2O O2 O2p O2m O2s Om O Os H2O H2Op H2 H Hs O3 HO2 H2O2 OHm OHp OHs'
     species = 'em Arp Ar2p Ars Arss Arsss OH H2O O2 O2p O2m O2s Om O Os H2O H2Op H2 H Hs O3 HO2 H2O2 OHm OHp OHs Hp'
@@ -2285,7 +2285,8 @@ dom1Scale=1.0
                  em_aq + H2Op_aq -> H_aq + OH_aq            : 6e8 
                  # The units on this next one make no sense and have no consistency 
                  # across literature. This is the Buxton value (halved)
-                 #em_aq + H_aq + H2O_aq -> H2_aq + OHm_aq    : 2.5e7
+                 em_aq + em_aq -> H2_aq + OHm_aq + OHm_aq   : 5.5e6 
+                 em_aq + H_aq + H2O_aq -> H2_aq + OHm_aq    : 2.5e7
                  em_aq + OH_aq -> OHm_aq                    : 3e7
                  # where does this one come from???
                  #em_aq + em_aq + H2O_aq -> OHm_aq + OHm_aq  : 2.2e4
@@ -2298,19 +2299,24 @@ dom1Scale=1.0
                  em_aq + O_aq -> Om_aq                          : 1.9e7
                  # This one is listed as 1e10 in Chens work. Completely different.
                  # I am going with this value because I have seen it in multiple references.
+                 H_aq + H2O_aq -> H2_aq + OH_aq                   : 1e-2
+                 H_aq + H_aq -> H2_aq                          : 7.5e6
                  H_aq + OH_aq -> H2O_aq                        : 7e6
                  H_aq + OHm_aq -> em_aq + H2O_aq                  : 2.2e4
                  H_aq + H2O2_aq -> OH_aq + H2O_aq                 : 9e4
+                 H2_aq + H2O2_aq -> H_aq + OH_aq + H2O_aq            : 6e3
                  H_aq + O2_aq -> HO2_aq                        : 2.1e7
                  H_aq + HO2_aq -> H2O2_aq                      : 1e7
                  O_aq + H2O_aq -> OH_aq + OH_aq                   : 1.3e1
                  O_aq + O2_aq -> O3_aq                         : 3e6
                  OH_aq + OH_aq -> H2O2_aq    : 5.5e6
                  OH_aq + Om_aq -> HO2m_aq    : 2e7
+                 OH_aq + H2_aq -> H_aq + H2O_aq     : 4.2e4
                  OH_aq + OHm_aq -> Om_aq + H2O_aq   : 1.3e7
                  OH_aq + HO2_aq -> H2O_aq + O2_aq   : 6e6
                  OH_aq + O2m_aq -> OHm_aq + O2_aq     : 8e6
                  Om_aq + H2O_aq -> OHm_aq + OH_aq     : 1.8e3
+                 Om_aq + H2_aq -> OHm_aq + H_aq       : 8e7
                  Om_aq + H2O2_aq -> O2m_aq + H2O_aq   : 5e5
                  Om_aq + HO2m_aq -> O2m_aq + OHm_aq   : 4e5
                  Om_aq + O2_aq -> O3m_aq           : 3.6e6
@@ -2383,25 +2389,6 @@ dom1Scale=1.0
                  HO3_aq -> O2_aq + OH_aq          : 1.1e5
                  H2O2_aq -> OH_aq + OH_aq               : 4.4e-9
                  HO2m_aq -> Om_aq + OH_aq         : 1e-5'
-  []
-
-  [water3]
-    name = 'test'
-    species = 'em_aq H2_aq OHm_aq H_aq Om_aq OH_aq'
-    aux_species = 'H2O_aq'
-    use_log = true
-    position_units = ${dom1Scale}
-    track_rates = true
-    reaction_coefficient_format = 'rate'
-    block = 1
-
-    reactions = 'em_aq + em_aq -> H2_aq + OHm_aq + OHm_aq   : 5.5e6 
-                 em_aq + H_aq -> H2_aq + OHm_aq             : 2.5e7
-                 H_aq + H2O_aq -> H2_aq + OH_aq                   : 1e-2
-                 H_aq + H_aq -> H2_aq                          : 7.5e6
-                 H2_aq + H2O2_aq -> H_aq + OH_aq + H2O_aq            : 6e3
-                 OH_aq + H2_aq -> H_aq + H2O_aq     : 4.2e4
-                 Om_aq + H2_aq -> OHm_aq + H_aq       : 8e7'
   []
 
   # More comprehensive reaction network is available in "Air plasma treatment
