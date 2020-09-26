@@ -105,6 +105,7 @@ dom1Scale=1.0
 [Outputs]
   # perf_graph = true
   #print_densityear_residuals = false
+  #[out_001um_02]
   [out_001um_02]
     type = Exodus
     interval = 4
@@ -134,7 +135,7 @@ dom1Scale=1.0
     electrons = em
     charged_particle = 'N2p N4p Np O2p O2m Om H2Op OHp OHm Hp'
     #Neutrals = 'H2O N2v N2s N2ss N2sss N Ns O2s O Os OH OHs H2 H Hs O3 HO2 H2O2 NO NO2 N2O NO3 N2O3 N2O4 N2O5' 
-    Neutrals = 'H2O N2s N2ss N2sss N Ns O2s O Os OH OHs H2 H Hs O3 HO2 H2O2 NO NO2 N2O NO3 N2O3 N2O4 N2O5' 
+    Neutrals = 'H2O N2s N2ss N2sss N Ns O2s O Os OH H2 H Hs O3 HO2 H2O2 NO NO2 N2O NO3 N2O3 N2O4 N2O5' 
     mean_energy = mean_en
     potential = potential
     is_potential_unique = false
@@ -620,7 +621,8 @@ dom1Scale=1.0
     variable = rholiq
     #charged = 'em_aq OH- H2O+ O- H3O+ HO2- O2- O3- H+ Na+ Cl-'
     #charged = 'em_aq OHm_aq'
-    charged = 'em_aq OHm_aq H3Op_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq NO2m_aq NO3m_aq OONOm_aq'
+    #charged = 'em_aq OHm_aq H3Op_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq NO2m_aq NO3m_aq OONOm_aq'
+    charged = 'em_aq OHm_aq H3Op_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq NO2m_aq NO3m_aq'
     execute_on = 'INITIAL TIMESTEP_END'
     block = 1
   []
@@ -751,15 +753,15 @@ dom1Scale=1.0
     neighbor_position_units = ${dom0Scale}
     boundary = 'water_left'
   []
-  [H2_henry]
-    type = ADHenryInterface
-    variable = H2_aq
-    neighbor_var = H2 
-    h = 1.8e-2
-    position_units = ${dom1Scale}
-    neighbor_position_units = ${dom0Scale}
-    boundary = 'water_left'
-  []
+  #[H2_henry]
+  #  type = ADHenryInterface
+  #  variable = H2_aq
+  #  neighbor_var = H2 
+  #  h = 1.8e-2
+  #  position_units = ${dom1Scale}
+  #  neighbor_position_units = ${dom0Scale}
+  #  boundary = 'water_left'
+  #[]
   [O_henry]
     type = ADHenryInterface
     variable = O_aq
@@ -862,6 +864,13 @@ dom1Scale=1.0
 []
 
 [BCs]
+  [H2_aq_open]
+    type = ADDriftDiffusionOpenBC
+    variable = H2_aq
+    potential = potential
+    position_units = ${dom1Scale}
+    boundary = 'right'
+  []
   # Evaporation boundary condition
   [H2O_right]
     type = DirichletBC
@@ -2659,8 +2668,7 @@ dom1Scale=1.0
                  em_aq + H2Op_aq -> H_aq + OH_aq            : 6e8 
                  # The units on this next one make no sense and have no consistency 
                  # across literature. This is the Buxton value (halved)
-                 em_aq + em_aq -> H2_aq + OHm_aq + OHm_aq   : 5.5e6 
-                 em_aq + H_aq + H2O_aq -> H2_aq + OHm_aq    : 2.5e7
+                 #em_aq + H_aq + H2O_aq -> H2_aq + OHm_aq    : 2.5e7
                  em_aq + OH_aq -> OHm_aq                    : 3e7
                  # where does this one come from???
                  #em_aq + em_aq + H2O_aq -> OHm_aq + OHm_aq  : 2.2e4
@@ -2673,34 +2681,42 @@ dom1Scale=1.0
                  em_aq + O_aq -> Om_aq                          : 1.9e7
                  # This one is listed as 1e10 in Chens work. Completely different.
                  # I am going with this value because I have seen it in multiple references.
-                 H_aq + H2O_aq -> H2_aq + OH_aq                   : 1e-2
-                 H_aq + H_aq -> H2_aq                          : 7.5e6
                  H_aq + OH_aq -> H2O_aq                        : 7e6
                  H_aq + OHm_aq -> em_aq + H2O_aq                  : 2.2e4
                  H_aq + H2O2_aq -> OH_aq + H2O_aq                 : 9e4
-                 H2_aq + H2O2_aq -> H_aq + OH_aq + H2O_aq            : 6e3
                  H_aq + O2_aq -> HO2_aq                        : 2.1e7
                  H_aq + HO2_aq -> H2O2_aq                      : 1e7
                  O_aq + H2O_aq -> OH_aq + OH_aq                   : 1.3e1
                  O_aq + O2_aq -> O3_aq                         : 3e6
                  OH_aq + OH_aq -> H2O2_aq    : 5.5e6
                  OH_aq + Om_aq -> HO2m_aq    : 2e7
-                 OH_aq + H2_aq -> H_aq + H2O_aq     : 4.2e4
                  OH_aq + OHm_aq -> Om_aq + H2O_aq   : 1.3e7
                  OH_aq + HO2_aq -> H2O_aq + O2_aq   : 6e6
                  OH_aq + O2m_aq -> OHm_aq + O2_aq     : 8e6
                  Om_aq + H2O_aq -> OHm_aq + OH_aq     : 1.8e3
-                 Om_aq + H2_aq -> OHm_aq + H_aq       : 8e7
                  Om_aq + H2O2_aq -> O2m_aq + H2O_aq   : 5e5
                  Om_aq + HO2m_aq -> O2m_aq + OHm_aq   : 4e5
                  Om_aq + O2_aq -> O3m_aq           : 3.6e6
+                 #Om_aq + O2m_aq + H2O_aq -> OHm_aq + OHm_aq + O2_aq   : 6e2
                  Om_aq + O2m_aq -> OHm_aq + OHm_aq + O2_aq   : 6e5
                  OH_aq + H2O2_aq -> H2O_aq + HO2_aq     : 2.7e4
                  OH_aq + HO2m_aq -> OHm_aq + HO2_aq     : 7.5e6
+                 # What the fuck
+                 #H2Op_aq + H2O_aq -> OHm_aq + HO2_aq    : 6
                  H2Op_aq + H2O_aq -> H3Op_aq + OH_aq    : 6
                  H3Op_aq + OHm_aq -> H_aq + OH_aq + H2O_aq     : 6e7
                  HO2_aq + H2O_aq -> H3Op_aq + O2m_aq        : 2
                  H3Op_aq + O2m_aq -> HO2_aq + H2O_aq        : 6e-2
+                 ##################################
+                 # HYDROGEN REACTIONS
+                 ##################################
+                 em_aq + em_aq -> H2_aq + OHm_aq + OHm_aq   : 5.5e6 
+                 em_aq + H_aq -> H2_aq + OHm_aq             : 2.5e7
+                 H_aq + H2O_aq -> H2_aq + OH_aq                   : 1e-2
+                 H_aq + H_aq -> H2_aq                          : 7.5e6
+                 H2_aq + H2O2_aq -> H_aq + OH_aq + H2O_aq            : 6e3
+                 OH_aq + H2_aq -> H_aq + H2O_aq     : 4.2e4
+                 Om_aq + H2_aq -> OHm_aq + H_aq       : 8e7
                  ##################################
                  # Additional reactions from Chen
                  #
