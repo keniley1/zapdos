@@ -88,6 +88,7 @@ validParams<AddDriftDiffusionActionAD>()
       "Additional_Outputs",
       "Current list of available ouputs options in this action: Current, ElectronTemperature,"
       " EField");
+  params.addParam<MooseEnum>("order", "FIRST", "The variable order.");
   return params;
 }
 
@@ -162,7 +163,9 @@ AddDriftDiffusionActionAD::act()
   auto fe_type = AddVariableAction::feType(_pars);
   auto type = AddVariableAction::determineType(fe_type, 1);
   auto var_params = _factory.getValidParams(type);
-  var_params.set<MooseEnum>("order") = "FIRST";
+  //var_params.set<MooseEnum>("order") = "FIRST";
+  var_params.set<MooseEnum>("order") = getParam<MooseEnum>("order");
+  //var_params.set<MooseEnum>("order") = "SECOND";
   var_params.set<MooseEnum>("family") = "LAGRANGE";
   var_params.set<std::vector<SubdomainName>>("block") =
       getParam<std::vector<SubdomainName>>("block");

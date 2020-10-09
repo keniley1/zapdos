@@ -1,7 +1,7 @@
-#dom0Scale=1.0
-#dom1Scale=1.0
-dom0Scale=1.0e-3
-dom1Scale=1.0e-4
+dom0Scale=1.0
+dom1Scale=1.0
+#dom0Scale=1.0e-3
+#dom1Scale=1.0e-4
 
 [GlobalParams]
   #offset = 20
@@ -17,8 +17,10 @@ dom1Scale=1.0e-4
 [Mesh]
   [./geo]
     type = FileMeshGenerator
-    file = 'gopalakrishnan_100um_scaled.msh'
-    #file = 'gopalakrishnan_1um.msh'
+    file = 'test_010um.msh'
+    #file = 'test_100um.msh'
+    #file = 'test_200um.msh'
+    #file = 'test_500um.msh'
   [../]
 
   [./interface1]
@@ -131,7 +133,7 @@ dom1Scale=1.0e-4
 [Outputs]
   # perf_graph = true
   #print_densityear_residuals = false
-  [out_100um_07]
+  [out_010um]
     type = Exodus
   [../]
 []
@@ -174,6 +176,8 @@ dom1Scale=1.0e-4
     #Neutrals = 'H OH H2 H2O2 O2 O HO2 O3 Ar_aq'
     # emliq OH- Arp_aq
     charged_particle = 'emliq OH- Arp_aq'
+    #charged_particle = 'emliq OH- Arp_aq H3O+'
+    #charged_particle = 'emliq OH-'
     is_potential_unique = false
     potential = potential
     using_offset = true
@@ -378,28 +382,34 @@ dom1Scale=1.0e-4
     family = MONOMIAL
     initial_condition = 0
   [../]
-  [./ADCurrent_em]
+  [./Current_em]
     order = CONSTANT
     family = MONOMIAL
     block = 0
     initial_condition = 0
   [../]
-  [./ADCurrent_emliq]
+  [./Current_emliq]
     order = CONSTANT
     family = MONOMIAL
     block = 1
     initial_condition = 0
   [../]
-  [./ADCurrent_Arp]
+  [./Current_Arp]
     order = CONSTANT
     family = MONOMIAL
     block = 0
     initial_condition = 0
   [../]
-  [./ADCurrent_OH-]
+  [./Current_OH-]
     block = 1
     order = CONSTANT
     family = MONOMIAL
+    initial_condition = 0
+  [../]
+  [./Current_Arp_aq]
+    order = CONSTANT
+    family = MONOMIAL
+    block = 1
     initial_condition = 0
   [../]
   [./tot_gas_current]
@@ -540,20 +550,21 @@ dom1Scale=1.0e-4
   #  execute_on = 'timestep_end'
   #  block = 0
   #[../]
-  #[rho_calc]
-  #  type = ChargeDensity
-  #  variable = rho
-  #  charged = 'em Arp'
-  #  execute_on = 'INITIAL TIMESTEP_END'
-  #  block = 0
-  #[]
-  #[rholiq_calc]
-  #  type = ChargeDensity
-  #  variable = rholiq
-  #  charged = 'emliq OH- H2O+ O- H3O+ HO2- O2- O3- H+ Na+ Cl-'
-  #  execute_on = 'INITIAL TIMESTEP_END'
-  #  block = 1
-  #[]
+  [rho_calc]
+    type = ChargeDensity
+    variable = rho
+    charged = 'em Arp'
+    execute_on = 'INITIAL TIMESTEP_END'
+    block = 0
+  []
+  [rholiq_calc]
+    type = ChargeDensity
+    variable = rholiq
+    #charged = 'emliq OH- H2O+ O- H3O+ HO2- O2- O3- H+ Na+ Cl-'
+    charged = 'emliq OH- Arp_aq'
+    execute_on = 'INITIAL TIMESTEP_END'
+    block = 1
+  []
   [./Efield_g]
     type = Efield
     component = 0
@@ -575,7 +586,7 @@ dom1Scale=1.0e-4
     type = ADCurrent
     potential = potential
     density_log = em
-    variable = ADCurrent_em
+    variable = Current_em
     art_diff = false
     block = 0
     position_units = ${dom0Scale}
@@ -585,7 +596,7 @@ dom1Scale=1.0e-4
     #potential = potential_liq
     potential = potential
     density_log = emliq
-    variable = ADCurrent_emliq
+    variable = Current_emliq
     art_diff = false
     block = 1
     position_units = ${dom1Scale}
@@ -594,7 +605,7 @@ dom1Scale=1.0e-4
     type = ADCurrent
     potential = potential
     density_log = Arp
-    variable = ADCurrent_Arp
+    variable = Current_Arp
     art_diff = false
     block = 0
     position_units = ${dom0Scale}
@@ -605,8 +616,17 @@ dom1Scale=1.0e-4
     #potential = potential_liq
     potential = potential
     density_log = OH-
-    variable = ADCurrent_OH-
+    variable = Current_OH-
     art_diff = false
+    position_units = ${dom1Scale}
+  [../]
+  [./Current_Arp_aq]
+    type = ADCurrent
+    potential = potential
+    density_log = Arp_aq
+    variable = Current_Arp_aq
+    art_diff = false
+    block = 1
     position_units = ${dom1Scale}
   [../]
   #[./tot_flux_OH-]
@@ -670,23 +690,23 @@ dom1Scale=1.0e-4
     neighbor_position_units = ${dom0Scale}
   [../]
 
-  [./Arp_advection]
-    type = ADInterfaceAdvection
-    potential_neighbor = potential
-    neighbor_var = Arp
-    variable = Arp_aq
-    boundary = master1_interface
-    position_units = ${dom1Scale}
-    neighbor_position_units = ${dom0Scale}
-  [../]
-  [./Arp_diffusion]
-    type = ADInterfaceLogDiffusion
-    neighbor_var = Arp
-    variable = Arp_aq
-    boundary = master1_interface
-    position_units = ${dom1Scale}
-    neighbor_position_units = ${dom0Scale}
-  [../]
+  #[./Arp_advection]
+  #  type = ADInterfaceAdvection
+  #  potential_neighbor = potential
+  #  neighbor_var = Arp
+  #  variable = Arp_aq
+  #  boundary = master1_interface
+  #  position_units = ${dom1Scale}
+  #  neighbor_position_units = ${dom0Scale}
+  #[../]
+  #[./Arp_diffusion]
+  #  type = ADInterfaceLogDiffusion
+  #  neighbor_var = Arp
+  #  variable = Arp_aq
+  #  boundary = master1_interface
+  #  position_units = ${dom1Scale}
+  #  neighbor_position_units = ${dom0Scale}
+  #[../]
 
   #[./water_interface]
   #  type = InterfaceFluxConservation
@@ -1325,7 +1345,8 @@ dom1Scale=1.0e-4
     mean_en = mean_en
     user_se_coeff = 0.05
     #property_tables_file = cpc_test/e_vals_test.txt
-    property_tables_file = '/Users/keniley/projects/zapdos/problems/argon_water_prelim_files/electron_mobility_diffusion.txt'
+    #property_tables_file = '/Users/keniley/projects/zapdos/problems/argon_water_prelim_files/electron_mobility_diffusion.txt'
+    property_tables_file = 'electron_mobility_diffusion.txt'
     block = 0
   [../]
   [gas_constants]
@@ -1607,7 +1628,8 @@ dom1Scale=1.0e-4
     electron_energy = 'mean_en'
     electron_density = 'em'
     #file_location = 'cpc_test'
-    file_location = '/Users/keniley/projects/zapdos/problems/argon_water_prelim_files/townsend'
+    #file_location = '/Users/keniley/projects/zapdos/problems/argon_water_prelim_files/townsend'
+    file_location = 'townsend'
     potential = 'potential'
     position_units = ${dom0Scale}
     use_log = true
@@ -1625,6 +1647,8 @@ dom1Scale=1.0e-4
     # Missing NO2-, NO2_2-, NO3-, NO3_2-
     #species = 'emliq OH- H2O+ O- H3O+ HO2- O2- O3- H OH H2 H2O2 O2 O HO2 O3 H+ Arp_aq Ar_aq'
     species = 'emliq OH- Arp_aq'
+    #species = 'emliq OH- Arp_aq H3O+'
+    #species = 'emliq OH- H2O+ H3O+'
     aux_species = 'H2O'
     use_log = true
     position_units = ${dom1Scale}
@@ -1634,13 +1658,14 @@ dom1Scale=1.0e-4
     reactions = 'emliq + H2O -> H + OH-               : 1.9e-2
                  emliq + emliq -> H2 + OH- + OH-      : 3.0703e8
                  Arp_aq + emliq + H2O -> Ar_aq + H2O  : 6e8'
+                 #Arp_aq + H2O -> Ar_aq + H3O+         : 1e8
+                 #emliq + H3O+ -> H + H2O              : 2.3e7
+                 #H3O+ + OH- -> H2O + H + OH           : 6e7'
                  #emliq + emliq -> H2 + OH- + OH-      : 5.5e9
-                 #emliq + H2O+ -> H + OH               : 6e8
                  #emliq + emliq -> H2 + OH- + OH-      : 3.0703e8
                  #emliq + H + H2O -> H2 + OH-          : 2.5e4
                  #emliq + OH -> OH-                    : 3e7
                  #emliq + O- + H2O -> OH + OH          : 2.2e4
-                 #emliq + H3O+ -> H + H2O              : 2.3e7
                  #emliq + H2O2 -> OH + OH-             : 1.1e7
                  #emliq + HO2- + H2O -> OH + OH- + OH- : 3.5e3
                  #emliq + O2 -> O2-                    : 1.9e7

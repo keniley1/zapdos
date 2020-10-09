@@ -113,5 +113,16 @@ def read_bolsig(bolsigdatafile, runs, gas_density, coefficient_type="rate", tran
             
     return None
 
-read_bolsig("bolsigdb_out.dat", runs=100, gas_density=2.445692e25, coefficient_type="townsend", transport_factor=1, rate_factor=1)
+# N2 69, O2 29
+#read_bolsig("bolsigdb_out.dat", runs=100, gas_density=2.445692e25, coefficient_type="townsend", transport_factor=1, rate_factor=1)
+
+# N2 80, O2 20
+#read_bolsig("bolsigdb_N2_80_O2_20_out.dat", runs=100, gas_density=2.445692e25, coefficient_type="townsend", transport_factor=1, rate_factor=1)
+
+# N2 89, O2 10
+#read_bolsig("bolsigdb_N2_90_O2_10_out.dat", runs=100, gas_density=2.445692e25, coefficient_type="townsend", transport_factor=1, rate_factor=1)
+
+# N2 99, O2 01
+read_bolsig("bolsigdb_N2_99_O2_01_out.dat", runs=100, gas_density=2.445692e25, coefficient_type="townsend", transport_factor=1, rate_factor=1)
+
 #read_bolsig("bolsigdb_out.dat", "argon_cs_data.dat", runs=100, gas_density=2.445692e25, coefficient_type="townsend", transport_factor=1, rate_factor=1)

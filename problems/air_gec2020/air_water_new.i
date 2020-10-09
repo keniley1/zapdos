@@ -112,9 +112,12 @@ dom1Scale=1.0
   #[out_001um_05] # R = 1 MOhm, O2 = 10%  
   #[out_001um_06] # R = 1 MOhm, O2 = 01%  
   #[out_001um_07] # R = 0.5 MOhm, O2 = 01%  
-  [out_new_R05MOhm]
+  #[out_new_R10MOhm]
+  #[out_new_R01MOhm]
+  #[out_new_R10MOhm_withO2]
+  [out_new_R01MOhm2]
     type = Exodus
-    interval = 4
+    interval = 2
   [../]
   #[out_R100MOhm_O2_01]
 []
@@ -128,7 +131,8 @@ dom1Scale=1.0
     type = ProvideMobility
     electrode_area = 5.02e-7 # Formerly 3.14e-6
     #ballast_resist = 1e6
-    ballast_resist = 0.5e6
+    ballast_resist = 1e5
+    #ballast_resist = 0.5e6
     #ballast_resist = 2.5e5
     e = 1.6e-19
     # electrode_area = 1.1
@@ -152,6 +156,17 @@ dom1Scale=1.0
     position_units = ${dom0Scale}
     block = 0
   [../]
+
+
+  #[O2_test]
+  #  Neutrals = 'O2'
+  #  using_offset = true
+  #  offset = -10
+  #  use_ad = true
+  #  position_units = ${dom0Scale}
+  #  First_DriftDiffusionActionAD_in_block = false
+  #  block = 0
+  #[]
 
   [./Water]
     #charged_particle = 'em_aq OHm_aq H3Op_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq NO2m_aq NO3m_aq OONOm_aq'
@@ -683,6 +698,15 @@ dom1Scale=1.0
 []
 
 [InterfaceKernels]
+  #[H2_henry]
+  #  type = ADHenryInterface
+  #  variable = H2
+  #  neighbor_var = H2_aq 
+  #  h = 55.56
+  #  position_units = ${dom0Scale}
+  #  neighbor_position_units = ${dom1Scale}
+  #  boundary = 'gas_right'
+  #[]
   [./em_advection]
     type = ADInterfaceAdvection
     potential_neighbor = potential
@@ -892,14 +916,14 @@ dom1Scale=1.0
     variable = H2O
     r = 0
     position_units = ${dom0Scale}
-    boundary = 'gas_right'
+    boundary = 'left'
   []
   [./potential_left]
     type = ADNeumannCircuitVoltageMoles_KV
     variable = potential
     boundary = left
     function = potential_bc_func
-    ip = 'N2p N4p Np O2p O2m Om H2Op OHp OHm'
+    ip = 'N2p N4p Np O2p O2m Om H2Op OHp OHm Hp'
     data_provider = data_provider
     em = em
     mean_en = mean_en
@@ -2375,6 +2399,10 @@ dom1Scale=1.0
     #species = 'em N2v N2p N4p N2s N2ss N2sss N Ns Np O2p O2m O2s Om O Os H2O H2Op H2 H Hs O3 HO2 H2O2 NO NO2 N2O NO3 N2O3 N2O4 N2O5 OHm OHp OH OHs Hp'
     species = 'em N2p N4p N2s N2ss N2sss N Ns Np O2p O2m O2s Om O Os H2O H2Op H2 H Hs O3 HO2 H2O2 NO NO2 N2O NO3 N2O3 N2O4 N2O5 OHm OHp OH Hp'
     aux_species = 'N2 O2'
+
+    # Testing with O2
+    #species = 'em N2p N4p N2s N2ss N2sss N Ns Np O2p O2m O2s Om O Os H2O H2Op H2 H Hs O3 HO2 H2O2 NO NO2 N2O NO3 N2O3 N2O4 N2O5 OHm OHp OH Hp O2'
+    #aux_species = 'N2'
     reaction_coefficient_format = 'townsend'
     #reaction_coefficient_format = 'rate'
     electron_energy = 'mean_en'

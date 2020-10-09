@@ -105,11 +105,17 @@ dom1Scale=1.0
 [Outputs]
   # perf_graph = true
   #print_densityear_residuals = false
-  #[out_001um_02]
-  [out_001um_02]
+  #[out_001um_01] # R = 1 MOhm, O2 = 29%
+  #[out_001um_02] # R = 0.5 MOhm, O2 = 29%
+  #[out_001um_03] # R = 0.5 MOhm, O2 = 10% 
+  #[out_001um_04] # R = 0.5 MOhm, O2 = 10% (with correct rate coefficients) 
+  #[out_001um_05] # R = 1 MOhm, O2 = 10%  
+  #[out_001um_06] # R = 1 MOhm, O2 = 01%  
+  [out_001um_07] # R = 0.5 MOhm, O2 = 01%  
     type = Exodus
     interval = 4
   [../]
+  #[out_R100MOhm_O2_01]
 []
 
 [Debug]
@@ -485,9 +491,9 @@ dom1Scale=1.0
     order = CONSTANT
     family = MONOMIAL
     #initial_condition = 3.701920755421197
-    #initial_condition = 3.6918704  # 99% N2,  1% O2
+    initial_condition = 3.6918704  # 99% N2,  1% O2
     #initial_condition = 3.5965602  # 90% N2, 10% O2
-    initial_condition = 3.3308363  # 71% N2, 29% O2
+    #initial_condition = 3.3308363  # 71% N2, 29% O2
     #initial_condition = 
   [../]
   [./O2]
@@ -495,9 +501,9 @@ dom1Scale=1.0
     order = CONSTANT
     family = MONOMIAL
     #initial_condition = 3.701920755421197
-    #initial_condition = -0.903249 # 99% N2,  1% O2
+    initial_condition = -0.903249 # 99% N2,  1% O2
     #initial_condition = 1.3993356 # 90% N2, 10% O2
-    initial_condition = 2.4640256 # 71% N2, 29% O2
+    #initial_condition = 2.4640256 # 71% N2, 29% O2
     #initial_condition = 
   [../]
 
@@ -1461,7 +1467,8 @@ dom1Scale=1.0
   []
   [./potential_bc_func]
     type = ParsedFunction
-    value = 3
+    #value = 3
+    value = 10
   [../]
   [./test_bc]
     type = ParsedFunction
@@ -1518,8 +1525,14 @@ dom1Scale=1.0
     potential = potential
     mean_en = mean_en
     user_se_coeff = 0.05
-    #property_tables_file = cpc_test/e_vals_test.txt
-    property_tables_file = 'data_files/electron_mobility_diffusion.txt'
+    # N2 69, O2 29
+    #property_tables_file = 'data_files/electron_mobility_diffusion.txt'
+
+    # N2 90, O2 10
+    #property_tables_file = 'data_N2_90_O2_10/electron_mobility_diffusion.txt'
+
+    # N2 99, O2 01 
+    property_tables_file = 'data_N2_99_O2_01/electron_mobility_diffusion.txt'
     block = 0
   [../]
   [gas_constants]
@@ -2363,7 +2376,14 @@ dom1Scale=1.0
     equation_constants = 'Tgas Tn'
     equation_values = '300 1'
     equation_variables = 'Te'
-    file_location = 'data_files'
+    # N2 69 O2 29
+    #file_location = 'data_files'
+
+    # N2 90 O2 10
+    #file_location = 'data_N2_90_O2_10'
+
+    # N2 99 O2 01
+    file_location = 'data_N2_99_O2_01'
     potential = 'potential'
     position_units = ${dom0Scale}
     use_log = true

@@ -117,7 +117,7 @@ dom1Scale=1.0
   #[./m1_kV_1um_02]
   #[m1_kV_1um_02]
   #[out_011]
-  [out_08_4]
+  #[out_08_4]
     type = Exodus
   [../]
 []
@@ -2341,7 +2341,8 @@ dom1Scale=1.0
                  # for a two body reaction since H2O is already included
                  #################################
                  O_aq + O_aq -> O2_aq          : 2.8e7
-                 em_aq + O2m_aq + H2O_aq -> HO2m_aq + OHm_aq   : 1.3e4
+                 #em_aq + O2m_aq + H2O_aq -> HO2m_aq + OHm_aq   : 1.3e4
+                 em_aq + O2m_aq -> HO2m_aq + OHm_aq   : 1.3e7
                  em_aq + HO2_aq -> HO2m_aq     : 2e7
                  em_aq + O2_aq -> O2m_aq       : 1.9e7
                  #em_aq + Om_aq + H2O_aq -> OHm_aq + OHm_aq     : 2.2e4
