@@ -108,15 +108,6 @@ ADGasElectronMoments::computeQpProperties()
                              (_mean_en[_qp].derivatives() - _em[_qp].derivatives()) *
                              _voltage_scaling * _time_units;
 
-  // Mean electron energy diffusivity and mobility:
-  _diffmean_en[_qp].value() = 5.0 / 3.0 * _diffem[_qp].value();
-
-  _diffmean_en[_qp].derivatives() = 5.0 / 3.0 * _diffem[_qp].derivatives();
-
-  _mumean_en[_qp].value() = 5.0 / 3.0 * _muem[_qp].value();
-
-  _mumean_en[_qp].derivatives() = 5.0 / 3.0 * _muem[_qp].derivatives();
-  */
   _diffem[_qp].value() =
       _diff_interpolation.sample(std::exp(_mean_en[_qp].value() - _em[_qp].value())) *
       _time_units;
