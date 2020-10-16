@@ -1,5 +1,5 @@
-dom0Scale=1.0
-dom1Scale=1.0
+dom0Scale=1e-3
+dom1Scale=1e-6
 
 [GlobalParams]
   #offset = 20
@@ -1559,125 +1559,125 @@ dom1Scale=1.0
   #[../]
 
   # WATER NEUTRAL BCs
-  [H_aq_diffusion]
-    type = ADHagelaarIonDiffusionBC
-    variable = H_aq 
-    boundary = 'right'
-    r = 0
-    position_units = ${dom1Scale}
-  []
-  [OH_aq_diffusion]
-    type = ADHagelaarIonDiffusionBC
-    variable = OH_aq 
-    boundary = 'right'
-    r = 0
-    position_units = ${dom1Scale}
-  []
-  [H2O2_aq_diffusion]
-    type = ADHagelaarIonDiffusionBC
-    variable = H2O2_aq 
-    boundary = 'right'
-    r = 0
-    position_units = ${dom1Scale}
-  []
-  [O2_aq_diffusion]
-    type = ADHagelaarIonDiffusionBC
-    variable = O2_aq 
-    boundary = 'right'
-    r = 0
-    position_units = ${dom1Scale}
-  []
-  [O_aq_diffusion]
-    type = ADHagelaarIonDiffusionBC
-    variable = O_aq 
-    boundary = 'right'
-    r = 0
-    position_units = ${dom1Scale}
-  []
-  [H2_aq_diffusion]
-    type = ADHagelaarIonDiffusionBC
-    variable = H2_aq 
-    boundary = 'right'
-    r = 0
-    position_units = ${dom1Scale}
-  []
-  [HO2_aq_diffusion]
-    type = ADHagelaarIonDiffusionBC
-    variable = HO2_aq 
-    boundary = 'right'
-    r = 0
-    position_units = ${dom1Scale}
-  []
-  [O3_aq_diffusion]
-    type = ADHagelaarIonDiffusionBC
-    variable = O3_aq 
-    boundary = 'right'
-    r = 0
-    position_units = ${dom1Scale}
-  []
-  [HO3_aq_diffusion]
-    type = ADHagelaarIonDiffusionBC
-    variable = HO3_aq 
-    boundary = 'right'
-    r = 0
-    position_units = ${dom1Scale}
-  []
-  [NO_aq_diffusion]
-    type = ADHagelaarIonDiffusionBC
-    variable = NO_aq 
-    boundary = 'right'
-    r = 0
-    position_units = ${dom1Scale}
-  []
-  [NO2_aq_diffusion]
-    type = ADHagelaarIonDiffusionBC
-    variable = NO2_aq 
-    boundary = 'right'
-    r = 0
-    position_units = ${dom1Scale}
-  []
-  [NO3_aq_diffusion]
-    type = ADHagelaarIonDiffusionBC
-    variable = NO3_aq 
-    boundary = 'right'
-    r = 0
-    position_units = ${dom1Scale}
-  []
-  [HNO2_aq_diffusion]
-    type = ADHagelaarIonDiffusionBC
-    variable = HNO2_aq 
-    boundary = 'right'
-    r = 0
-    position_units = ${dom1Scale}
-  []
-  [HNO3_aq_diffusion]
-    type = ADHagelaarIonDiffusionBC
-    variable = HNO3_aq 
-    boundary = 'right'
-    r = 0
-    position_units = ${dom1Scale}
-  []
-  [N2O3_aq_diffusion]
-    type = ADHagelaarIonDiffusionBC
-    variable = N2O3_aq 
-    boundary = 'right'
-    r = 0
-    position_units = ${dom1Scale}
-  []
-  [N2O4_aq_diffusion]
-    type = ADHagelaarIonDiffusionBC
-    variable = N2O4_aq 
-    boundary = 'right'
-    r = 0
-    position_units = ${dom1Scale}
-  []
-  [N2O5_aq_diffusion]
-    type = ADHagelaarIonDiffusionBC
-    variable = N2O5_aq 
-    boundary = 'right'
-    r = 0
-    position_units = ${dom1Scale}
-  []
+  #[H_aq_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = H_aq 
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[]
+  #[OH_aq_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = OH_aq 
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[]
+  #[H2O2_aq_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = H2O2_aq 
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[]
+  #[O2_aq_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = O2_aq 
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[]
+  #[O_aq_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = O_aq 
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[]
+  #[H2_aq_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = H2_aq 
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[]
+  #[HO2_aq_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = HO2_aq 
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[]
+  #[O3_aq_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = O3_aq 
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[]
+  #[HO3_aq_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = HO3_aq 
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[]
+  #[NO_aq_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = NO_aq 
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[]
+  #[NO2_aq_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = NO2_aq 
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[]
+  #[NO3_aq_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = NO3_aq 
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[]
+  #[HNO2_aq_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = HNO2_aq 
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[]
+  #[HNO3_aq_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = HNO3_aq 
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[]
+  #[N2O3_aq_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = N2O3_aq 
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[]
+  #[N2O4_aq_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = N2O4_aq 
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[]
+  #[N2O5_aq_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = N2O5_aq 
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[]
 []
 
 [ICs]
