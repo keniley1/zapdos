@@ -123,7 +123,7 @@ dom1Scale=1.0
   [../]
 []
 
-[DriftDiffusionActionAD]
+[DriftDiffusionAction]
   [./Plasma]
     electrons = em
     #charged_particle = 'Arp Ar2p H2Op OHp OHm Om O2m O2p'
@@ -145,7 +145,7 @@ dom1Scale=1.0
     # Missing Na+, Cl-, NO2-, NO2_2-, NO3-, NO3_2-
     #charged_particle = 'em_aq OHm_aq'
     #Neutrals = 'OH_aq'
-    charged_particle = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq Nap_aq Clm_aq'
+    charged_particle = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq'
     Neutrals = 'H_aq H2O2_aq OH_aq O2_aq O_aq H2_aq HO2_aq O3_aq HO3_aq'
     #Is_potential_unique = false
     potential = potential
@@ -156,9 +156,35 @@ dom1Scale=1.0
     position_units = ${dom1Scale}
     block = 1
   [../]
+  [./Salt]
+    # Missing Na+, Cl-, NO2-, NO2_2-, NO3-, NO3_2-
+    charged_particle = 'Nap_aq Clm_aq'
+    First_DriftDiffusionAction_in_block = false
+    potential = potential
+    using_offset = true
+    offset = -2.3026
+    use_ad = true
+    order = FIRST 
+    position_units = ${dom1Scale}
+    block = 1
+  [../]
 []
 
 [Variables]
+  [Nap_aq]
+    block = 1
+    # 100 mM
+    #initial_condition = 4.60517
+    # 10 mM
+    initial_condition = 2.3026
+  [] 
+  [Clm_aq]
+    block = 1
+    # 100 mM
+    #initial_condition = 4.60517
+    # 10 mM
+    initial_condition = 2.3026
+  [] 
   [H2O]
     block = 0
     #initial_condition = 0.0367321
