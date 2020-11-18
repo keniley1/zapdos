@@ -963,13 +963,13 @@ dom1Scale=1.0
   #  H = 55
   #  boundary = 'gas_right'
   #[]
-  [H2_aq_open]
-    type = ADDriftDiffusionOpenBC
-    variable = H2_aq
-    potential = potential
-    position_units = ${dom1Scale}
-    boundary = 'right'
-  []
+  #[H2_aq_open]
+  #  type = ADDriftDiffusionOpenBC
+  #  variable = H2_aq
+  #  potential = potential
+  #  position_units = ${dom1Scale}
+  #  boundary = 'right'
+  #[]
   [H2_bc_diffusion]
     type = ADHagelaarIonDiffusionBC
     variable = H2
@@ -1448,7 +1448,7 @@ dom1Scale=1.0
   [../]
   [./potential_bc_func]
     type = ParsedFunction
-    value = 0.8
+    value = -0.8
     #value = 1.0
   [../]
   [./test_bc]
@@ -2248,7 +2248,6 @@ dom1Scale=1.0
                  #em_aq + O2m_aq + H2O_aq -> HO2m_aq + OHm_aq   : 1.3e4
                  em_aq + O2m_aq -> HO2m_aq + OHm_aq   : 1.3e7
                  em_aq + HO2_aq -> HO2m_aq     : 2e7
-                 em_aq + O2_aq -> O2m_aq       : 1.9e7
                  #em_aq + Om_aq + H2O_aq -> OHm_aq + OHm_aq     : 2.2e4
                  # This one is listed with conflicting units in literature. 
                  # (Three body reaction with a two body reaction rate coefficient.)
