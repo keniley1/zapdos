@@ -82,7 +82,7 @@ dom1Scale=1.0
   # perf_graph = true
   #print_densityear_residuals = false
   #[out_2kV_330kOhm]
-  [out]
+  [out_01]
     type = Exodus
   []
 []
@@ -989,7 +989,8 @@ dom1Scale=1.0
   [./se_coefficient]
     type = GenericConstantMaterial
     prop_names = 'se_coeff'
-    prop_values = '0.01'
+    #prop_values = '0.01'
+    prop_values = '0.2'
     boundary = 'left right'
   [../]
  [./GasBasics]
@@ -1464,7 +1465,7 @@ dom1Scale=1.0
                  ##########################################
                  Ars + OH -> Ar + OHs           : 6.6e-11 
                  Arp + H -> Ar + Hp             : 1e-10
-                 Arp + H2 -> Ar + H2Op          : 1.1e-9
+                 #Arp + H2 -> Ar + H2Op          : 1.1e-9
                  Ar2p + H -> Ar + Ar + Hp       : 5e-11
                  Ar2p + OHm -> Ar + Ar + OH     : 1e-7
                  Ar2p + OHm -> Ar + Ar + O + H  : 1e-7
