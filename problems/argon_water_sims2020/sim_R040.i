@@ -69,8 +69,6 @@ dom1Scale=1.0
 
 [Executioner]
   type = Transient
-  #end_time = 1e-1
-  #end_time = 1e10
   end_time = 1e6
   automatic_scaling = true
   #compute_scaling_once = false
@@ -81,12 +79,6 @@ dom1Scale=1.0
   #solve_type = pjfnk
   petsc_options_iname = '-pc_type -pc_factor_shift-type -pc_factor_shift_amount'
   petsc_options_value = 'lu NONZERO 1.e-10'
-  #petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount -pc_factor_mat_solver_package'
-  #petsc_options_value = 'lu NONZERO 1.e-10 superlu_dist'
-  #petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount -pc_factor_mat_solver_package -snes_stol'
-  #petsc_options_value = 'lu NONZERO 1.e-10 mumps 0'
-  #petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount -snes_stol'
-  #petsc_options_value = 'lu NONZERO 1.e-10 0'
   nl_rel_tol = 1e-5
   nl_abs_tol = 1e-9
   dtmin = 1e-18
@@ -963,13 +955,13 @@ dom1Scale=1.0
   #  H = 55
   #  boundary = 'gas_right'
   #[]
-  [H2_aq_open]
-    type = ADDriftDiffusionOpenBC
-    variable = H2_aq
-    potential = potential
-    position_units = ${dom1Scale}
-    boundary = 'right'
-  []
+  #[H2_aq_open]
+  #  type = ADDriftDiffusionOpenBC
+  #  variable = H2_aq
+  #  potential = potential
+  #  position_units = ${dom1Scale}
+  #  boundary = 'right'
+  #[]
   [H2_bc_diffusion]
     type = ADHagelaarIonDiffusionBC
     variable = H2
@@ -1448,7 +1440,7 @@ dom1Scale=1.0
   [../]
   [./potential_bc_func]
     type = ParsedFunction
-    value = 0.8
+    value = -0.8
     #value = 1.0
   [../]
   [./test_bc]
@@ -1997,7 +1989,7 @@ dom1Scale=1.0
                  em + Arss -> em + em + Arp               : EEDF [-4.14] (C26_Ar1s4_Ionization_4.14_eV)
                  #em + Arsss -> em + em + Arp              : EEDF [] (C_Ar_Ionization__eV)
                  em + Arp -> Arsss                        : {4e-13*Te^(-0.5)}
-                 em + em + Arp -> Arsss + em              : {5e-27 * Te^(-4.5)}
+                 em + em + Arp -> Arsss + em              : {5e-27*Te^(-4.5)}
                  em + Ar2s -> Ar2p + em + em              : {9e-8*Te^0.7}
                  em + Ar2s -> Ar + Ar + em                : 1e-7
                  em + Ar2p -> Arsss + Ar                  : {5.38e-8*Te^(-0.66)}
@@ -2248,7 +2240,6 @@ dom1Scale=1.0
                  #em_aq + O2m_aq + H2O_aq -> HO2m_aq + OHm_aq   : 1.3e4
                  em_aq + O2m_aq -> HO2m_aq + OHm_aq   : 1.3e7
                  em_aq + HO2_aq -> HO2m_aq     : 2e7
-                 em_aq + O2_aq -> O2m_aq       : 1.9e7
                  #em_aq + Om_aq + H2O_aq -> OHm_aq + OHm_aq     : 2.2e4
                  # This one is listed with conflicting units in literature. 
                  # (Three body reaction with a two body reaction rate coefficient.)

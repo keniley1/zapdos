@@ -16,14 +16,14 @@ dom1Scale=1e-7
   [../]
   [./interface]
     type = SideSetsBetweenSubdomainsGenerator
-    master_block = '0'
+    primary_block = '0'
     paired_block = '1'
     new_boundary = 'master0_interface'
     input = file
   [../]
   [./interface_again]
     type = SideSetsBetweenSubdomainsGenerator
-    master_block = '1'
+    primary_block = '1'
     paired_block = '0'
     new_boundary = 'master1_interface'
     input = interface
@@ -86,7 +86,7 @@ dom1Scale=1e-7
   # print_linear_residuals = false
   [./out]
     type = Exodus
-    execute_on = 'final'
+    #execute_on = 'final'
   [../]
   [./dof_map]
     type = DOFMap
@@ -785,7 +785,8 @@ dom1Scale=1e-7
     potential = potential
     em = em
     ip = Arp
-    r = 0.99
+    #r = 0.99
+    r = 0
     position_units = ${dom0Scale}
   [../]
   [./mean_en_physical_left]
@@ -834,7 +835,8 @@ dom1Scale=1e-7
     boundary = 'master0_interface'
     potential = potential
     mean_en = mean_en
-    r = 0.99
+    #r = 0.99
+    r = 0
     position_units = ${dom0Scale}
   [../]
   [./Arp_physical_right_diffusion]
