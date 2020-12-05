@@ -10,37 +10,65 @@
 
 #include "TotalFlux.h"
 
+#include "metaphysicl/raw_type.h"
+
+using MetaPhysicL::raw_value;
+
 registerMooseObject("ZapdosApp", TotalFlux);
+registerMooseObject("ZapdosApp", ADTotalFlux);
 
-template <>
+template <bool is_ad>
 InputParameters
-validParams<TotalFlux>()
+TotalFluxTempl<is_ad>::validParams()
 {
-  InputParameters params = validParams<AuxKernel>();
-
-  params.addRequiredCoupledVar("density_log", "The electron density");
-  params.addRequiredCoupledVar("potential", "The potential");
-  params.addClassDescription("Returns the total flux of defined species");
-
+  InputParameters params = AuxKernel::validParams();
+  params.addRequiredCoupledVar(
+      "potential", "The gradient of the potential will be used to compute the advection velocity.");
+  params.addRequiredCoupledVar("density_log", "The variable representing the log of the density.");
+  params.addRequiredParam<Real>("position_units", "Units of position.");
+  params.addClassDescription("Returns the electric field driven advective flux of defined species");
   return params;
 }
 
-TotalFlux::TotalFlux(const InputParameters & parameters)
+template <bool is_ad>
+TotalFluxTempl<is_ad>::TotalFluxTempl(const InputParameters & parameters)
   : AuxKernel(parameters),
+    _r_units(1. / getParam<Real>("position_units")),
+
+    // Coupled variables
 
     _density_var(*getVar("density_log", 0)),
     _density_log(coupledValue("density_log")),
     _grad_density_log(coupledGradient("density_log")),
     _grad_potential(coupledGradient("potential")),
-    _mu(getMaterialProperty<Real>("mu" + _density_var.name())),
-    _sgn(getMaterialProperty<Real>("sgn" + _density_var.name())),
-    _diff(getMaterialProperty<Real>("diff" + _density_var.name()))
+
+    // Material properties
+
+    _mu(getGenericMaterialProperty<Real, is_ad>("mu" + _density_var.name())),
+    _diff(getGenericMaterialProperty<Real, is_ad>("diff" + _density_var.name())),
+    _sgn(getMaterialProperty<Real>("sgn" + _density_var.name()))
 {
 }
 
+template <bool is_ad>
+Real
+TotalFluxTempl<is_ad>::computeValue()
+{
+  return _sgn[_qp] * raw_value(_mu[_qp]) * -_grad_potential[_qp](0) * std::exp(_density_log[_qp]) -
+         raw_value(_diff[_qp]) * std::exp(_density_log[_qp]) * _grad_density_log[_qp](0);
+  /*
+  return _sgn[_qp] * raw_value(_mu[_qp]) * std::exp(_density_log[_qp]) * -_grad_potential[_qp](0) *
+         _r_units * 6.02e23;
+         */
+}
+
+template class TotalFluxTempl<false>;
+template class TotalFluxTempl<true>;
+/*
 Real
 TotalFlux::computeValue()
 {
   return _sgn[_qp] * _mu[_qp] * -_grad_potential[_qp](0) * std::exp(_density_log[_qp]) -
          _diff[_qp] * std::exp(_density_log[_qp]) * _grad_density_log[_qp](0);
 }
+*/

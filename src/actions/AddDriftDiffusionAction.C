@@ -79,6 +79,7 @@ validParams<AddDriftDiffusionAction>()
   params.addParam<std::vector<SubdomainName>>("block",
                                               "The subdomain that this action applies to.");
   params.addRequiredParam<Real>("position_units", "Units of position");
+  params.addParam<MooseEnum>("order", "FIRST", "The order of the problem.");
   params.addParam<bool>("using_offset", false, "Is the LogStabilizationMoles Kernel being used");
   params.addParam<Real>(
       "offset", 20.0, "The offset parameter that goes into the exponential function");
@@ -162,7 +163,8 @@ AddDriftDiffusionAction::act()
   auto fe_type = AddVariableAction::feType(_pars);
   auto type = AddVariableAction::determineType(fe_type, 1);
   auto var_params = _factory.getValidParams(type);
-  var_params.set<MooseEnum>("order") = "FIRST";
+  //var_params.set<MooseEnum>("order") = "FIRST";
+  var_params.set<MooseEnum>("order") = getParam<MooseEnum>("order");
   var_params.set<MooseEnum>("family") = "LAGRANGE";
   var_params.set<std::vector<SubdomainName>>("block") =
       getParam<std::vector<SubdomainName>>("block");
@@ -284,6 +286,24 @@ AddDriftDiffusionAction::act()
               type,
               "EField" + dir + Moose::stringify(getParam<std::vector<SubdomainName>>("block")),
               aux_params);
+        }
+      }
+
+      else if (output_name == "Flux")
+      {
+        if (em_present)
+          _problem->addAuxVariable(type, "Flux_" + em_name, aux_params);
+
+        for (unsigned int cur_num = 0; cur_num < number_ions; cur_num++)
+        {
+          std::string ion_name = Ions[cur_num];
+          _problem->addAuxVariable(type, "Flux_" + ion_name, aux_params);
+        }
+
+        for (unsigned int cur_num = 0; cur_num < number_sec_particle; cur_num++)
+        {
+          std::string sec_particle_name = sec_particle[cur_num];
+          _problem->addAuxVariable(type, "Flux_" + sec_particle_name, aux_params);
         }
       }
 
@@ -475,6 +495,27 @@ AddDriftDiffusionAction::act()
         params.set<std::vector<SubdomainName>>("block") =
             getParam<std::vector<SubdomainName>>("block");
         _problem->addAuxKernel("ElectronTemperature", "e_temp", params);
+      }
+
+      if (output_name == "Flux")
+      {
+        if (em_present)
+        {
+          addFlux(em_name, potential_name);
+        }
+
+        for (unsigned int cur_num = 0; cur_num < number_ions; cur_num++)
+        {
+          std::string ion_name = Ions[cur_num];
+          addFlux(ion_name, potential_name);
+        }
+
+        for (unsigned int cur_num = 0; cur_num < number_sec_particle; cur_num++)
+        {
+          std::string sec_particle_name = sec_particle[cur_num];
+          std::string eff_potentials_name = eff_potentials[cur_num];
+          addFlux(sec_particle_name, eff_potentials_name);
+        }
       }
     }
   }
@@ -716,6 +757,7 @@ AddDriftDiffusionAction::addDensityLog(const std::string & particle_name)
   params.set<std::vector<VariableName>>("density_log") = {particle_name};
   params.set<bool>("use_moles") = getParam<bool>("use_moles");
   params.set<std::vector<SubdomainName>>("block") = getParam<std::vector<SubdomainName>>("block");
+  params.set<ExecFlagEnum>("execute_on") = "initial timestep_end";
   _problem->addAuxKernel("DensityMoles", particle_name + "_density", params);
 }
 
@@ -731,6 +773,21 @@ AddDriftDiffusionAction::addCurrent(const std::string & particle_name,
   params.set<Real>("position_units") = getParam<Real>("position_units");
   params.set<std::vector<SubdomainName>>("block") = getParam<std::vector<SubdomainName>>("block");
   _problem->addAuxKernel(_ad_prepend + "Current", "Current_" + particle_name, params);
+}
+
+// Adding the Aux kernels for flux
+void
+AddDriftDiffusionAction::addFlux(const std::string & particle_name,
+                                    const std::string & potential_name)
+{
+  InputParameters params = _factory.getValidParams("TotalFlux");
+  params.set<AuxVariableName>("variable") = {"Flux_" + particle_name};
+  params.set<std::vector<VariableName>>("potential") = {potential_name};
+  params.set<std::vector<VariableName>>("density_log") = {particle_name};
+  params.set<Real>("position_units") = getParam<Real>("position_units");
+  params.set<ExecFlagEnum>("execute_on") = "initial timestep_end";
+  params.set<std::vector<SubdomainName>>("block") = getParam<std::vector<SubdomainName>>("block");
+  _problem->addAuxKernel(_ad_prepend + "TotalFlux", "Flux_" + particle_name, params);
 }
 
 // Adding the Aux kernels for the Efield
