@@ -84,7 +84,7 @@ dom0Scale=1
   # Now "surface_charge" will appear as an AuxVariable in
   # the exodus file.
   perf_graph = true
-  [./out]
+  [./out_01]
     type = Exodus
   [../]
 []
@@ -111,7 +111,7 @@ dom0Scale=1
     potential = potential
     mean_energy = mean_en
     using_offset = false
-    offset = 40
+    offset = 30
     use_ad = true
     position_units = ${dom0Scale}
     Additional_Outputs = 'ElectronTemperature'
@@ -157,15 +157,15 @@ dom0Scale=1
   ######
   # HAGELAAR BCS
   ######
-  [./em_physical_bc]
-    type = ADHagelaarElectronBC
-    variable = em
-    boundary = 'left right'
-    potential = potential
-    mean_en = mean_en
-    r = 0.0
-    position_units = ${dom0Scale}
-  [../]
+  #[./em_physical_bc]
+  #  type = ADHagelaarElectronBC
+  #  variable = em
+  #  boundary = 'left right'
+  #  potential = potential
+  #  mean_en = mean_en
+  #  r = 0.0
+  #  position_units = ${dom0Scale}
+  #[../]
   [./sec_electrons_left]
     type = ADSecondaryElectronBC
     variable = em
@@ -176,15 +176,15 @@ dom0Scale=1
     r = 0
     position_units = ${dom0Scale}
   [../]
-  [./mean_en_physical]
-    type = ADHagelaarEnergyBC
-    variable = mean_en
-    boundary = 'left right'
-    potential = potential
-    em = em
-    r = 0
-    position_units = ${dom0Scale}
-  [../]
+  #[./mean_en_physical]
+  #  type = ADHagelaarEnergyBC
+  #  variable = mean_en
+  #  boundary = 'left right'
+  #  potential = potential
+  #  em = em
+  #  r = 0
+  #  position_units = ${dom0Scale}
+  #[../]
   [./secondary_energy_left]
     type = ADSecondaryElectronEnergyBC
     variable = mean_en
@@ -210,6 +210,32 @@ dom0Scale=1
     r = 0
     position_units = ${dom0Scale}
   [../]
+  [Arp_bc]
+    type = IonBC
+    variable = Arp
+    boundary = 'left right'
+    potential = potential
+    r = 0
+    position_units = ${dom0Scale}
+  []
+  [e_bc]
+    type = ElectronBC
+    variable = em
+    boundary = 'left right'
+    potential = potential
+    mean_en = mean_en
+    r = 0
+    position_units = ${dom0Scale}
+  []
+  [mean_en_bc]
+    type = ElectronEnergyBC
+    variable = mean_en
+    boundary = 'left right'
+    potential = potential
+    em = em
+    r = 0
+    position_units = ${dom0Scale}
+  []
   [./Arex_bcs]
     type = ADHagelaarIonDiffusionBC
     variable = Ar*
