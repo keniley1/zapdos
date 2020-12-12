@@ -159,7 +159,7 @@ dom1Scale=1.0
     #Is_potential_unique = false
     potential = potential
     using_offset = true
-    offset = 30
+    offset = 40
     use_ad = true
     order = FIRST 
     position_units = ${dom1Scale}
@@ -1002,20 +1002,20 @@ dom1Scale=1.0
 []
 
 [BCs]
-  [./Nap_aq_physical]
-    type = ADDCIonBC
-    variable = Nap_aq
-    boundary = 'right'
-    potential = potential
-    position_units = ${dom1Scale}
-  [../]
-  [./Clm_aq_physical]
-    type = ADDCIonBC
-    variable = Clm_aq
-    boundary = 'right'
-    potential = potential
-    position_units = ${dom1Scale}
-  [../]
+  #[./Nap_aq_physical]
+  #  type = ADDCIonBC
+  #  variable = Nap_aq
+  #  boundary = 'right'
+  #  potential = potential
+  #  position_units = ${dom1Scale}
+  #[../]
+  #[./Clm_aq_physical]
+  #  type = ADDCIonBC
+  #  variable = Clm_aq
+  #  boundary = 'right'
+  #  potential = potential
+  #  position_units = ${dom1Scale}
+  #[../]
   #[H2_henry_test]
   #  type = MatchedValueLogBC
   #  variable = H2

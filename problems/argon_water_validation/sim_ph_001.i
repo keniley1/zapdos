@@ -93,7 +93,7 @@ dom1Scale=1.0
 [Outputs]
   # perf_graph = true
   #print_densityear_residuals = false
-  [out]
+  [out_01]
     type = Exodus
   []
 []
@@ -497,84 +497,128 @@ dom1Scale=1.0
     family = MONOMIAL
     initial_condition = 0
   [../]
-  [./ADCurrent_em]
+  [./current_em]
     order = CONSTANT
     family = MONOMIAL
     block = 0
     initial_condition = 0
   [../]
-  [./ADCurrent_em_aq]
+  [./current_em_aq]
     order = CONSTANT
     family = MONOMIAL
     block = 1
     initial_condition = 0
   [../]
-  [./ADCurrent_Arp]
+  [./current_Arp]
     order = CONSTANT
     family = MONOMIAL
     block = 0
     initial_condition = 0
   [../]
-  [./ADCurrent_OHm_aq]
-    block = 1
+
+  [./current_Ar2p]
     order = CONSTANT
     family = MONOMIAL
+    block = 0
     initial_condition = 0
   [../]
+  [./current_H2Op]
+    order = CONSTANT
+    family = MONOMIAL
+    block = 0
+    initial_condition = 0
+  [../]
+  [./current_OHp]
+    order = CONSTANT
+    family = MONOMIAL
+    block = 0
+    initial_condition = 0
+  [../]
+  [./current_OHm]
+    order = CONSTANT
+    family = MONOMIAL
+    block = 0
+    initial_condition = 0
+  [../]
+  [./current_Om]
+    order = CONSTANT
+    family = MONOMIAL
+    block = 0
+    initial_condition = 0
+  [../]
+  [./current_O2m]
+    order = CONSTANT
+    family = MONOMIAL
+    block = 0
+    initial_condition = 0
+  [../]
+  [./current_O2p]
+    order = CONSTANT
+    family = MONOMIAL
+    block = 0
+    initial_condition = 0
+  [../]
+  [./current_Hp]
+    order = CONSTANT
+    family = MONOMIAL
+    block = 0
+    initial_condition = 0
+  [../]
+
   [./tot_gas_current]
     order = CONSTANT
     family = MONOMIAL
     block = 0
     initial_condition = 0
   [../]
-  [./tot_liq_current]
-    block = 1
-    order = CONSTANT
-    family = MONOMIAL
-    initial_condition = 0
-  [../]
-  [./tot_flux_OHm_aq]
-    block = 1
-    order = CONSTANT
-    family = MONOMIAL
-    initial_condition = 0
-  [../]
-  [./ADEFieldAdvAux_em]
-    order = CONSTANT
-    family = MONOMIAL
-    block = 0
-    initial_condition = 0
-  [../]
-  [./ADDiffusiveFlux_em]
-    order = CONSTANT
-    family = MONOMIAL
-    block = 0
-    initial_condition = 0
-  [../]
-  [./ADEFieldAdvAux_em_aq]
-    order = CONSTANT
-    family = MONOMIAL
-    block = 1
-    initial_condition = 0
-  [../]
-  [./ADDiffusiveFlux_em_aq]
-    order = CONSTANT
-    family = MONOMIAL
-    block = 1
-    initial_condition = 0
-  [../]
-  [./ADPowerDep_em]
-   order = CONSTANT
-   family = MONOMIAL
-   block = 0
-    initial_condition = 0
-  [../]
-  [./ADPowerDep_Arp]
-   order = CONSTANT
-   family = MONOMIAL
-   block = 0
-    initial_condition = 0
-  [../]
+  #[./tot_liq_current]
+  #  block = 1
+  #  order = CONSTANT
+  #  family = MONOMIAL
+  #  initial_condition = 0
+  #[../]
+  #[./tot_flux_OHm_aq]
+  #  block = 1
+  #  order = CONSTANT
+  #  family = MONOMIAL
+  #  initial_condition = 0
+  #[../]
+  #[./ADEFieldAdvAux_em]
+  #  order = CONSTANT
+  #  family = MONOMIAL
+  #  block = 0
+  #  initial_condition = 0
+  #[../]
+  #[./ADDiffusiveFlux_em]
+  #  order = CONSTANT
+  #  family = MONOMIAL
+  #  block = 0
+  #  initial_condition = 0
+  #[../]
+  #[./ADEFieldAdvAux_em_aq]
+  #  order = CONSTANT
+  #  family = MONOMIAL
+  #  block = 1
+  #  initial_condition = 0
+  #[../]
+  #[./ADDiffusiveFlux_em_aq]
+  #  order = CONSTANT
+  #  family = MONOMIAL
+  #  block = 1
+  #  initial_condition = 0
+  #[../]
+  #[./ADPowerDep_em]
+  # order = CONSTANT
+  # family = MONOMIAL
+  # block = 0
+  #  initial_condition = 0
+  #[../]
+  #[./ADPowerDep_Arp]
+  # order = CONSTANT
+  # family = MONOMIAL
+  # block = 0
+  #  initial_condition = 0
+  #[../]
 []
 
 [AuxKernels]
@@ -585,28 +629,28 @@ dom1Scale=1.0
     execute_on = 'initial timestep_end'
     block = 1
   [../]
-  [./ADPowerDep_em]
-    type = ADPowerDep
-    density_log = em
-    potential = potential
-    art_diff = false
-    execute_on = 'initial timestep_end'
-    potential_units = kV
-    variable = ADPowerDep_em
-    position_units = ${dom0Scale}
-    block = 0
-  [../]
-  [./ADPowerDep_Arp]
-    type = ADPowerDep
-    density_log = Arp
-    potential = potential
-    art_diff = false
-    potential_units = kV
-    variable = ADPowerDep_Arp
-    execute_on = 'initial timestep_end'
-    position_units = ${dom0Scale}
-    block = 0
-  [../]
+  #[./ADPowerDep_em]
+  #  type = ADPowerDep
+  #  density_log = em
+  #  potential = potential
+  #  art_diff = false
+  #  execute_on = 'initial timestep_end'
+  #  potential_units = kV
+  #  variable = ADPowerDep_em
+  #  position_units = ${dom0Scale}
+  #  block = 0
+  #[../]
+  #[./ADPowerDep_Arp]
+  #  type = ADPowerDep
+  #  density_log = Arp
+  #  potential = potential
+  #  art_diff = false
+  #  potential_units = kV
+  #  variable = ADPowerDep_Arp
+  #  execute_on = 'initial timestep_end'
+  #  position_units = ${dom0Scale}
+  #  block = 0
+  #[../]
   [./e_temp]
     type = ElectronTemperature
     variable = Te
@@ -651,6 +695,13 @@ dom1Scale=1.0
   #  execute_on = 'timestep_end'
   #  block = 0
   #[../]
+  [total_current]
+    type = ParsedAux
+    variable = tot_gas_current
+    args = 'current_em current_Arp current_Ar2p current_H2Op  current_OHp  current_OHm  current_Om  current_O2m  current_O2p  current_Hp'  
+    function = 'current_em + current_Arp + current_Ar2p + current_H2Op +  current_OHp +  current_OHm +  current_Om +  current_O2m +  current_O2p +  current_Hp'
+    block = 0
+  []
   [rho_calc]
     type = ChargeDensity
     variable = rho
@@ -686,7 +737,7 @@ dom1Scale=1.0
     type = ADCurrent
     potential = potential
     density_log = em
-    variable = ADCurrent_em
+    variable = current_em
     art_diff = false
     block = 0
     position_units = ${dom0Scale}
@@ -696,7 +747,7 @@ dom1Scale=1.0
     #potential = potential_liq
     potential = potential
     density_log = em_aq
-    variable = ADCurrent_em_aq
+    variable = current_em_aq
     art_diff = false
     block = 1
     position_units = ${dom1Scale}
@@ -705,21 +756,94 @@ dom1Scale=1.0
     type = ADCurrent
     potential = potential
     density_log = Arp
-    variable = ADCurrent_Arp
+    variable = current_Arp
     art_diff = false
     block = 0
     position_units = ${dom0Scale}
   [../]
-  [./ADCurrent_OHm_aq]
-    block = 1
+    charged_particle = 'Arp Ar2p H2Op OHp OHm Om O2m O2p Hp'
+  [./ADCurrent_Ar2p]
     type = ADCurrent
-    #potential = potential_liq
     potential = potential
-    density_log = OHm_aq
-    variable = ADCurrent_OHm_aq
+    density_log = Ar2p
+    variable = current_Ar2p
     art_diff = false
-    position_units = ${dom1Scale}
+    block = 0
+    position_units = ${dom0Scale}
   [../]
+  [./ADCurrent_H2Op]
+    type = ADCurrent
+    potential = potential
+    density_log = H2Op
+    variable = current_H2Op
+    art_diff = false
+    block = 0
+    position_units = ${dom0Scale}
+  [../]
+  [./ADCurrent_OHp]
+    type = ADCurrent
+    potential = potential
+    density_log = OHp
+    variable = current_OHp
+    art_diff = false
+    block = 0
+    position_units = ${dom0Scale}
+  [../]
+  [./ADCurrent_OHm]
+    type = ADCurrent
+    potential = potential
+    density_log = OHm
+    variable = current_OHm
+    art_diff = false
+    block = 0
+    position_units = ${dom0Scale}
+  [../]
+  [./ADCurrent_Om]
+    type = ADCurrent
+    potential = potential
+    density_log = Om
+    variable = current_Om
+    art_diff = false
+    block = 0
+    position_units = ${dom0Scale}
+  [../]
+  [./ADCurrent_O2m]
+    type = ADCurrent
+    potential = potential
+    density_log = O2m
+    variable = current_O2m
+    art_diff = false
+    block = 0
+    position_units = ${dom0Scale}
+  [../]
+  [./ADCurrent_O2p]
+    type = ADCurrent
+    potential = potential
+    density_log = O2p
+    variable = current_O2p
+    art_diff = false
+    block = 0
+    position_units = ${dom0Scale}
+  [../]
+  [./ADCurrent_Hp]
+    type = ADCurrent
+    potential = potential
+    density_log = Hp 
+    variable = current_Hp
+    art_diff = false
+    block = 0
+    position_units = ${dom0Scale}
+  [../]
+  #[./ADCurrent_OHm_aq]
+  #  block = 1
+  #  type = ADCurrent
+  #  #potential = potential_liq
+  #  potential = potential
+  #  density_log = OHm_aq
+  #  variable = ADCurrent_OHm_aq
+  #  art_diff = false
+  #  position_units = ${dom1Scale}
+  #[../]
   #[./tot_flux_OHm_aq]
   #  block = 1
   #  type = TotalFlux
@@ -728,37 +852,37 @@ dom1Scale=1.0
   #  density_log = OHm_aq
   #  variable = tot_flux_OHm_aq
   #[../]
-  [./ADEFieldAdvAux_em]
-    type = ADEFieldAdvAux
-    potential = potential
-    density_log = em
-    variable = ADEFieldAdvAux_em
-    block = 0
-    position_units = ${dom0Scale}
-  [../]
-  [./ADDiffusiveFlux_em]
-    type = ADDiffusiveFlux
-    density_log = em
-    variable = ADDiffusiveFlux_em
-    block = 0
-    position_units = ${dom0Scale}
-  [../]
-  [./ADEFieldAdvAux_em_aq]
-    type = ADEFieldAdvAux
-    #potential = potential_liq
-    potential = potential
-    density_log = em_aq
-    variable = ADEFieldAdvAux_em_aq
-    block = 1
-    position_units = ${dom1Scale}
-  [../]
-  [./ADDiffusiveFlux_em_aq]
-    type = ADDiffusiveFlux
-    density_log = em_aq
-    variable = ADDiffusiveFlux_em_aq
-    block = 1
-    position_units = ${dom1Scale}
-  [../]
+  #[./ADEFieldAdvAux_em]
+  #  type = ADEFieldAdvAux
+  #  potential = potential
+  #  density_log = em
+  #  variable = ADEFieldAdvAux_em
+  #  block = 0
+  #  position_units = ${dom0Scale}
+  #[../]
+  #[./ADDiffusiveFlux_em]
+  #  type = ADDiffusiveFlux
+  #  density_log = em
+  #  variable = ADDiffusiveFlux_em
+  #  block = 0
+  #  position_units = ${dom0Scale}
+  #[../]
+  #[./ADEFieldAdvAux_em_aq]
+  #  type = ADEFieldAdvAux
+  #  #potential = potential_liq
+  #  potential = potential
+  #  density_log = em_aq
+  #  variable = ADEFieldAdvAux_em_aq
+  #  block = 1
+  #  position_units = ${dom1Scale}
+  #[../]
+  #[./ADDiffusiveFlux_em_aq]
+  #  type = ADDiffusiveFlux
+  #  density_log = em_aq
+  #  variable = ADDiffusiveFlux_em_aq
+  #  block = 1
+  #  position_units = ${dom1Scale}
+  #[../]
 []
 
 [InterfaceKernels]
@@ -1002,20 +1126,20 @@ dom1Scale=1.0
 []
 
 [BCs]
-  [./Nap_aq_physical]
-    type = ADDCIonBC
-    variable = Nap_aq
-    boundary = 'right'
-    potential = potential
-    position_units = ${dom1Scale}
-  [../]
-  [./Clm_aq_physical]
-    type = ADDCIonBC
-    variable = Clm_aq
-    boundary = 'right'
-    potential = potential
-    position_units = ${dom1Scale}
-  [../]
+  #[./Nap_aq_physical]
+  #  type = ADDCIonBC
+  #  variable = Nap_aq
+  #  boundary = 'right'
+  #  potential = potential
+  #  position_units = ${dom1Scale}
+  #[../]
+  #[./Clm_aq_physical]
+  #  type = ADDCIonBC
+  #  variable = Clm_aq
+  #  boundary = 'right'
+  #  potential = potential
+  #  position_units = ${dom1Scale}
+  #[../]
   #[H2_henry_test]
   #  type = MatchedValueLogBC
   #  variable = H2
@@ -1508,8 +1632,10 @@ dom1Scale=1.0
   [../]
   [./potential_bc_func]
     type = ParsedFunction
-    value = -0.8
+    #value = -0.8
     #value = 1.0
+    # Used to match Necip's experiments
+    value = -1.5
   [../]
   [./test_bc]
     type = ParsedFunction
@@ -1521,7 +1647,7 @@ dom1Scale=1.0
   [../]
   [./potential_ic_func]
     type = ParsedFunction
-    value = '-0.8 * (1.001e-3 - x)'
+    value = '-1.5 * (1.001e-3 - x)'
   [../]
   [./charged_gas_ic]
     type = ParsedFunction
