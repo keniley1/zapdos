@@ -17,6 +17,7 @@ dom1Scale=1.0
 
 [Problem]
   type = FEProblem
+  coord_type = RZ
   # kernel_coverage_check = false
   #type = ReferenceResidualProblem
   #extra_tag_vectors = 'ref'
@@ -54,7 +55,7 @@ dom1Scale=1.0
   [./TimeStepper]
     type = IterationAdaptiveDT
     cutback_factor = 0.4
-    dt = 2e-16
+    dt = 2e-13
     growth_factor = 1.4
     optimal_iterations = 10
   [../]
@@ -65,6 +66,7 @@ dom1Scale=1.0
   #print_densityear_residuals = false
   [out_002]
     type = Exodus
+    interval = 10
   []
 []
 
@@ -109,7 +111,8 @@ dom1Scale=1.0
     #Neutrals = 'OH_aq'
     #charged_particle = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq'
     #Neutrals = 'H_aq H2O2_aq OH_aq O2_aq O_aq H2_aq HO2_aq O3_aq HO3_aq'
-    charged_particle = 'em_aq OHm_aq'
+    charged_particle = 'em_aq OHm_aq H3Op_aq'
+    #charged_particle = 'em_aq'
     #Is_potential_unique = false
     potential = potential
     using_offset = true
@@ -125,7 +128,8 @@ dom1Scale=1.0
     First_DriftDiffusionAction_in_block = false
     potential = potential
     using_offset = true
-    offset = -2.3026
+    #offset = -2.3026
+    offset = 40
     use_ad = true
     order = SECOND 
     position_units = ${dom1Scale}
@@ -165,6 +169,9 @@ dom1Scale=1.0
   [] 
 
   # Water Species
+  # e- starts at some small value
+  # (10^15 isn't exactly SMALL, but water density is O(10^28) so...
+  # small enough!)
   [./em_aq]
     block = 0
     order = SECOND
@@ -174,9 +181,10 @@ dom1Scale=1.0
     #initial_condition = -14
     #initial_condition = -24
     #initial_condition = -20
-    initial_condition = -12
+    initial_condition = -20
   [../]
 
+  # pH = 7 -- equal parts OH- and H3O+
   [./OHm_aq]
     block = 0
     order = SECOND
@@ -184,8 +192,15 @@ dom1Scale=1.0
     #initial_condition = -24
     #initial_condition = -21
     #initial_condition = -9.210340
-    initial_condition = -20
+    #initial_condition = -20
+    initial_condition = -16.1175
   [../]
+
+  [H3Op_aq]
+    block = 0
+    order = SECOND
+    initial_condition = -16.1175
+  []
 
   #[./OH_aq]
   #  block = 0
@@ -254,7 +269,7 @@ dom1Scale=1.0
   [bc_test]
     order = CONSTANT
     family = MONOMIAL
-    #initial_condition = 0
+    initial_condition = 0
     block = 0
   []
   [./H2O_aq]
@@ -284,7 +299,12 @@ dom1Scale=1.0
     family = MONOMIAL
     initial_condition = 0
   [../]
-  [./Efield]
+  [./Efield_x]
+    order = CONSTANT
+    family = MONOMIAL
+    initial_condition = 0
+  [../]
+  [./Efield_y]
     order = CONSTANT
     family = MONOMIAL
     initial_condition = 0
@@ -296,7 +316,7 @@ dom1Scale=1.0
     type = FunctionAux
     variable = bc_test
     function = electron_bc_gaussian
-    execute_on = 'initial'
+    execute_on = 'initial timestep_end'
   []
   [./H2O_aq_density]
     type = DensityMoles
@@ -323,16 +343,26 @@ dom1Scale=1.0
     type = ChargeDensity
     variable = rholiq
     #charged = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq'
-    charged = 'em_aq Nap_aq Clm_aq'
+    #charged = 'em_aq OHm_aq Nap_aq Clm_aq'
+    charged = 'em_aq'
     execute_on = 'INITIAL TIMESTEP_END'
     block = 0
   []
-  [./Efield_l]
+  [./Efield_x]
     type = Efield
     component = 0
     #potential = potential_liq
     potential = potential
-    variable = Efield
+    variable = Efield_x
+    position_units = ${dom1Scale}
+    block = 0
+  [../]
+  [./Efield_y]
+    type = Efield
+    component = 1
+    #potential = potential_liq
+    potential = potential
+    variable = Efield_y
     position_units = ${dom1Scale}
     block = 0
   [../]
@@ -468,16 +498,16 @@ dom1Scale=1.0
   [electron_bc_gaussian]
     type = ParsedFunction
     vars = 'sigma mu'
-    vals = '1e-4 0'
+    vals = '1e-5 0'
     #value = 'log(1/(sigma*sqrt(2*3.14159)) * exp(-0.5*(x-mu)^2/(sigma^2)))'
-    value = '0.05/(sigma*sqrt(2*3.14159)) * exp(-0.5*(x-mu)^2/(sigma^2))*sigma*sqrt(2*3.14159)'
+    value = '0.05 * exp(-0.5*(x-mu)^2/(sigma^2)) * tanh(1e9*t)'
   []
   [potential_bc_gaussian]
     type = ParsedFunction
     vars = 'sigma mu'
-    vals = '1e-4 0'
+    vals = '1e-5 0'
     #value = 'log(1/(sigma*sqrt(2*3.14159)) * exp(-0.5*(x-mu)^2/(sigma^2)))'
-    value = '1e-8/(sigma*sqrt(2*3.14159)) * exp(-0.5*(x-mu)^2/(2*sigma^2))*sigma*sqrt(2*3.14159)'
+    value = '1e-8 * exp(-0.5*(x-mu)^2/(2*sigma^2)) * tanh(1e9*t)'
   []
   [./water_ic_func]
     type = ParsedFunction
@@ -726,7 +756,8 @@ dom1Scale=1.0
   # Taken from Wei Tian's thesis
   # Note the difference in values (1 L = 1000 m^-3)
   [water2]
-    species = 'em_aq OHm_aq'
+    species = 'em_aq OHm_aq H3Op_aq'
+    #species = 'em_aq'
     aux_species = 'H2O_aq'
     use_log = true
     position_units = ${dom1Scale}
@@ -734,7 +765,9 @@ dom1Scale=1.0
     reaction_coefficient_format = 'rate'
     block = 0
 
-    reactions = 'em_aq + em_aq -> H2_aq + OHm_aq + OHm_aq   : 5.5e6'
+    reactions = 'em_aq + em_aq -> H2_aq + OHm_aq + OHm_aq   : 5.5e6
+                 em_aq + H3Op_aq -> H_aq + H2O_aq           : 2.5e7
+                 H3Op_aq + OHm_aq -> H_aq + OH_aq + H2O_aq  : 6e7'
     #reactions = 'em_aq + H2O_aq -> H_aq + OHm_aq            : 1.9e-2
     #             #em_aq + H2Op_aq -> H_aq + OH_aq            : 6e-8 
     #             em_aq + H2Op_aq -> H_aq + OH_aq            : 6e8 
