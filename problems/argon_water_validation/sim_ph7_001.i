@@ -92,7 +92,7 @@ dom1Scale=1.0
 [Outputs]
   # perf_graph = true
   #print_densityear_residuals = false
-  [out_01]
+  [out_03]
     type = Exodus
   []
 []
@@ -158,7 +158,7 @@ dom1Scale=1.0
     #Is_potential_unique = false
     potential = potential
     using_offset = true
-    offset = 40
+    offset = 30
     use_ad = true
     order = FIRST 
     position_units = ${dom1Scale}
@@ -170,8 +170,8 @@ dom1Scale=1.0
     First_DriftDiffusionAction_in_block = false
     potential = potential
     using_offset = true
-    #offset = -2.3026
-    offset = 40
+    offset = -2.3026
+    #offset = 30
     use_ad = true
     order = FIRST 
     position_units = ${dom1Scale}
@@ -210,7 +210,8 @@ dom1Scale=1.0
   [./H3Op_aq]
     block = 1
     #initial_condition = -20
-    initial_condition = -14
+    #initial_condition = -14
+    initial_condition = -9.21034
 
     # 1 mM added for decreased pH
     #initial_condition = 0
@@ -377,7 +378,8 @@ dom1Scale=1.0
     #initial_condition = -24
     #initial_condition = -21
     #initial_condition = -9.210340
-    initial_condition = -14
+    #initial_condition = -14
+    initial_condition = -9.21034
   [../]
 
   [./OH_aq]

@@ -158,20 +158,21 @@ dom1Scale=1.0
     #Is_potential_unique = false
     potential = potential
     using_offset = true
-    offset = 40
+    offset = 30
     use_ad = true
     order = FIRST 
     position_units = ${dom1Scale}
     block = 1
   [../]
   [./Salt]
+    # I hate this but I can't figure out what else to do...
     # Missing Na+, Cl-, NO2-, NO2_2-, NO3-, NO3_2-
     charged_particle = 'Nap_aq Clm_aq'
     First_DriftDiffusionAction_in_block = false
     potential = potential
     using_offset = true
-    #offset = -2.3026
-    offset = 40
+    offset = -2.3026
+    #offset = 30
     use_ad = true
     order = FIRST 
     position_units = ${dom1Scale}
@@ -213,7 +214,9 @@ dom1Scale=1.0
     #initial_condition = -14
 
     # 1 mM added for decreased pH
-    initial_condition = 0
+    # (1 mM + the 10^-4 mM already present from neutral pH)
+    #initial_condition = 0
+    initial_condition = 9.9995e-5
   [../]
 
   ################################
@@ -377,7 +380,9 @@ dom1Scale=1.0
     #initial_condition = -24
     #initial_condition = -21
     #initial_condition = -9.210340
-    initial_condition = -14
+
+    #initial_condition = -14
+    initial_condition = -9.21034
   [../]
 
   [./OH_aq]
