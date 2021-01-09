@@ -24,7 +24,6 @@ InterfaceDiffusionTest::validParams()
   params.addRequiredParam<Real>("position_units", "Units of position.");
   params.addRequiredParam<Real>("neighbor_position_units",
                                 "The units of position in the neighboring domain.");
-  params.addRequiredParam<Real>("h", "Henry's coefficient for this species.");
   params.addClassDescription(
       "Used to include the diffusive flux of species into or out of a neighboring"
       "subdomain. Currently specific to electrons.");
@@ -35,7 +34,6 @@ InterfaceDiffusionTest::InterfaceDiffusionTest(const InputParameters & parameter
   : ADInterfaceKernel(parameters),
     _r_units(1. / getParam<Real>("position_units")),
     _r_neighbor_units(1. / getParam<Real>("neighbor_position_units")),
-    _henry_coeff(getParam<Real>("h")),
 
     _diff(getADMaterialProperty<Real>("diff" + _var.name())),
     _diff_neighbor(getNeighborADMaterialProperty<Real>("diff" + _neighbor_var.name()))
@@ -50,35 +48,7 @@ InterfaceDiffusionTest::InterfaceDiffusionTest(const InputParameters & parameter
 ADReal
 InterfaceDiffusionTest::computeQpResidual(Moose::DGResidualType type)
 {
-  // if (_diffem[_qp] < std::numeric_limits<double>::epsilon())
-  //   mooseError("It doesn't appear that DG material properties got passed.");
-
   ADReal r = 0;
-
-  /*
-  num = _henry_coeff * std::exp(_neighbor_value[_qp]) - std::exp(_u[_qp]);
-
-  if (num > 0)
-  {
-    _diff_ij = _diff[_qp] * num / (_henry_coeff * std::exp(_neighbor_value[_qp]));
-  }
-  else
-  {
-    _diff_ij = 0;
-  }
-
-  switch (type)
-  {
-    case Moose::Element:
-      r = -_diff_ij * std::exp(_neighbor_value[_qp]) * _grad_neighbor_value[_qp] *
-          _r_neighbor_units * _normals[_qp] * _test[_i][_qp] * _r_units;
-      break;
-
-    case Moose::Neighbor:
-      r = 0.;
-      break;
-  }
-  */
 
   switch (type)
   {
