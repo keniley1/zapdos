@@ -1,5 +1,6 @@
 dom0Scale=1.0
 dom1Scale=1.0
+dom2Scale=1.0
 
 [GlobalParams]
   #offset = 20
@@ -16,7 +17,8 @@ dom1Scale=1.0
   [./geo]
     type = FileMeshGenerator
     #file = 'mesh_nowater.msh'
-    file = 'gas_water_mesh.msh'
+    #file = 'gas_water_mesh.msh'
+    file = 'cathode_gas_water_mesh.msh'
   [../]
 
   [./interface1]
@@ -140,7 +142,7 @@ dom1Scale=1.0
   [./Water]
     # Missing Na+, Cl-, NO2-, NO2_2-, NO3-, NO3_2-
     charged_particle = 'emliq OH-'
-    Neutrals = 'OH_aq'
+    #Neutrals = 'OH_aq'
     #Is_potential_unique = false
     potential = potential
     using_offset = true
@@ -170,6 +172,7 @@ dom1Scale=1.0
   []
   [./potential]
     #block = 0
+    block = '0 1'
   [../]
   [./em]
     block = 0
@@ -183,10 +186,10 @@ dom1Scale=1.0
     block = 0
     initial_condition = -20.693147
   [../]
-  [OH]
-    block = 0
-    initial_condition = -20
-  []
+  #[OH]
+  #  block = 0
+  #  initial_condition = -20
+  #[]
   [./Ar*]
     block = 0
     initial_condition = -25
@@ -206,11 +209,11 @@ dom1Scale=1.0
     initial_condition = -14
     #initial_condition = -24
   [../]
-  [./OH_aq]
-    block = 1
-    #initial_condition = -20
-    initial_condition = -5
-  [../]
+  #[./OH_aq]
+  #  block = 1
+  #  #initial_condition = -20
+  #  initial_condition = -5
+  #[../]
   [./OH-]
     block = 1
     # scaling = 1e-5
@@ -240,6 +243,7 @@ dom1Scale=1.0
     position_units = ${dom0Scale}
     block = 0
   []
+
   [HeatDiff_water]
     type = ADHeatConduction
     variable = Tw
@@ -250,6 +254,18 @@ dom1Scale=1.0
     variable = Tw
     block = 1
   []
+
+  [HeatDiff_cathode]
+    type = ADHeatConduction
+    variable = Tc
+    block = 2
+  []
+  [HeatTdot_cathode]
+    type = ADHeatConductionTimeDerivative
+    variable = Tc
+    block = 2
+  []
+
   #[ElasticTest]
   #  type = GasTemperatureElastic
   #  variable = Tg
@@ -472,36 +488,28 @@ dom1Scale=1.0
   [../]
 
   # Now we test the henry interface condition
-  [OH_diff]
-    type = InterfaceDiffusionTest
-    variable = OH_aq
-    neighbor_var = OH
-    h = 6.48e3
-    position_units = ${dom1Scale}
-    neighbor_position_units = ${dom0Scale}
-    boundary = 'water_left'
-  []
   #[OH_diff]
-  #  type = NewDiffusionTest
+  #  type = InterfaceDiffusionTest
   #  variable = OH_aq
   #  neighbor_var = OH
+  #  h = 6.48e3
   #  position_units = ${dom1Scale}
   #  neighbor_position_units = ${dom0Scale}
   #  boundary = 'water_left'
   #[]
-  [OH_henry]
-    type = InterfaceReactionTest
-    variable = OH_aq
-    neighbor_var = OH
-    #kf = 6.48e3
-    #kb = 1
-    kf = 1
-    kb = 6.2e2 
-    #kb = 1
-    position_units = ${dom1Scale}
-    neighbor_position_units = ${dom0Scale}
-    boundary = 'water_left'
-  []
+  #[OH_henry]
+  #  type = InterfaceReactionTest
+  #  variable = OH_aq
+  #  neighbor_var = OH
+  #  #kf = 6.48e3
+  #  #kb = 1
+  #  kf = 1
+  #  kb = 6.2e2 
+  #  #kb = 1
+  #  position_units = ${dom1Scale}
+  #  neighbor_position_units = ${dom0Scale}
+  #  boundary = 'water_left'
+  #[]
 
   [temp]
     type = TemperatureTest
@@ -512,18 +520,19 @@ dom1Scale=1.0
     boundary = 'water_left'
   []
 
-  #[temp2]
-  #  type = TemperatureTest
-  #  variable = Tc
-  #  neighbor_var = Tg
-  #  position_units = ${dom1Scale}
-  #  neighbor_position_units = ${dom0Scale}
-  #  boundary = 'cathode_right'
-  #[]
   [temp2]
-    type = IonBombardment
+    type = TemperatureTestOneWay
     variable = Tc
+    neighbor_var = Tg
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+    boundary = 'cathode_right'
   []
+  #[temp2]
+  #  type = IonBombardment
+  #  variable = Tc
+    
+  #[]
 []
 
 [BCs]
@@ -534,13 +543,28 @@ dom1Scale=1.0
     v = Tw
     boundary = gas_right
   []
-  # Gas temperature boundary conditions
-  [lefttemp]
-    type = ADDirichletBC
+  [cathode_Tc]
+    type = MatchedValueBC
     variable = Tg
+    v = Tc
     boundary = gas_left
-    value = 350
   []
+  [cathode_test]
+    type = IonHeating
+    variable = Tg
+    ions = 'Arp Ar2p'
+    potential = potential
+    r = 0
+    position_units = ${dom2Scale}
+    boundary = 'gas_left'
+  []
+  # Gas temperature boundary conditions
+  #[lefttemp]
+  #  type = ADDirichletBC
+  #  variable = Tg
+  #  boundary = gas_left
+  #  value = 350
+  #[]
   #[lefttemp]
   #  type = ADConvectiveHeatFluxBC
   #  variable = Tg
@@ -548,12 +572,12 @@ dom1Scale=1.0
   #  T_infinity = Tinf
   #  heat_transfer_coefficient = htc
   #[]
-  #[righttemp]
-  #  type = ADDirichletBC
-  #  variable = Tw
-  #  boundary = right
-  #  value = 300
-  #[]
+  [righttemp]
+    type = ADDirichletBC
+    variable = Tw
+    boundary = right
+    value = 300
+  []
   # H2O evaporation boundary condition
   #[H2O_interface]
   #  type = DirichletBC
@@ -561,18 +585,18 @@ dom1Scale=1.0
   #  value = 0.367321
   #  boundary = 'gas_right'
   [H2O_interface]
-    type = H2O_temp_test
+    type = VaporPressureBC
     variable = H2O
     gas_temp = Tg
     boundary = gas_right
   []
-  [OH_bc]
-    type = ADHagelaarIonDiffusionBC
-    variable = OH
-    boundary = 'gas_left gas_right'
-    r = 0
-    position_units = ${dom0Scale}
-  []
+  #[OH_bc]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = OH
+  #  boundary = 'gas_left gas_right'
+  #  r = 0
+  #  position_units = ${dom0Scale}
+  #[]
   #[H2O_physical_left]
   #  type = ADHagelaarIonDiffusionBC
   #  variable = H2O
@@ -700,11 +724,13 @@ dom1Scale=1.0
     variable = potential
     function = potential_ic_func
     #block = 0
+    block = '0 1'
   [../]
   [H2O_ic]
     type = FunctionIC
     variable = H2O
     function = water_ic_func
+    block = 0
   []
   #[./em_ic]
   #  type = FunctionIC
@@ -766,11 +792,13 @@ dom1Scale=1.0
     type = ADGenericConstantMaterial
     prop_names = 'Tinf htc'
     prop_values = '300 10'
+    block = 0
   []
   [density_argon]
     type = ADGenericConstantMaterial
     prop_names = 'density'
     prop_values = '1.784' # kg m^-3
+    block = 0
   []
 
   # Gas phase
@@ -786,6 +814,12 @@ dom1Scale=1.0
     prop_values = '312.2' # J kg^-1 K^-1
     block = 0
   []
+  [density_water]
+    type = ADGenericConstantMaterial
+    prop_names = 'density'
+    prop_values = '997' # kg m^-3
+    block = 1
+  []
 
   # Water phase
   [thermal_conductivity_water]
@@ -799,6 +833,32 @@ dom1Scale=1.0
     prop_names = 'specific_heat'
     prop_values = '4182' # J kg^-1 K^-1
     block = 1
+  []
+  [density_tungsten]
+    type = ADGenericConstantMaterial
+    prop_names = 'density'
+    prop_values = '19300' # kg m^-3
+    block = 2
+  []
+  
+  # Cathode
+  [thermal_conductivity_cathode]
+    type = ADGenericConstantMaterial
+    prop_names = 'thermal_conductivity'
+    prop_values = '173' # W m^-1 K^-1
+    block = 2
+  []
+  [specific_heat_cathode]
+    type = ADGenericConstantMaterial
+    prop_names = 'specific_heat'
+    prop_values = '134' # J kg^-1 K^-1
+    block = 2
+  []
+  [work_function_cathode]
+    type = GenericConstantMaterial
+    prop_names = 'work_function'
+    prop_values = '4.5' # W m^-1 K^-1
+    block = 2
   []
   
   [./se_coefficient]
@@ -913,11 +973,20 @@ dom1Scale=1.0
     prop_values = '6.022e23 1.602e-19 7.0832e-10 7.0832e-10 300 1.013e5'
     block = 1
   [../]
+
+  # Why do these need to be declared? Where are they used?
+  [cathode_constants]
+   type = GenericConstantMaterial
+   prop_names = 'p_gas T_gas'
+   prop_values = '101325 300'
+   block = 2
+  []
 []
 
 [Reactions]
   [./Argon]
-    species = 'em Arp Ar2p Ar* OH'
+    #species = 'em Arp Ar2p Ar* OH'
+    species = 'em Arp Ar2p Ar*'
     aux_species = 'Ar H2O'
     reaction_coefficient_format = 'townsend'
     gas_species = 'Ar'
@@ -947,12 +1016,13 @@ dom1Scale=1.0
                  Ar* + Ar + Ar -> Ar + Ar + Ar    : 5077.02776
                  #Arp + Ar + Ar -> Ar2p + Ar       : {81595.089 * (Tgas/300)^(-0.4)}
                  Arp + Ar + Ar -> Ar2p + Ar       : {81595.089 * (Tg/300)^(-0.4)}
-                 Ar* + H2O -> Ar + OH + H         : 2.89056e8'
+                 #Ar* + H2O -> Ar + OH + H         : 2.89056e8'
                  #Arp + Ar + Ar -> Ar2p + Ar       : {81595.089 * (Tgas/300)^(-0.4)}'
   [../]
 
   [./liquid_phase_reactions]
-    species = 'emliq OH- OH_aq'
+    #species = 'emliq OH- OH_aq'
+    species = 'emliq OH-'
     aux_species = 'H2O_aq'
     use_log = true
     position_units = ${dom1Scale}
