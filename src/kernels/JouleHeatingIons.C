@@ -78,17 +78,25 @@ JouleHeatingIons::computeQpResidual()
 {
   // Loop through the ions to calculate total flux term
 
-  ADReal _ion_flux;
+  ADRealVectorValue _temp;
+  ADRealVectorValue _ion_flux;
+  //ADReal _ion_flux;
   _ion_flux = 0;
+
+  _temp = _test[_i][_qp] * -_grad_potential[_qp] * _r_units * _voltage_scaling;
   for (unsigned int i = 0; i < _num_ions; ++i)
   {
+    /*
     _ion_flux += _test[_i][_qp] * -_grad_potential[_qp] * _r_units * _voltage_scaling *
                  std::exp((*_ion[i])[_qp]) *
                  ((*_sign[i])[_qp] * (*_mu[i])[_qp] * -_grad_potential[_qp] * _r_units -
                   (*_diff[i])[_qp] * (*_grad_ion[i])[_qp] * _r_units);
+                  */
+    _ion_flux += ((*_sign[i])[_qp] * (*_mu[i])[_qp] * -_grad_potential[_qp] * _r_units -
+                  (*_diff[i])[_qp] * (*_grad_ion[i])[_qp] * _r_units) * std::exp((*_ion[i])[_qp]);
   }
   // return _test[_i][_qp] * -_grad_potential[_qp] * _r_units * _voltage_scaling * _ion_flux;
-  return -_ion_flux;
+  return -_temp * _ion_flux;
 
   /*
   return _test[_i][_qp] * -_grad_potential[_qp] * _r_units * _voltage_scaling * std::exp(_em[_qp]) *
