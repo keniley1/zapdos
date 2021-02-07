@@ -64,10 +64,9 @@ dom1Scale=1.0
 
 [Executioner]
   type = Transient
-  end_time = 1e6
+  end_time = 3600 # 1 hour
   automatic_scaling = true
-  #compute_scaling_once = false
-  #resid_vs_jac_scaling_param = 0.5
+  compute_scaling_once = false
   line_search = 'basic'
   petsc_options = '-snes_converged_reason'
   solve_type = newton
@@ -80,19 +79,19 @@ dom1Scale=1.0
   nl_max_its = 20
   steady_state_detection = true
   steady_state_tolerance = 1e-8
-  [./TimeStepper]
+  [TimeStepper]
     type = IterationAdaptiveDT
     cutback_factor = 0.4
     dt = 2e-16
     growth_factor = 1.4
     optimal_iterations = 10
-  [../]
+  []
 []
 
 [Outputs]
   # perf_graph = true
   #print_densityear_residuals = false
-  [out_01]
+  [out_02]
     type = Exodus
   []
 []
