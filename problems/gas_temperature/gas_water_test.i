@@ -530,7 +530,7 @@ dom1Scale=1.0
   #  value = 0.367321
   #  boundary = 'gas_right'
   [H2O_interface]
-    type = H2O_temp_test
+    type = VaporPressureBC 
     variable = H2O
     gas_temp = Tg
     boundary = gas_right
