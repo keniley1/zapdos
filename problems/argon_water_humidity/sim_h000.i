@@ -126,7 +126,7 @@ dom1Scale=1.0
   [./Plasma]
     electrons = em
     charged_particle = 'Arp Ar2p'
-    Neutrals = 'Ars Arss Arsss Ar2s'
+    Neutrals = 'Ars Arss Arsss Ar2s H2 O3'
     mean_energy = mean_en
     potential = potential
     #Is_potential_unique = false
@@ -168,13 +168,13 @@ dom1Scale=1.0
 []
 
 [Variables]
-  [H2O]
-    block = 0 
-    initial_condition = -0.900556 # 1 % humidity
-    #initial_condition = -0.2074 # 2 % humidity
-    #initial_condition = 0.70881 # 5 % humidity
-    #initial_condition = 1.402028 # 10 % humidity
-  []
+  #[H2O]
+  #  block = 0 
+  #  initial_condition = -0.900556 # 1 % humidity
+  #  #initial_condition = -0.2074 # 2 % humidity
+  #  #initial_condition = 0.70881 # 5 % humidity
+  #  #initial_condition = 1.402028 # 10 % humidity
+  #[]
 
   [Nap_aq]
     block = 1
@@ -190,14 +190,6 @@ dom1Scale=1.0
     # 10 mM
     initial_condition = 2.3026
   [] 
-  [H2Op]
-    block = 0
-    initial_condition = -25
-  []
-  [Hp]
-    block = 0
-    initial_condition = -30
-  []
   [./potential]
     #block = 0
   [../]
@@ -217,18 +209,6 @@ dom1Scale=1.0
     block = 0
     initial_condition = -20.693147
   [../]
-  [O2]
-    block = 0
-    initial_condition = -30
-  []
-  [OHp]
-    block = 0
-    initial_condition = -30
-  []
-  [OHm]
-    block = 0
-    initial_condition = -30
-  []
 
   [./Ars]
     block = 0
@@ -262,47 +242,7 @@ dom1Scale=1.0
   [../]
 
   # Humid Species (H2O, H2, O2, and their derivatives)
-  [O2s]
-    block = 0
-    initial_condition = -30
-  []
-  [O]
-    block = 0
-    initial_condition = -30
-  []
-  [Om]
-    block = 0
-    initial_condition = -30
-  []
-  [O2p]
-    block = 0
-    initial_condition = -30
-  []
-  [O2m]
-    block = 0
-    initial_condition = -30
-  []
-  [Os]
-    block = 0
-    initial_condition = -30
-  []
-  [OH]
-    block = 0
-    initial_condition = -30
-  []
-  [OHs]
-    block = 0
-    initial_condition = -30
-  []
   [H2]
-    block = 0
-    initial_condition = -30
-  []
-  [H]
-    block = 0
-    initial_condition = -30
-  []
-  [Hs]
     block = 0
     initial_condition = -30
   []
@@ -310,15 +250,6 @@ dom1Scale=1.0
     block = 0
     initial_condition = -30
   []
-  [HO2]
-    block = 0
-    initial_condition = -30
-  []
-  [H2O2]
-    block = 0
-    initial_condition = -30
-  []
-
 
   # Water Species
   [./em_aq]
@@ -622,7 +553,8 @@ dom1Scale=1.0
   [rho_calc]
     type = ChargeDensity
     variable = rho
-    charged = 'em Arp Ar2p H2Op OHp OHm Om O2m O2p Hp'
+    #charged = 'em Arp Ar2p H2Op OHp OHm Om O2m O2p Hp'
+    charged = 'em Arp Ar2p'
     execute_on = 'INITIAL TIMESTEP_END'
     block = 0
   []
@@ -776,6 +708,49 @@ dom1Scale=1.0
   # NH        - 1.47e3
 #########################
 #########################
+  [H2_diff]
+    type = InterfaceDiffusionTest
+    variable = H2_aq
+    neighbor_var = H2
+    h = 6.48e3
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+    boundary = 'water_left'
+  []
+  [H2_henry]
+    type = InterfaceReactionTest
+    variable = H2_aq
+    neighbor_var = H2
+    #kf = 6.48e3
+    #kb = 1
+    kf = 1
+    kb = 1.8e-2 
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+    boundary = 'water_left'
+  []
+
+  [O3_diff]
+    type = InterfaceDiffusionTest
+    variable = O3_aq
+    neighbor_var = O3
+    h = 6.48e3
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+    boundary = 'water_left'
+  []
+  [O3_henry]
+    type = InterfaceReactionTest
+    variable = O3_aq
+    neighbor_var = O3
+    #kf = 6.48e3
+    #kb = 1
+    kf = 1
+    kb = 3e-1 
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+    boundary = 'water_left'
+  []
 []
 
 [BCs]
@@ -863,7 +838,8 @@ dom1Scale=1.0
     boundary = left
     function = potential_bc_func
     #ip = 'Arp Ar2p H2Op OHp OHm Om O2m O2p'
-    ip = 'Arp Ar2p H2Op OHp OHm Om O2m O2p Hp'
+    #ip = 'Arp Ar2p H2Op OHp OHm Om O2m O2p Hp'
+    ip = 'Arp Ar2p'
     data_provider = data_provider
     em = em
     mean_en = mean_en
@@ -1033,32 +1009,6 @@ dom1Scale=1.0
     function = potential_ic_func
     #block = 0
   [../]
-  #[H2O_ic]
-  #  type = FunctionIC
-  #  variable = H2O
-  #  function = water_ic_func
-  #[]
-  #[./em_ic]
-  #  type = FunctionIC
-  #  variable = em
-  #  function = charged_gas_ic
-  #[../]
-  #[./Arp_ic]
-  #  type = FunctionIC
-  #  variable = Arp
-  #  function = charged_gas_ic
-  #[../]
-  #[./mean_en_ic]
-  #  type = FunctionIC
-  #  variable = mean_en
-  #  #function = charged_gas_ic
-  #  function = mean_en_ic
-  #[../]
-  #[./em_aq_ic]
-  #  type = FunctionIC
-  #  variable = em_aq
-    #function = em_aq_ic_func
-  #[../]
 []
 
 [Functions]
@@ -1561,8 +1511,8 @@ dom1Scale=1.0
 
 [Reactions]
   [./Argon]
-    #species = 'em Arp Ar2p Ars Arss Arsss OH H2O O2 O2p O2m O2s Om O Os H2O H2Op H2 H Hs O3 HO2 H2O2 OHm OHp OHs'
-    species = 'em Arp Ar2p Ars Arss Arsss OH H2O O2 O2p O2m O2s Om O Os H2O H2Op H2 H Hs O3 HO2 H2O2 OHm OHp OHs Hp'
+    #species = 'em Arp Ar2p Ars Arss Arsss OH H2O O2 O2p O2m O2s Om O Os H2O H2Op H2 H Hs O3 HO2 H2O2 OHm OHp OHs Hp'
+    species = 'em Arp Ar2p Ars Arss Arsss H2'
     aux_species = 'Ar'
     reaction_coefficient_format = 'townsend'
     gas_species = 'Ar'
@@ -1644,114 +1594,6 @@ dom1Scale=1.0
                  Ars + Ar + Ar -> Ar + Ar2s               : {1.14e-32}
                  Arss + Ar + Ar -> Ar + Ar2s              : {1.14e-32}
                  Arsss + Ar + Ar -> Ar + Ar2s             : {1.14e-32}
-                 #########################
-                 # Ar-H2O reactions
-                 #########################
-                 Arp + H2O -> Ar + H2Op                  : 1.5e-10
-                 Ar2p + H2O -> Ar + Ar + H2Op            : 1.5e-10
-                 Ars + H2O -> Ar + OH + H                : 4.8e-10
-                 Arss + H2O -> Ar + OH + H              : 4.8e-10
-                 Arsss + H2O -> Ar + OHs + H            : 4.8e-10
-                 Ar2s + H2O  -> Ar + OH + H             : 4.8e-10
-                 Ar2s + H2O  -> Ar + OHs + H            : 4.8e-10
-                 #Arp + Om + Ar -> Ar + Ar + Ar          : {2e-25 * (Tgas/300)^(-2.5)}
-                 #Arp + Om + H2O -> Ar + Ar + H2O        : {2e-25 * (Tgas/300)^(-2.5)}
-                 #Ar2p + Om + Ar -> Ar + Ar + Ar         : {2e-25 * (Tgas/300)^(-2.5)} 
-                 #Ar2p + Om + H2O -> Ar + Ar + H2O       : {2e-25 * (Tgas/300)^(-2.5)} 
-                 #Arp + OHm + Ar -> Ar + Ar + OH         : {2e-25 * (Tgas/300)^(-2.5)}
-                 #Arp + OHm + H2O -> Ar + H2O + OH       : {2e-25 * (Tgas/300)^(-2.5)}
-                 #Ar2p + OHm + Ar -> Ar + Ar + OH        : {2e-25 * (Tgas/300)^(-2.5)}
-                 #Ar2p + OHm + H2O -> Ar + Ar + H2O + OH : {2e-25 * (Tgas/300)^(-2.5)}
-                 #########################
-                 # H2O, OH, and H reactions
-                 #########################
-                 em + H2O -> em + H2O             : EEDF [elastic] (C60_H2O_Elastic)
-                 em + H2O -> H2Ov + em            : EEDF [-0.198] (C65_H2O_Excitation_0.20_eV)
-                 em + H2O -> OHm + H              : EEDF (C58_H2O_Attachment)
-                 # It is unclear what Hs* and Hs** refer to in the thesis
-                 #em + H2O -> em + OH + Hs         : EEDF [] (C_H2O_Excitation__eV)
-                 #em + H2O -> em + OH + Hs*        : EEDF [] (C_H2O_Excitation__eV)
-                 #em + H2O -> em + OH + Hs**       : EEDF [] (C_H2O_Excitation__eV)
-                 em + H2O -> em + OHs + H         : EEDF [-9.00] (C66_H2O_Excitation_9.00_eV) 
-                 em + H -> em + Hs                : EEDF [-10.2] (C69_H_Excitation_10.20_eV)
-                 em + H -> em + Hs                : EEDF [-10.2] (C70_H_Excitation_10.20_eV)
-                 em + Hs -> em + H                : EEDF [10.2] (C72_H2p10.2eV_De-excitation_10.20_eV)
-                 em + Hs -> em + H                : EEDF [10.2] (C73_H2s10.2eV_De-excitation_10.20_eV)
-                 em + O2 -> em + O2               : EEDF [elastic] (C44_O2_Elastic)
-                 em + O2 -> O2s + em              : EEDF [-0.98] (C46_O2_Excitation_0.98_eV)
-                 em + O2 -> O2s + em              : EEDF [-1.63] (C47_O2_Excitation_1.63_eV)
-                 em + O2s -> em + O2              : EEDF [0.98] (C50_O20.98_De-excitation_0.98_eV)
-                 em + O2s -> em + O2              : EEDF [1.63] (C54_O21.63_De-excitation_1.63_eV)
-                 em + O2 -> em + em + O2p         : EEDF [-12.1] (C48_O2_Ionization_12.10_eV)
-                 em + O2s -> em + em + O2p        : EEDF [-11.10] (C52_O20.98_Ionization_11.10_eV)
-                 em + O2s -> em + em + O2p        : EEDF [-10.45] (C56_O21.63_Ionization_10.45_eV)
-                 em + O2s -> em + em + Op + O     : EEDF [-18.52] (C53_O20.98_Ionization_18.52_eV)
-                 em + O2s -> em + em + Op + O     : EEDF [-17.87] (C57_O21.63_Ionization_17.87_eV)
-                 em + O2 -> Om + O                : EEDF (C43_O2_Attachment)
-                 em + O2s -> Om + O               : EEDF (C51_O20.98_Attachment)
-                 em + O2s -> Om + O               : EEDF (C55_O21.63_Attachment)
-                 em + O2p -> O + O                : {1.2e-8*Te^(-0.7)} 
-                 #em + H -> em + Hs*               : EEDF [] (C_H_Excitation__eV)
-                 #em + Hs* -> em + H               : EEDF [] (C_H_Excitation__eV)
-                 #em + H -> em + Hs**              : EEDF [] (C_H_Excitation__eV)
-                 #em + Hs** -> em + H              : EEDF [] (C_H_Excitation__eV)
-                 #em + Hs -> em + Hs*              : EEDF [] (C_H_Excitation__eV)
-                 #em + Hs* -> em + Hs              : EEDF [] (C_H_Excitation__eV)
-                 #em + Hs -> em + Hs**             : EEDF [] (C_H_Excitation__eV)
-                 #em + Hs** -> em + Hs             : EEDF [] (C_H_Excitation__eV)
-                 #em + Hs* -> em + Hs**            : EEDF [] (C_H_Excitation__eV)
-                 #em + Hs** -> em + Hs*            : EEDF [] (C_H_Excitation__eV)
-                 # Cannot find cross section of OH
-                 #em + OH -> em + OHs              : EEDF [] (C_OH_Excitation__eV)
-                 em + OHs -> em + O + H           : {2.7e-10*Te^(0.5)} 
-                 Hs + H2O -> H + H2O              : 9.1e-9
-                 #Hs* + H2O -> H + H2O             : 9.1e-9 
-                 #Hs** + H2O -> H + H2O            : 9.1e-9
-                 #Hs* + H2O -> Hs + H2O            : 9.1e-9
-                 #Hs** + H2O -> Hs + H2O           : 9.1e-9
-                 #Hs** + H2O -> Hs* + H2O          : 9.1e-9
-                 OHs + H2O -> OH + H2O            : 9.1e-9
-                 OHm + H -> H2O + em              : 1.8e-9
-                 OH + H -> H2O                    : {6.87e-31*Tn^(-2)}
-                 OHs + H -> H2O                   : {6.87e-31*Tn^(-2)}
-                 OHs + OHs + O2 -> H2O2 + O2      : {6.9e-31*Tn^(-0.8)} 
-                 OHs + OHs + H2O -> H2O2 + H2O    : {6.9e-31*Tn^(-0.8)} 
-                 H2 + HO2 -> H2O2 + H             : {5e-11*exp(-Tgas/11310)}
-                 HO2 + HO2 -> H2O2 + O2           : {8.05e-11*Tn^(-1)}
-                 HO2 + HO2 + O2 -> H2O2 + O2 + O2 : {1.9e-33*exp(980/Tgas)}
-                 HO2 + HO2 + H2O -> H2O2 + O2 + H2O : {1.9e-33*exp(980/Tgas)}
-                 HO2 + H2O -> H2O2 + OH           : {4.65e-11*exp(-11647/Tgas)} 
-                 H + H2O2 -> HO2 + H2             : {8e-11*exp(-4000/Tgas)}
-                 H + H2O2 -> OH + H2O             : {4e-11*exp(-2000/Tgas)}
-                 O2 + H2O2 -> HO2 + HO2           : {9e-11*exp(-19965/Tgas)}
-                 O + H2O2 -> HO2 + OH             : {1.4e-12*exp(-2000/Tgas)}
-                 Os + H2O2 -> O2 + H2O            : 5.2e-10
-                 OH + H2O2 -> HO2 + H2O           : {2.9e-12*exp(-160/Tgas)}
-                 H2O2 -> OH + OH                  : {1.96e-9*Tn^(-4.86)*exp(-26800/Tgas)}
-                 H + H2O2 -> OH + H2O             : {4e-11*exp(-2000/Tgas)}
-                 Hs + H2O2 -> OH + H2O            : {4e-11*exp(-2000/Tgas)}
-                 #Hs* + H2O2 -> OH + H2O           : {4e-11*exp(-2000/Tgas)}
-                 #Hs** + H2O2 -> OH + H2O          : {4e-11*exp(-2000/Tgas)}
-                 OHm + OHp + O2 -> H2O2 + O2      : {2e-25*Tn^(-2.5)}
-                 OHm + OHp + H2O -> H2O2 + H2O    : {2e-25*Tn^(-2.5)}
-                 OHm + H2Op + O2 -> OH + H2O + O2 : {2e-25*Tn^(-2.5)}
-                 OHm + H2Op + H2O -> OH + H2O + H2O : {2e-25*Tn^(-2.5)}
-                 O2m + O2p -> O2 + O2             : 2e-6
-                 O2m + H2Op -> O2 + H2O           : 2e-6
-                 Om + O2p -> O + O2               : 3e-6
-                 Om + OHp + O2 -> HO2 + O2        : {2e-25*Tn^(-2.5)}
-                 Om + OHp + H2O -> HO2 + H2O      : {2e-25*Tn^(-2.5)}
-                 Om + H2Op + O2 -> O + H2O + O2   : {2e-25*Tn^(-2.5)}
-                 Om + H2Op + H2O -> O + H2O + H2O : {2e-25*Tn^(-2.5)}
-                 Om + O2 -> O2m + O               : 1.5e-20
-                 Om + O3 -> O2 + O2m              : 1e-11
-                 O2m + O -> O3 + em               : 1.5e-10
-                 O2m + O -> Om + O2               : 1.5e-10
-                 O2m + O2s -> O2 + O2 + em        : 2e-10
-                 O2s + O2 -> O2 + O2              : 2.2e-18
-                 O2s + H2O -> O2 + H2O            : 2.2e-18
-                 O2s + O2 -> O + O3               : 2.9e-21
-                 O2s + O3 -> O2 + O2 + O          : 9.9e-11
                  ##########################################
                  # Radiative Transitions Ar
                  ##########################################
@@ -1760,50 +1602,12 @@ dom1Scale=1.0
                  Arss -> Ar                             : 5.3e5
                  Ar2s -> Ar + Ar                        : 6e7
                  ##########################################
-                 # Radiative Transitions H2O, OH, etc.
-                 ##########################################
-                 OHs -> OH                              : 1.3e6
-                 Hs -> H                                : 4.7e8
-                 ##########################################
                  # Additional reactions (from Van Gaens et al)
                  # Includes Ar and H reactions
                  ##########################################
-                 Ars + OH -> Ar + OHs           : 6.6e-11 
-                 Arp + H -> Ar + Hp             : 1e-10
-                 Arp + H2 -> Ar + H2Op          : 1.1e-9
-                 Ar2p + H -> Ar + Ar + Hp       : 5e-11
-                 Ar2p + OHm -> Ar + Ar + OH     : 1e-7
-                 Ar2p + OHm -> Ar + Ar + O + H  : 1e-7
-                 H2Op + Ar -> Arp + H2          : 2.2e-10
-                 # Next one is commented because Op is not tracked
-                 #H + Op -> Hp + O               : {5.66e-10*(Tgas/300)^0.36*exp(8.6/Tgas)}
-                 H + Om -> OH + em              : 5e-10
-                 H + O2 + Ar -> HO2 + Ar        : {6.09e-32*(Tgas/300)^(-0.8)}
-                 H + H + Ar -> H2 + Ar          : {2e-32*(Tgas/300)^(-1)}
-                 Hp + OH -> H + OHp             : 2.1e-9
-                 Hp + H2O -> H2Op + H           : 6.9e-9
-                 H2Op + O2 -> H2 + O2p          : 8e-10
-                 OH + O -> H + O2               : {2.08e-11*(Tgas/300)^(-0.186)*exp(-154/Tgas)}
-                 OH + O2m -> OHm + O2           : 1e-10
-                 OH + O3 -> HO2 + O2            : 1.69e-12
-                 #################################
-                 # H2O+ Rxns
-                 # (Van Gaens, page 40)
-                 #################################
-                 H2Op + Om + Ar -> H2O2 + Ar    : {2e-25*(Tgas/300)^(-2.5)}
-                 H2Op + Om + H2O -> H2O2 + H2O  : {2e-25*(Tgas/300)^(-2.5)}
-                 em + H2Op -> O + H2            : {6.27e-9*(Tgas/300)^(-0.5)}
-                 em + H2Op -> O + H + H         : {4.9e-8*(Tgas/300)^(-0.5)}
-                 ##################################
-                 # Electron-impact of Hydrogen
-                 ##################################
-                 em + H -> em + em + Hp         : EEDF [-13.60] (C71_H_Ionization_13.60_eV)
-                 ###################################
-                 # OH, OHp reactions
-                 # (Van Gaens)
-                 ###################################
-                 em + OHp -> O + H              : {6.03e-9*(Tgas/300)^(-0.5)}
-                 em + OH -> em + O + H          : {2.08e-7*(Tgas/300)^(-0.76)*exp(-6.9/Tgas)}'
+                 #Arp + H2 -> Ar + H2Op          : 1.1e-9
+                 # ^ Changed to the below reaction to conserve charge and still degrade H2
+                 Arp + H2 -> Arp                : 1.1e-9'
   [../]
 
 

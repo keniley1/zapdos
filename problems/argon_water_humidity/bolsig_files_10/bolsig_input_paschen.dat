@@ -32,7 +32,7 @@ VAR       / Electric field / N (Td)
 2.445692e25      / Plasma density (1/m3)
 1.        / Ion charge parameter
 1.        / Ion/neutral mass ratio
-1         / e-e momentum effects: 0=No; 1=Yes*
+0         / e-e momentum effects: 0=No; 1=Yes*
 1         / Energy sharing: 1=Equal*; 2=One takes all
 1         / Growth: 1=Temporal*; 2=Spatial; 3=Not included; 4=Grad-n expansion
 0.        / Maxwellian mean energy (eV) 
