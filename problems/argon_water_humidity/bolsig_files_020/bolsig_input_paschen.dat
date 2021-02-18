@@ -42,9 +42,9 @@ VAR       / Electric field / N (Td)
 1e-10     / Precision
 1e-4      / Convergence
 1000      / Maximum # of iterations
-0.97 0.001 0.001 0.001 0.001 & / Ar species fractions 
-0.001 0.001 0.001 & / O2 species fractions 
-0.02 0.001 0.001 0.001  / H2O species fractions       
+0.99204 0.0001 0.0001 0.0001 0.0001 & / Ar species fractions 
+0.0001 0.0001 0.0001 & / O2 species fractions 
+0.00696 0.0001 0.0001 0.0001  / H2O species fractions       
 1         / Normalize composition to unity: 0=No; 1=Yes
 
 RUN

@@ -172,10 +172,11 @@ dom1Scale=1.0
 [Variables]
   [H2O]
     block = 0 
-    initial_condition = -0.900556 # 1 % humidity
-    #initial_condition = -0.2074 # 2 % humidity
-    #initial_condition = 0.70881 # 5 % humidity
-    #initial_condition = 1.402028 # 10 % humidity
+    #initial_condition = -1.26279318 # 20 % humidity 
+    #initial_condition = -0.70316062 # 35 % humidity 
+    #initial_condition = -0.34647896 # 50 % humidity 
+    #initial_condition = -0.08411109 # 65 % humidity 
+    initial_condition = 0.12351586 # 80 % humidity 
   []
 
   [Nap_aq]
@@ -415,11 +416,11 @@ dom1Scale=1.0
     block = 0
     order = CONSTANT
     family = MONOMIAL 
-    initial_condition = -1.26279318 # 20 % humidity 
+    #initial_condition = -1.26279318 # 20 % humidity 
     #initial_condition = -0.70316062 # 35 % humidity 
     #initial_condition = -0.34647896 # 50 % humidity 
     #initial_condition = -0.08411109 # 65 % humidity 
-    #initial_condition = 0.12351586 # 80 % humidity 
+    initial_condition = 0.12351586 # 80 % humidity 
   [../]
   [Ar_density]
     block = 0
