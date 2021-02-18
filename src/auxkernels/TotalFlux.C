@@ -55,7 +55,7 @@ Real
 TotalFluxTempl<is_ad>::computeValue()
 {
   return _sgn[_qp] * raw_value(_mu[_qp]) * -_grad_potential[_qp](0) * std::exp(_density_log[_qp]) -
-         raw_value(_diff[_qp]) * std::exp(_density_log[_qp]) * _grad_density_log[_qp](0);
+         raw_value(_diff[_qp]) * std::exp(_density_log[_qp]) * _grad_density_log[_qp](0) * 6.022e23;
   /*
   return _sgn[_qp] * raw_value(_mu[_qp]) * std::exp(_density_log[_qp]) * -_grad_potential[_qp](0) *
          _r_units * 6.02e23;

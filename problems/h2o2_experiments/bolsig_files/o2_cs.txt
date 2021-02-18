@@ -1,0 +1,532 @@
+LXCat, www.lxcat.net
+Generated on 09 Sep 2020. All rights reserved.
+
+RECOMMENDED REFERENCE FORMAT
+- TRINITI database, www.lxcat.net, retrieved on September 9, 2020.
+
+CROSS SECTION DATA FORMAT
+In downloaded files, each collision process is defined by a block consisting of
+1st line
+Keyword in capitals indicating the type of the collision. Possible collision types are elastic, effective, excitation,
+ionization, or attachment (capital letters required, key words are case sensitive), where "elastic" is used to denote
+the elastic momentum transfer cross section and where "effective" denotes the total momentum transfer cross section (sum
+of elastic momentum transfer and total inelastic cross sections).  The latter is useful for solving the Boltzmann
+equation in the 2-term approximation.
+2nd line
+Name of the target particle species. This name is a character string, freely chosen by the user, e.g. "Ar". Optionally
+for excitation processes, the name of the corresponding excited state can be specified on the same line, separated from
+the first name either by arrow "->" (dash + greater than) or by double-head arrow "<->" (less than + dash +
+greater than), e.g. "Ar -> Ar*" and "Ar <-> Ar*", respectively. In the later case BOLSIG+ will automatically
+define the inverse superelastic process, constructing the superelastic cross-section by detailed balancing, and
+considering the indicated excited state as the target. In this case, the ratio of statistical weights must be input in
+the 3rd line (see below).
+3rd line
+For elastic and effective collisions, the ratio of the electron mass to the target particle mass. For excitation or
+ionization collisions, the electron energy loss (nominally the threshold energy) in eV. For attachment, the 3rd line is
+missing. In case of an excitation process where an excited state has been indicated on the 2nd line using double-head
+arrow "<->", the 3rd line must specify also ratio of the statistical weights of the final state to the initial state
+as the second parameter in 3rd line this is needed by BOLSIG+ to calculate the de-excitation cross-section. The
+statistical weight ratio, if given, will also be used by the automatic superelastics option in BOLSIG+. If this ratio is
+not provided then BOLSIG+ will assume it unity.
+from 4th line (optionally)
+User comments and reference information, maximum 100 lines. The only constraint on format is that these comment lines
+must not start with a number.
+Finally
+Table of the cross section as a function of energy. The table starts and ends by a line of dashes "------" (at least 5),
+and has otherwise two numbers per line: the energy in eV and the cross section in m2.
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+DATABASE:         TRINITI database
+PERMLINK:         www.lxcat.net/TRINITI
+DESCRIPTION:      These cross sections retrieved from the EEDF software package for calculations of electron energy
+                  distribution function developed by Prof. Napartovich A. P. and  Drs. Dyatko N. A., Kochetov I. V.,
+                  Sukharev A. G. from The State Science Center Troitsk Institute for Innovation and Fusion Research,
+                  Russia
+CONTACT:          Contact person is Dr. Igor Kochetov
+                  kochet@@triniti.ru
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+************************************************************************************************************************
+
+COMMENT: A A Ionin, I V Kochetov, A P Napartovich and N N Yuryshev, Physics and engineering of singlet delta oxygen production in
+         low-temperature plasma, J. Phys. D: Appl. Phys. 40 (2007) R25-R61.
+
+********************************************************** O2 **********************************************************
+
+ATTACHMENT
+O2 -> O^- + O
+SPECIES: e / O2
+PROCESS: E + O2 -> O- + O, Attachment
+PARAM.:  E = 0 eV, complete set
+COMMENT: Rapp D and Englander-Golden P 1965 J. Chem. Phys. 43 1464.
+UPDATED: 2010-11-03 13:29:02
+COLUMNS: Energy (eV) | Cross section (m2)
+-----------------------------
+ 4.200000e+0	0.000000e+0
+ 4.600000e+0	7.000000e-24
+ 5.000000e+0	2.200000e-23
+ 5.500000e+0	6.330000e-23
+ 6.000000e+0	1.140000e-22
+ 6.300000e+0	1.360000e-22
+ 6.500000e+0	1.410000e-22
+ 6.700000e+0	1.370000e-22
+ 7.000000e+0	1.220000e-22
+ 7.500000e+0	8.180000e-23
+ 8.000000e+0	4.490000e-23
+ 8.500000e+0	2.020000e-23
+ 9.000000e+0	8.800000e-24
+ 9.500000e+0	5.300000e-24
+ 9.900000e+0	3.500000e-24
+ 1.000000e+2	1.000000e-24
+ 1.000000e+3	0.000000e+0
+-----------------------------
+
+ELASTIC
+O2
+ 1.710000e-5
+SPECIES: e / O2
+PROCESS: E + O2 -> E + O2, Elastic
+PARAM.:  m/M = 0.0000171, complete set
+COMMENT: Eliasson B, Kogelschatz U 1986 Basic data for modelling of electrical discharge in gases:
+COMMENT: Oxygen. Report KLR-86-11C. Report Brown Boveri Forschungszentrum CH-5405 Baden. Momentum
+COMMENT: transfer cross-section for O2(VSUM), O2(a1) and O2(b1) are the same as for O2.
+UPDATED: 2010-11-03 13:21:30
+COLUMNS: Energy (eV) | Cross section (m2)
+-----------------------------
+ 0.000000e+0	3.500000e-21
+ 2.000000e-3	3.600000e-21
+ 5.000000e-3	5.000000e-21
+ 8.500000e-3	6.400000e-21
+ 1.000000e-2	7.000000e-21
+ 2.000000e-2	9.900000e-21
+ 3.000000e-2	1.240000e-20
+ 5.000000e-2	1.600000e-20
+ 8.000000e-2	2.900000e-20
+ 1.000000e-1	4.200000e-20
+ 2.000000e-1	5.100000e-20
+ 2.300000e-1	5.600000e-20
+ 3.500000e-1	5.650000e-20
+ 5.000000e-1	5.900000e-20
+ 7.000000e-1	6.100000e-20
+ 1.000000e+0	7.200000e-20
+ 1.300000e+0	7.900000e-20
+ 1.700000e+0	7.400000e-20
+ 2.100000e+0	6.600000e-20
+ 2.500000e+0	6.100000e-20
+ 3.000000e+0	5.700000e-20
+ 3.600000e+0	5.450000e-20
+ 4.500000e+0	5.550000e-20
+ 6.000000e+0	6.000000e-20
+ 8.000000e+0	7.100000e-20
+ 1.000000e+1	8.000000e-20
+ 1.500000e+1	8.800000e-20
+ 2.000000e+1	8.600000e-20
+ 3.000000e+1	9.250000e-20
+ 5.000000e+1	9.070000e-20
+ 7.500000e+1	8.990000e-20
+ 1.000000e+2	8.670000e-20
+ 1.000000e+3	1.000000e-20
+-----------------------------
+
+EXCITATION
+O2 -> O2(VSUM)
+ 1.930000e-1
+SPECIES: e / O2
+PROCESS: E + O2 -> E + O2(VSUM), Excitation
+PARAM.:  E = 0.193 eV, complete set
+COMMENT: Eliasson B, Kogelschatz U 1986 Basic data for modelling of electrical discharge in gases:
+COMMENT: Oxygen. Report KLR-86-11C. Report Brown Boveri Forschungszentrum CH-5405 Baden.
+UPDATED: 2010-11-03 11:42:28
+COLUMNS: Energy (eV) | Cross section (m2)
+-----------------------------
+ 1.930000e-1	0.000000e+0
+ 2.000000e-1	7.500000e-22
+ 2.100000e-1	7.500000e-22
+ 2.300000e-1	0.000000e+0
+ 3.200000e-1	0.000000e+0
+ 3.300000e-1	3.000000e-21
+ 3.500000e-1	0.000000e+0
+ 4.400000e-1	0.000000e+0
+ 4.500000e-1	1.410000e-20
+ 4.700000e-1	0.000000e+0
+ 5.600000e-1	0.000000e+0
+ 5.700000e-1	1.820000e-20
+ 5.900000e-1	0.000000e+0
+ 6.800000e-1	0.000000e+0
+ 6.900000e-1	2.070000e-20
+ 7.100000e-1	0.000000e+0
+ 7.900000e-1	0.000000e+0
+ 8.000000e-1	1.780000e-20
+ 8.200000e-1	0.000000e+0
+ 9.000000e-1	0.000000e+0
+ 9.100000e-1	1.500000e-20
+ 9.300000e-1	0.000000e+0
+ 1.020000e+0	0.000000e+0
+ 1.030000e+0	1.010000e-20
+ 1.050000e+0	0.000000e+0
+ 1.130000e+0	0.000000e+0
+ 1.140000e+0	7.610000e-21
+ 1.160000e+0	0.000000e+0
+ 1.230000e+0	0.000000e+0
+ 1.240000e+0	5.420000e-21
+ 1.260000e+0	0.000000e+0
+ 1.340000e+0	0.000000e+0
+ 1.350000e+0	3.110000e-21
+ 1.370000e+0	0.000000e+0
+ 1.440000e+0	0.000000e+0
+ 1.450000e+0	2.330000e-21
+ 1.470000e+0	0.000000e+0
+ 1.540000e+0	0.000000e+0
+ 1.550000e+0	1.210000e-21
+ 1.570000e+0	0.000000e+0
+ 1.630000e+0	0.000000e+0
+ 1.650000e+0	7.630000e-22
+ 1.670000e+0	0.000000e+0
+ 3.500000e+0	0.000000e+0
+ 4.000000e+0	3.180000e-23
+ 5.000000e+0	9.760000e-22
+ 6.000000e+0	2.090000e-21
+ 7.000000e+0	4.920000e-21
+ 8.000000e+0	6.660000e-21
+ 9.000000e+0	7.710000e-21
+ 1.000000e+1	7.540000e-21
+ 1.100000e+1	6.010000e-21
+ 1.200000e+1	4.780000e-21
+ 1.300000e+1	3.290000e-21
+ 1.400000e+1	1.950000e-21
+ 1.500000e+1	8.650000e-22
+ 2.000000e+1	1.990000e-22
+ 4.500000e+1	0.000000e+0
+ 1.000000e+3	0.000000e+0
+-----------------------------
+
+EXCITATION
+O2 <-> O2(0.98)
+ 9.800000e-1
+SPECIES: e / O2
+PROCESS: E + O2 -> E + O2(0.98), Excitation
+PARAM.:  E = 0.98 eV, complete set
+COMMENT: Eliasson B, Kogelschatz U 1986 Basic data for modelling of electrical discharge in gases:
+COMMENT: Oxygen. Report KLR-86-11C. Report Brown Boveri Forschungszentrum CH-5405 Baden.
+UPDATED: 2010-11-03 11:42:39
+COLUMNS: Energy (eV) | Cross section (m2)
+-----------------------------
+ 9.770000e-1	0.000000e+0
+ 1.500000e+0	5.800000e-23
+ 2.000000e+0	1.530000e-22
+ 3.000000e+0	3.800000e-22
+ 3.500000e+0	4.900000e-22
+ 4.000000e+0	5.700000e-22
+ 4.500000e+0	6.700000e-22
+ 5.000000e+0	7.400000e-22
+ 5.620000e+0	8.250000e-22
+ 5.910000e+0	8.620000e-22
+ 6.190000e+0	8.880000e-22
+ 6.530000e+0	9.080000e-22
+ 6.990000e+0	9.140000e-22
+ 7.610000e+0	8.910000e-22
+ 7.890000e+0	8.630000e-22
+ 8.960000e+0	7.680000e-22
+ 1.000000e+1	6.790000e-22
+ 1.300000e+1	5.270000e-22
+ 1.510000e+1	4.550000e-22
+ 1.750000e+1	3.870000e-22
+ 2.050000e+1	3.240000e-22
+ 2.490000e+1	2.560000e-22
+ 3.090000e+1	1.960000e-22
+ 4.100000e+1	1.370000e-22
+ 4.500000e+1	1.200000e-22
+ 1.000000e+2	0.000000e+0
+ 1.000000e+3	0.000000e+0
+-----------------------------
+
+EXCITATION
+O2 <-> O2(1.63)
+ 1.630000e+0
+SPECIES: e / O2
+PROCESS: E + O2 -> E + O2(1.63), Excitation
+PARAM.:  E = 1.63 eV, complete set
+COMMENT: Eliasson B, Kogelschatz U 1986 Basic data for modelling of electrical discharge in gases:
+COMMENT: Oxygen. Report KLR-86-11C. Report Brown Boveri Forschungszentrum CH-5405 Baden.
+UPDATED: 2010-11-03 11:42:56
+COLUMNS: Energy (eV) | Cross section (m2)
+-----------------------------
+ 1.630000e+0	0.000000e+0
+ 2.000000e+0	2.600000e-23
+ 3.000000e+0	9.700000e-23
+ 3.500000e+0	1.330000e-22
+ 4.000000e+0	1.490000e-22
+ 4.500000e+0	1.700000e-22
+ 5.000000e+0	1.820000e-22
+ 5.690000e+0	1.940000e-22
+ 6.540000e+0	1.940000e-22
+ 7.340000e+0	1.910000e-22
+ 8.410000e+0	1.830000e-22
+ 9.260000e+0	1.740000e-22
+ 1.000000e+1	1.600000e-22
+ 1.300000e+1	1.310000e-22
+ 1.490000e+1	1.170000e-22
+ 1.700000e+1	1.030000e-22
+ 1.940000e+1	9.200000e-23
+ 2.070000e+1	8.600000e-23
+ 2.250000e+1	8.000000e-23
+ 2.400000e+1	7.200000e-23
+ 2.800000e+1	6.100000e-23
+ 3.510000e+1	4.700000e-23
+ 4.190000e+1	3.400000e-23
+ 4.510000e+1	3.100000e-23
+ 1.000000e+2	0.000000e+0
+ 1.000000e+3	0.000000e+0
+-----------------------------
+
+IONIZATION
+O2 -> O2^+
+ 1.210000e+1
+SPECIES: e / O2
+PROCESS: E + O2 -> E + E + O2+, Ionization
+PARAM.:  E = 12.1 eV, complete set
+COMMENT: Eliasson B, Kogelschatz U 1986 Basic data for modelling of electrical discharge in gases:
+COMMENT: Oxygen. Report KLR-86-11C. Report Brown Boveri Forschungszentrum CH-5405 Baden.
+UPDATED: 2010-11-03 13:46:25
+COLUMNS: Energy (eV) | Cross section (m2)
+-----------------------------
+ 1.210000e+1	0.000000e+0
+ 1.300000e+1	2.500000e-22
+ 1.800000e+1	2.500000e-21
+ 2.800000e+1	1.020000e-20
+ 3.800000e+1	1.780000e-20
+ 4.800000e+1	2.070000e-20
+ 5.800000e+1	2.410000e-20
+ 6.800000e+1	2.610000e-20
+ 7.800000e+1	2.810000e-20
+ 8.800000e+1	2.840000e-20
+ 1.000000e+2	2.900000e-20
+ 1.000000e+3	6.000000e-21
+-----------------------------
+
+IONIZATION
+O2 -> O + O^+
+ 1.950000e+1
+SPECIES: e / O2
+PROCESS: E + O2 -> E + E + O + O+, Ionization
+PARAM.:  E = 19.5 eV, complete set
+COMMENT: Eliasson B, Kogelschatz U 1986 Basic data for modelling of electrical discharge in gases:
+COMMENT: Oxygen. Report KLR-86-11C. Report Brown Boveri Forschungszentrum CH-5405 Baden.
+UPDATED: 2010-11-03 13:50:31
+COLUMNS: Energy (eV) | Cross section (m2)
+-----------------------------
+ 1.950000e+1	0.000000e+0
+ 2.000000e+1	1.310000e-23
+ 2.100000e+1	4.310000e-23
+ 2.200000e+1	8.210000e-23
+ 2.300000e+1	1.520000e-22
+ 2.400000e+1	2.390000e-22
+ 2.500000e+1	3.480000e-22
+ 3.000000e+1	1.010000e-21
+ 4.000000e+1	2.690000e-21
+ 5.000000e+1	4.370000e-21
+ 6.000000e+1	5.710000e-21
+ 7.000000e+1	6.890000e-21
+ 8.000000e+1	8.000000e-21
+ 9.000000e+1	8.570000e-21
+ 1.000000e+2	9.160000e-21
+ 1.500000e+2	1.030000e-20
+ 2.000000e+2	9.750000e-21
+ 3.000000e+2	8.150000e-21
+ 4.000000e+2	6.640000e-21
+ 5.000000e+2	5.360000e-21
+ 1.000000e+3	3.360000e-21
+-----------------------------
+
+************************************************************************************************************************
+
+COMMENT: A A Ionin, I V Kochetov, A P Napartovich and N N Yuryshev, Physics and engineering of singlet delta oxygen production in
+         low-temperature plasma, J. Phys. D: Appl. Phys. 40 (2007) R25-R61.
+
+******************************************************* O2(0.98) *******************************************************
+
+ATTACHMENT
+O2(0.98) -> O^- + O
+SPECIES: e / O2(0.98)
+PROCESS: E + O2(0.98) -> O- + O, Attachment
+PARAM.:  E = 0 eV, complete set
+COMMENT: Burrow P D 1973 J.Phys. 59 4922.
+UPDATED: 2010-11-03 11:45:33
+COLUMNS: Energy (eV) | Cross section (m2)
+-----------------------------
+ 3.500000e+0	0.000000e+0
+ 3.900000e+0	5.000000e-23
+ 4.100000e+0	1.000000e-22
+ 4.400000e+0	1.800000e-22
+ 4.600000e+0	2.600000e-22
+ 4.800000e+0	3.300000e-22
+ 5.100000e+0	4.200000e-22
+ 5.400000e+0	4.500000e-22
+ 5.600000e+0	4.600000e-22
+ 5.900000e+0	4.400000e-22
+ 6.100000e+0	4.000000e-22
+ 6.300000e+0	3.400000e-22
+ 6.600000e+0	2.700000e-22
+ 6.900000e+0	1.800000e-22
+ 7.200000e+0	1.000000e-22
+ 7.400000e+0	6.000000e-23
+ 8.000000e+1	1.000000e-23
+ 1.000000e+2	1.000000e-26
+-----------------------------
+
+IONIZATION
+O2(0.98) -> O2^+
+ 1.110000e+1
+SPECIES: e / O2(0.98)
+PROCESS: E + O2(0.98) -> E + E + O2+, Ionization
+PARAM.:  E = 11.1 eV, complete set
+COMMENT: Eliasson B, Kogelschatz U 1986 Basic data for modelling of electrical discharge in gases:
+COMMENT: Oxygen. Report KLR-86-11C. Report Brown Boveri Forschungszentrum CH-5405 Baden.
+COMMENT: Cross-section of the ionization from vibrational and electronic a1 (Vagin N P, Derugin A
+COMMENT: A, Ionin A A, Klimachev Yu M, Kochetov I V, Napartovich A P, Sinitsyn D V, Yuryshev N N,
+COMMENT: 2000, Plasma Phys. Rep. 26, 278), b1 states obtained by shifting energy by corresponding
+COMMENT: value.
+UPDATED: 2010-11-03 13:46:25
+COLUMNS: Energy (eV) | Cross section (m2)
+-----------------------------
+ 1.110000e+1	0.000000e+0
+ 1.200000e+1	2.500000e-22
+ 1.700000e+1	2.500000e-21
+ 2.700000e+1	1.020000e-20
+ 3.700000e+1	1.770000e-20
+ 4.700000e+1	2.070000e-20
+ 5.700000e+1	2.410000e-20
+ 6.700000e+1	2.610000e-20
+ 7.700000e+1	2.810000e-20
+ 8.700000e+1	2.840000e-20
+ 9.900000e+1	2.900000e-20
+ 9.990000e+2	6.000000e-21
+-----------------------------
+
+IONIZATION
+O2(0.98) -> O + O^+
+ 1.852000e+1
+SPECIES: e / O2(0.98)
+PROCESS: E + O2(0.98) -> E + E + O + O+, Ionization
+PARAM.:  E = 18.52 eV, complete set
+COMMENT: Eliasson B, Kogelschatz U 1986 Basic data for modelling of electrical discharge in gases:
+COMMENT: Oxygen. Report KLR-86-11C. Report Brown Boveri Forschungszentrum CH-5405 Baden.
+COMMENT: Cross-section for this process for vibrational and electronic a1, b1 states obtained by
+COMMENT: shifting energy by corresponding value.
+UPDATED: 2010-11-03 13:50:31
+COLUMNS: Energy (eV) | Cross section (m2)
+-----------------------------
+ 1.850000e+1	0.000000e+0
+ 1.900000e+1	1.310000e-23
+ 2.000000e+1	4.310000e-23
+ 2.100000e+1	8.210000e-23
+ 2.200000e+1	1.520000e-22
+ 2.300000e+1	2.390000e-22
+ 2.400000e+1	3.480000e-22
+ 2.900000e+1	1.010000e-21
+ 3.900000e+1	2.690000e-21
+ 4.900000e+1	4.370000e-21
+ 5.900000e+1	5.710000e-21
+ 6.900000e+1	6.890000e-21
+ 7.900000e+1	8.000000e-21
+ 8.900000e+1	8.570000e-21
+ 9.900000e+1	9.160000e-21
+ 1.490000e+2	1.020000e-20
+ 1.990000e+2	9.750000e-21
+ 2.990000e+2	8.150000e-21
+ 3.990000e+2	6.640000e-21
+ 4.990000e+2	5.360000e-21
+ 9.990000e+2	3.360000e-21
+-----------------------------
+
+************************************************************************************************************************
+
+COMMENT: A A Ionin, I V Kochetov, A P Napartovich and N N Yuryshev, Physics and engineering of singlet delta oxygen production in
+         low-temperature plasma, J. Phys. D: Appl. Phys. 40 (2007) R25-R61.
+
+******************************************************* O2(1.63) *******************************************************
+
+ATTACHMENT
+O2(1.63) -> O^- + O
+SPECIES: e / O2(1.63)
+PROCESS: E + O2(1.63) -> O- + O, Attachment
+PARAM.:  E = 0 eV, complete set
+COMMENT: Akhmanov S L et al 1983 Depon. VINITI (Rus.) 5472-83. Moscow.
+UPDATED: 2010-11-03 11:45:52
+COLUMNS: Energy (eV) | Cross section (m2)
+-----------------------------
+ 3.000000e+0	0.000000e+0
+ 3.700000e+0	5.100000e-22
+ 4.000000e+0	1.530000e-21
+ 4.300000e+0	1.680000e-21
+ 5.000000e+0	8.900000e-22
+ 6.000000e+0	3.500000e-22
+ 9.000000e+0	0.000000e+0
+ 1.000000e+2	0.000000e+0
+-----------------------------
+
+IONIZATION
+O2(1.63) -> O2^+
+ 1.045000e+1
+SPECIES: e / O2(1.63)
+PROCESS: E + O2(1.63) -> E + E + O2+, Ionization
+PARAM.:  E = 10.45 eV, complete set
+COMMENT: Eliasson B, Kogelschatz U 1986 Basic data for modelling of electrical discharge in gases:
+COMMENT: Oxygen. Report KLR-86-11C. Report Brown Boveri Forschungszentrum CH-5405 Baden.
+COMMENT: Cross-section of the ionization from vibrational and electronic a1 (Vagin N P, Derugin A
+COMMENT: A, Ionin A A, Klimachev Yu M, Kochetov I V, Napartovich A P, Sinitsyn D V, Yuryshev N N,
+COMMENT: 2000, Plasma Phys. Rep. 26, 278), b1 states obtained by shifting energy by corresponding
+COMMENT: value.
+UPDATED: 2010-11-03 13:46:25
+COLUMNS: Energy (eV) | Cross section (m2)
+-----------------------------
+ 1.050000e+1	0.000000e+0
+ 1.140000e+1	2.500000e-22
+ 1.640000e+1	2.500000e-21
+ 2.640000e+1	1.020000e-20
+ 3.640000e+1	1.770000e-20
+ 4.640000e+1	2.070000e-20
+ 5.640000e+1	2.410000e-20
+ 6.640000e+1	2.610000e-20
+ 7.640000e+1	2.810000e-20
+ 8.640000e+1	2.840000e-20
+ 9.840000e+1	2.900000e-20
+ 9.980000e+2	6.000000e-21
+-----------------------------
+
+IONIZATION
+O2(1.63) -> O + O^+
+ 1.787000e+1
+SPECIES: e / O2(1.63)
+PROCESS: E + O2(1.63) -> E + E + O + O+, Ionization
+PARAM.:  E = 17.87 eV, complete set
+COMMENT: Eliasson B, Kogelschatz U 1986 Basic data for modelling of electrical discharge in gases:
+COMMENT: Oxygen. Report KLR-86-11C. Report Brown Boveri Forschungszentrum CH-5405 Baden.
+COMMENT: Cross-section for this process for vibrational and electronic a1, b1 states obtained by
+COMMENT: shifting energy by corresponding value.
+UPDATED: 2010-11-03 13:50:31
+COLUMNS: Energy (eV) | Cross section (m2)
+-----------------------------
+ 1.790000e+1	0.000000e+0
+ 1.840000e+1	1.310000e-23
+ 1.940000e+1	4.310000e-23
+ 2.040000e+1	8.210000e-23
+ 2.140000e+1	1.520000e-22
+ 2.240000e+1	2.390000e-22
+ 2.340000e+1	3.480000e-22
+ 2.840000e+1	1.010000e-21
+ 3.840000e+1	2.690000e-21
+ 4.840000e+1	4.370000e-21
+ 5.840000e+1	5.710000e-21
+ 6.840000e+1	6.890000e-21
+ 7.840000e+1	8.000000e-21
+ 8.840000e+1	8.570000e-21
+ 9.840000e+1	9.160000e-21
+ 1.480000e+2	1.020000e-20
+ 1.980000e+2	9.750000e-21
+ 2.980000e+2	8.150000e-21
+ 3.980000e+2	6.640000e-21
+ 4.980000e+2	5.360000e-21
+ 9.980000e+2	3.360000e-21
+-----------------------------
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
