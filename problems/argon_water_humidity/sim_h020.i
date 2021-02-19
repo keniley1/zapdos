@@ -91,7 +91,7 @@ dom1Scale=1.0
 [Outputs]
   # perf_graph = true
   #print_densityear_residuals = false
-  [out_02]
+  [out_01]
     type = Exodus
   []
 []
@@ -104,21 +104,8 @@ dom1Scale=1.0
   [./data_provider]
     type = ProvideMobility
     electrode_area = 5.02e-7 # Formerly 3.14e-6
-    #ballast_resist = 1e6
-    #ballast_resist = 9.0e5
-    #ballast_resist = 8.5e5
-    #ballast_resist = 7.0e5
-    #ballast_resist = 5.5e5
-    ballast_resist = 4.0e5
-    #ballast_resist = 3.5e5
-    #ballast_resist = 2.5e5
-    #ballast_resist = 2.0e5
-    #ballast_resist = 1.5e5
-    #ballast_resist = 1.0e5
+    ballast_resist = 651e3
     e = 1.6e-19
-    # electrode_area = 1.1
-    # ballast_resist = 1.1
-    # e = 1.1
   [../]
 []
 
@@ -424,6 +411,7 @@ dom1Scale=1.0
   [../]
   [Ar_density]
     block = 0
+    order = CONSTANT
     family = MONOMIAL
   []
 
@@ -1521,8 +1509,7 @@ dom1Scale=1.0
   [../]
   [./potential_bc_func]
     type = ParsedFunction
-    value = -0.8
-    #value = 1.0
+    value = -1.65
   [../]
   [./test_bc]
     type = ParsedFunction
@@ -1534,7 +1521,7 @@ dom1Scale=1.0
   [../]
   [./potential_ic_func]
     type = ParsedFunction
-    value = '-0.8 * (1.001e-3 - x)'
+    value = '-1.65 * (1.001e-3 - x)'
   [../]
   [./charged_gas_ic]
     type = ParsedFunction
@@ -2099,9 +2086,9 @@ dom1Scale=1.0
                  Arsss + Arsss -> Ar + Arp + em           : {5e-10*Tn^0.5}
                  #Arp + Ar -> Ar + Arp                     : {5.66e-10*Tn^0.5}
                  Arp + Ar + Ar -> Ar + Ar2p               : {1.41e-31*Tn^(-0.5)}
-                 Ars + Ar + Ar -> Ar + Ar2s               : {1.14e-32}
-                 Arss + Ar + Ar -> Ar + Ar2s              : {1.14e-32}
-                 Arsss + Ar + Ar -> Ar + Ar2s             : {1.14e-32}
+                 Ars + Ar + Ar -> Ar + Ar2s               : 1.14e-32
+                 Arss + Ar + Ar -> Ar + Ar2s              : 1.14e-32
+                 Arsss + Ar + Ar -> Ar + Ar2s             : 1.14e-32
                  #########################
                  # H2O electron-impact reactions
                  #########################
@@ -2342,8 +2329,8 @@ dom1Scale=1.0
                  HO2 + HO2 -> H2O2 + O2                   : {2.2e-13*exp(600/Tgas)}
                  HO2 + HO2 + Ar -> H2O2 + O2 + Ar         : {1.9e-33*exp(980/Tgas)}
                  HO2 + HO2 + H2 -> H2O2 + O2 + H2         : {4e-33*exp(980/Tgas)}
-                 # Next one ignored because temperature is too small
-                 #HO2 + H2O -> H2O2 + OH                   : {6.45e-11*exp(-16500/Tgas)}
+                 HO2 + HO2 + H2O -> H2O2 + O2 + H2O       : {1e-32*exp(980/Tgas)}
+                 HO2 + H2O -> H2O2 + OH                   : {6.45e-11*exp(-16500/Tgas)}
                  HO2 + H2O2 -> OH + H2O + O2              : 1e-16
                  H2O + O -> OH + OH                       : {1.67e-11*(Tgas/300)^(1.14)*exp(-8680/Tgas)}
                  H2O + Os -> H2 + O2                      : 2.2e-12
@@ -2352,6 +2339,13 @@ dom1Scale=1.0
                  H2O + O2m -> H2O + O2 + em               : {5e-9*exp(-5000/Tgas)}
                  H2Op + Om + Ar -> H2O2 + Ar              : {2e-25*(Tgas/300)^(-2.5)}
                  H2Op + O2 -> H2O + O2p                   : 3.3e-10
+                 # Reactions 1255 and 1256 are WRONG -- see Erratum
+                 #H2Op + O2m + Ar -> H2O2 + Ar             : {2e-25*(Tgas/300)^(-2.5)}
+                 #H2Op + O2m + H2O -> H2O2 + H2O           : {2e-25*(Tgas/300)^(-2.5)}
+                 H2Op + O2m + H2 -> H2O2 + H2             : {2e-25*(Tgas/300)^(-2.5)}
+                 H2Op + O2m + Ar -> H2 + O2 + Ar          : {2e-25*(Tgas/300)^(-2.5)}
+                 H2Op + O2m + H2O -> H2 + O2 + H2O        : {2e-25*(Tgas/300)^(-2.5)}
+                 H2Op + O2m + H2 -> H2 + O2 + H2          : {2e-25*(Tgas/300)^(-2.5)}
                  H2O2 + O -> HO2 + OH                     : {1.79e-13*(Tgas/300)^(2.92)*exp(-1394/Tgas)}
                  H2O2 + O -> H2O + O2                     : 1.45e-15
                  ##############################
