@@ -2096,6 +2096,7 @@ dom1Scale=1.0
                  em + H2O -> H2Ov + em            : EEDF [-0.198] (C65_H2O_Excitation_0.20_eV)
                  em + H2O -> OHm + H              : EEDF (C58_H2O_Attachment)
                  em + H2O -> em + OHs + H         : EEDF [-9.00] (C66_H2O_Excitation_9.00_eV) 
+                 em + H2O -> em + em + H2Op       : EEDF [-13.5] (C67_H2O_Ionization_13.50_eV)
                  em + H -> em + Hs                : EEDF [-10.2] (C69_H_Excitation_10.20_eV)
                  em + H -> em + Hs                : EEDF [-10.2] (C70_H_Excitation_10.20_eV)
                  em + Hs -> em + H                : EEDF [10.2] (C72_H2p10.2eV_De-excitation_10.20_eV)
@@ -2193,7 +2194,7 @@ dom1Scale=1.0
                  Arsss + OH -> Ar + O + H                 : 2.1e-10
                  Arsss + H2O -> Ar + OH + H               : 2.1e-10
                  Arp + H -> Ar + Hp                       : 1e-10
-                 Arp + H2 -> Ar + H2Op                    : 1.1e-9
+                 #Arp + H2 -> Ar + H2Op                    : 1.1e-9
                  Arp + H2O -> Ar + H2Op                   : 7e-10
                  # Next ones excluded because ArHp is not tracked
                  # I should look into ArH molecules -- significant or not?
