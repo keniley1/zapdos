@@ -570,7 +570,7 @@ dom1Scale=1.0
     variable = Ar_density
     density_log = Ar
     execute_on = 'initial'
-    block = 1
+    block = 0
   []
   [./ADPowerDep_em]
     type = ADPowerDep
@@ -1586,7 +1586,7 @@ dom1Scale=1.0
    potential = potential
    mean_en = mean_en
    user_se_coeff = 0.05
-   property_tables_file = 'bolsig_files_020/electron_mobility_diffusion.txt'
+   property_tables_file = 'bolsig_files_035/electron_mobility_diffusion.txt'
    block = 0
  [../]
  [gas_constants]
@@ -2021,7 +2021,7 @@ dom1Scale=1.0
     electron_energy = 'mean_en'
     electron_density = 'em'
     include_electrons = true
-    file_location = 'bolsig_files_020'
+    file_location = 'bolsig_files_035'
     equation_constants = 'Tgas Tn'
     equation_values = '300 1'
     equation_variables = 'Te'

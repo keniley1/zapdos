@@ -570,7 +570,7 @@ dom1Scale=1.0
     variable = Ar_density
     density_log = Ar
     execute_on = 'initial'
-    block = 1
+    block = 0
   []
   [./ADPowerDep_em]
     type = ADPowerDep
