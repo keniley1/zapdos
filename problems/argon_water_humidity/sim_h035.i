@@ -91,7 +91,7 @@ dom1Scale=1.0
 [Outputs]
   # perf_graph = true
   #print_densityear_residuals = false
-  [out_01]
+  [out_02]
     type = Exodus
   []
 []
@@ -2253,9 +2253,10 @@ dom1Scale=1.0
                  # skipping rxns 1116-1121 because O2m and O3m are not terribly relevant
                  # Also skipping up through 1133 since we have no nitrogen
                  # next three are all rxn 1136
-                 Hp + H + Ar -> H2Op + Ar                 : 1e-34
-                 Hp + H + H2 -> H2Op + H2                 : 1e-34
-                 Hp + H + H2O -> H2Op + H2O               : 1e-34
+                 # commented out because of erratum - H2Op should be H2p, which I ignore
+                 #Hp + H + Ar -> H2Op + Ar                 : 1e-34
+                 #Hp + H + H2 -> H2Op + H2                 : 1e-34
+                 #Hp + H + H2O -> H2Op + H2O               : 1e-34
                  Hp + OH -> H + OHp                       : 2.1e-9
                  Hp + OHm -> OH + H                       : {2e-7*(Tgas/300)^(-0.5)}
                  Hp + OHm -> H + H + O                    : 1e-7
@@ -2281,8 +2282,8 @@ dom1Scale=1.0
                  ##############################
                  ##############################
                  H2 + H2O -> OH + H2 + H                  : {4.38e-12*exp(-52900/Tgas)}
-                 H2Op + O -> H + OHp                      : 1.5e-9
-                 H2Op + Om -> H2 + O                      : {2e-7*(Tgas/300)^(-0.5)}
+                 #H2Op + O -> H + OHp                      : 1.5e-9
+                 #H2Op + Om -> H2 + O                      : {2e-7*(Tgas/300)^(-0.5)}
                  OH + O -> H + O2                         : {1.81e-11*(Tgas/300)^(-0.31)*exp(177/Tgas)}
                  OH + Os -> H + O2                        : {2.08e-11*(Tgas/300)^(-0.186)*exp(-154/Tgas)}
                  OH + Op -> OHp + O                       : 3.6e-10
@@ -2343,14 +2344,17 @@ dom1Scale=1.0
                  # Reactions 1255 and 1256 are WRONG -- see Erratum
                  #H2Op + O2m + Ar -> H2O2 + Ar             : {2e-25*(Tgas/300)^(-2.5)}
                  #H2Op + O2m + H2O -> H2O2 + H2O           : {2e-25*(Tgas/300)^(-2.5)}
-                 H2Op + O2m + H2 -> H2O2 + H2             : {2e-25*(Tgas/300)^(-2.5)}
-                 H2Op + O2m + Ar -> H2 + O2 + Ar          : {2e-25*(Tgas/300)^(-2.5)}
-                 H2Op + O2m + H2O -> H2 + O2 + H2O        : {2e-25*(Tgas/300)^(-2.5)}
-                 H2Op + O2m + H2 -> H2 + O2 + H2          : {2e-25*(Tgas/300)^(-2.5)}
+                 #H2Op + O2m + H2 -> H2O2 + H2             : {2e-25*(Tgas/300)^(-2.5)}
+                 #H2Op + O2m + Ar -> H2 + O2 + Ar          : {2e-25*(Tgas/300)^(-2.5)}
+                 #H2Op + O2m + H2O -> H2 + O2 + H2O        : {2e-25*(Tgas/300)^(-2.5)}
+                 #H2Op + O2m + H2 -> H2 + O2 + H2          : {2e-25*(Tgas/300)^(-2.5)}
                  H2O2 + O -> HO2 + OH                     : {1.79e-13*(Tgas/300)^(2.92)*exp(-1394/Tgas)}
                  H2O2 + O -> H2O + O2                     : 1.45e-15
                  ##############################
                  # Radiation terms
+                 # Note that Arss is a photoemission state
+                 # Ars is a metastable, and accordingly has a low decay rate
+                 # Arss is a photon emission state (as is Arsss, I presume -- must check)
                  ##############################
                  Arsss -> Ars                             : 2e6
                  Arsss -> Arss                            : 2e6
