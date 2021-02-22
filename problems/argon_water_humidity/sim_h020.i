@@ -91,7 +91,7 @@ dom1Scale=1.0
 [Outputs]
   # perf_graph = true
   #print_densityear_residuals = false
-  [out_02]
+  [out_03]
     type = Exodus
   []
 []
@@ -2081,14 +2081,23 @@ dom1Scale=1.0
                  em + Ar2s -> Ar2p + em + em              : {9e-8*Te^0.7}
                  em + Ar2s -> Ar + Ar + em                : 1e-7
                  em + Ar2p -> Arsss + Ar                  : {5.38e-8*Te^(-0.66)}
-                 Ars + Ars -> Ar + Arp + em               : {5e-10*Tn^0.5}
-                 Arss + Arss -> Ar + Arp + em             : {5e-10*Tn^0.5}
-                 Arsss + Arsss -> Ar + Arp + em           : {5e-10*Tn^0.5}
+                 # Note that some rate coefficients are multiplied by a factor of 2
+                 # since Ars and Arss account for multiple excited states
+                 Ars + Ar2s -> Arp + Ar + Ar + em         : 5e-10
+                 Ars + Ars -> Ar + Arp + em               : 1.28e-9
+                 Arss + Arss -> Ar + Arp + em             : 4.2e-9 
+                 Arsss + Arsss -> Ar + Arp + em           : 1e-9 
                  #Arp + Ar -> Ar + Arp                     : {5.66e-10*Tn^0.5}
-                 Arp + Ar + Ar -> Ar + Ar2p               : {1.41e-31*Tn^(-0.5)}
-                 Ars + Ar + Ar -> Ar + Ar2s               : 1.14e-32
-                 Arss + Ar + Ar -> Ar + Ar2s              : 1.14e-32
-                 Arsss + Ar + Ar -> Ar + Ar2s             : 1.14e-32
+                 # Van gaens reactions 309-320
+                 Ars + Ar + Ar -> Ar + Ar2s               : 6.6e-32 
+                 Arss + Ar + Ar -> Ar + Ar2s              : 6.6e-32 
+                 Arsss + Ar + Ar -> Ar + Ar2s             : 1e-31
+                 Arp + Ar + Ar -> Ar + Ar2p               : 2.5e-31 
+                 Ar2s + Ar2s -> Ar2p + Ar + Ar + em       : 5e-10
+                 Ar2s + Ar -> Ar + Ar + Ar                : 5e-15
+                 # Van Gaens reactions 317-320 
+                 Ar2s + Ar -> Ars + Ar + Ar               : 1e-14 
+                 Ar2s + Ar -> Arss + Ar + Ar              : 1e-14 
                  #########################
                  # H2O electron-impact reactions
                  #########################
@@ -2117,12 +2126,29 @@ dom1Scale=1.0
                  em + O2s -> Om + O               : EEDF (C55_O21.63_Attachment)
                  em + O2p -> O + O                : {1.2e-8*Te^(-0.7)} 
                  em + H -> em + em + Hp           : EEDF [-13.60] (C71_H_Ionization_13.60_eV)
+                 # Van Gaens reactions 266-268 -- seem important!
+                 em + H2Op -> O + H2              : {6.27e-9*Te^(-0.5)}
+                 em + H2Op -> O + H + H           : {4.90e-8*Te^(-0.5)}
+                 em + H2Op -> OH + H              : {1.38e-8*Te^(-0.5)}
+                 # H2O2 dissociative attachment
+                 # Cross sections originally from D. Nandi, Chem. Phys. Lett. 373 (2003), \cite{Nandi2003}
+                 # But the form used here is from 
+                 # Liu, D. PSST 19 (2010), \cite{Liu2010a}
+                 # (reactions 83-84)
+                 em + H2O2 -> H2O + Om            : {1.57e-10*Te^(-0.55)}
+                 em + H2O2 -> OH + OHm            : {2.7e-10*Te^(-0.5)}  
                  #########################
                  # Argon-heavy particle collisions
                  #########################
+                 Ars + O2 -> Ar + O + O                   : 4.2e-10
+                 Ars + O2s -> Ar + O + O                  : 2.1e-10
+                 Arss + O2 -> Ar + O + O                  : 4.2e-10
+                 Arsss + O2 -> Ar + O + O                 : 2.1e-10
+                 Arsss + O2s -> Ar + O + O                : 2.1e-10
                  Arp + O -> Ar + Op                       : 6.4e-12
                  Arp + O2 -> Ar + O2p                     : 5e-11
                  Arp + O2m -> Ar + O2                     : {2e-7*(Tgas/300)^(-0.5)}
+                 Arp + O2m -> Ar + O + O                  : 1e-7
                  Arp + Om -> Ar + O                       : {2e-7*(Tgas/300)^(-0.5)}
                  # Van Gaens, Reactions 427, 428, 433-437
                  Ar2s + O2 -> Ar + Ar + O + O             : 4.6e-11
@@ -2156,8 +2182,13 @@ dom1Scale=1.0
                  #O + O3m -> O2m + O2                      : 3.2e-10
                  #O + O3m -> O2 + O2 + em                  : 3e-10
                  Os + O2 -> O2s + O                       : {2.6e-11*(67/Tgas)}
+                 Os + O3 -> O2s + O2                      : 1.2e-10
                  Os + Ar -> Ar + O                        : 5e-12
                  Op + O2 -> O + O2p                       : 2.1e-11
+                 Om + O2 -> O2m + O                       : 1e-10
+                 Om + O2s -> O3 + em                      : 3e-10
+                 Om + O2p + Ar -> O + O2 + Ar             : {2e-25*(Tgas/300)^(-2.5)}
+
                  # Next is commented because O4p not tracked
                  #O2 + O2p + Ar -> O4p + Ar                : {2.4e-30*(Tgas/300)^(-3.2)}
                  # Rxns 505, 508, 512, 515 ignored because vibrational levels of O2 are not tracked
@@ -2170,6 +2201,7 @@ dom1Scale=1.0
                  O2s + H2O -> O2 + H2O                    : 2.3e-12
                  O2s + O3 -> O2 + O3                      : 2.2e-11
                  # Reactions 546-550 ignored because O2s levels are lumped together
+                 O2p + O2m -> O2 + O + O                  : 1e-7
                  O2p + O2m + Ar -> O2 + O2 + Ar           : {1e-24*(Tgas/300)^(-2.5)}
                  # Ignored because O3m not included
                  #O2p + O3m + Ar -> O3 + O2 + Ar           : {2e-25*(Tgas/300)^(-2.5)}
@@ -2182,10 +2214,11 @@ dom1Scale=1.0
                  # Argon-humid air reactions
                  # All of the B reactions from Van Gaens, plus all H2 reactions
                  #########################
+                 Ars + H2 -> Ar + H + H                   : 1.32e-10
                  Ars + OH -> Ar + O + H                   : 6.6e-11
                  Ars + OH -> Ar + OHs                     : 6.6e-11
                  Ars + H2O -> Ar + OH + H                 : 2.1e-10
-                 Ars + H2 -> Ar + H + H                   : 6.6e-11
+                 Arss + H2 -> Ar + H + H                  : 1.32e-10 
                  Arss + OH -> Ar + O + H                  : 6.6e-11
                  Arss + OH -> Ar + OHs                    : 6.6e-11
                  Arss + H2O -> Ar + OH + H                : 2.1e-10
@@ -2196,10 +2229,12 @@ dom1Scale=1.0
                  Arp + H -> Ar + Hp                       : 1e-10
                  #Arp + H2 -> Ar + H2Op                    : 1.1e-9
                  Arp + H2O -> Ar + H2Op                   : 7e-10
+                 Arp + OHm -> Ar + OH                     : {2e-7*(Tgas/300)^(-0.5)}
                  # Next ones excluded because ArHp is not tracked
                  # I should look into ArH molecules -- significant or not?
                  #Arp + H2O -> ArHp + OH                   : 3e-10
                  #Ar2p + H2O -> ArHp + Ar + OH             : 4e-10
+                 Ar2s + H2 -> Ar + Ar + H + H             : 6.6e-11
                  Ar2s + H2O -> Ar + Ar + OH + H           : 1e-10
                  Ar2p + H -> Ar + Ar + Hp                 : 5e-11
                  Ar2p + H2O -> Ar + Ar + H2Op             : 1.6e-9
@@ -2275,7 +2310,8 @@ dom1Scale=1.0
                  #H2 + H2Op -> H2 + Hp + H                 : {1e-8*exp(-84100/Tgas)} 
                  H2 + OH -> H2O + H                       : {9.54e-13*exp(-1490/Tgas)}
                  H2 + OHp -> H2Op + H                     : 1.3e-9
-                 H2 + OHm -> H2O + Hm                     : 5e-12
+                 # Next is excluded because Hm is not tracked
+                 #H2 + OHm -> H2O + Hm                     : 5e-12
                  ##############################
                  ##############################
                  H2 + HO2 -> H2O2 + H                     : {4.38e-12*exp(-10751/Tgas)}
@@ -2298,6 +2334,14 @@ dom1Scale=1.0
                  OH + OH + H2 -> H2O2 + H2                : {1.6e-30*(Tgas/300)^(-0.9)} 
                  OH + OH + H2O -> H2O2 + H2O              : {4e-30*(Tgas/300)^(-0.9)} 
                  OH + OH + O3 -> H2O2 + O3                : {1.6e-30*(Tgas/300)^(-0.9)}
+                 # second order OH recombination to H2O2 is strange. See:
+                 # D. Liu. "Global model of low-temperature atmospheric-pressure He + H2O
+                 #   plasmas," Plasma Sources Sci. Technol. 19 (2010)
+                 # 
+                 # But this is apparently the "high pressure limit" -- see
+                 # Atkinson, Atmos. Chem. Phys. Discussions 3 (2003)
+                 # I am excluding for now. Not entirely sure what to make of this.
+                 #OH + OH -> H2O2                          : {1.5e-11*(Tgas/300)^(-0.37)}
                  ##############################
                  ##############################
                  OH + OHs -> H2O + O                      : {1.5e-11*(Tgas/300)^(-0.37)}
@@ -2312,7 +2356,9 @@ dom1Scale=1.0
                  OHp + Om -> O + OH                       : {2e-7*(Tgas/300)^(-0.5)}
                  OHp + Om -> O + O + H                    : 1e-7
                  OHp + Om + Ar -> OH + O + Ar             : {2e-25*(Tgas/300)^(-2.5)}
+                 OHp + Om + H2 -> OH + O + H2             : {2e-25*(Tgas/300)^(-2.5)}
                  OHp + Om + Ar -> HO2 + Ar                : {2e-25*(Tgas/300)^(-2.5)}
+                 OHp + Om + H2 -> HO2 + H2                : {2e-25*(Tgas/300)^(-2.5)}
                  OHp + O2 -> OH + O2p                     : 3.8e-10
                  # Next 3 are all rxn number 1399
                  OHp + OHm + Ar -> H2O2 + Ar              : {2e-25*(Tgas/300)^(-2.5)}
@@ -2326,6 +2372,17 @@ dom1Scale=1.0
                  OHm + O2p -> OH + O2                     : {2e-7*(Tgas/300)^(-0.5)}
                  OHm + O2p + Ar -> OH + O2 + Ar           : {2e-25*(Tgas/300)^(-2.5)}
                  OHm + O3 -> O2m + HO2                    : 1.08e-11
+                 ###################################################
+                 # OHm and H2O+ recombination
+                 # Van gaens reactions 1443-1447
+                 OHm + H2Op -> OH + H2O                   : {2e-7*(Tgas/300)^-2.5}
+                 OHm + H2Op -> O + H + H2O                : 1e-7
+                 OHm + H2Op -> OH + OH + H                : 1e-7
+                 OHm + H2Op -> O + H + OH + H             : 1e-7
+                 OHm + H2Op + Ar -> OH + H2O + Ar         : {2e-25*(Tgas/300)^(-2.5)}
+                 OHm + H2Op + H2O -> OH + H2O + H2O        : {2e-25*(Tgas/300)^(-2.5)}
+                 OHm + H2Op + H2 -> OH + H2O + H2         : {2e-25*(Tgas/300)^(-2.5)}
+                 ###################################################
                  HO2 + O -> OH + O2                       : {2.71e-11*exp(224/Tgas)}
                  HO2 + O2s -> OH + O2 + O                 : 1.66e-11
                  HO2 + HO2 -> H2O2 + O2                   : {2.2e-13*exp(600/Tgas)}
@@ -2339,8 +2396,17 @@ dom1Scale=1.0
                  H2O + Op -> H2Op + O                     : 2.6e-9
                  H2O + Om -> H2O2 + em                    : 6e-13
                  H2O + O2m -> H2O + O2 + em               : {5e-9*exp(-5000/Tgas)}
+                 H2Op + Om -> OH + H + O                  : 1e-7
+                 # Next six reactions are Van Gaens, reactions 1521-1522 (split M)
+                 H2Op + Om + Ar -> H2O + O + Ar           : {2e-25*(Tgas/300)^(-2.5)}
+                 H2Op + Om + H2O -> H2O + O + H2O         : {2e-25*(Tgas/300)^(-2.5)}
+                 H2Op + Om + H2 -> H2O + O + H2           : {2e-25*(Tgas/300)^(-2.5)}
                  H2Op + Om + Ar -> H2O2 + Ar              : {2e-25*(Tgas/300)^(-2.5)}
+                 H2Op + Om + H2O -> H2O2 + H2O            : {2e-25*(Tgas/300)^(-2.5)}
+                 H2Op + Om + H2 -> H2O2 + H2              : {2e-25*(Tgas/300)^(-2.5)}
                  H2Op + O2 -> H2O + O2p                   : 3.3e-10
+                 H2Op + O2m -> OH + H + O2                : 1e-7
+                 H2Op + O2m + Ar -> H2O + O2 + Ar         : {2e-25*(Tgas/300)^(-0.5)} 
                  # Reactions 1255 and 1256 are WRONG -- see Erratum
                  #H2Op + O2m + Ar -> H2O2 + Ar             : {2e-25*(Tgas/300)^(-2.5)}
                  #H2Op + O2m + H2O -> H2O2 + H2O           : {2e-25*(Tgas/300)^(-2.5)}
@@ -2350,6 +2416,7 @@ dom1Scale=1.0
                  #H2Op + O2m + H2 -> H2 + O2 + H2          : {2e-25*(Tgas/300)^(-2.5)}
                  H2O2 + O -> HO2 + OH                     : {1.79e-13*(Tgas/300)^(2.92)*exp(-1394/Tgas)}
                  H2O2 + O -> H2O + O2                     : 1.45e-15
+                 H2O2 + Os -> H2O + O2                    : 5.2e-10
                  ##############################
                  # Radiation terms
                  # Note that Arss is a photoemission state
