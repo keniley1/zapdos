@@ -10,7 +10,8 @@ dom1Scale=1.0
 [Mesh]
   [./geo]
     type = FileMeshGenerator
-    file = 'mesh01.msh'
+    #file = 'mesh01.msh'
+    file = 'mesh02.msh'
   [../]
 
   [./interface1]
@@ -91,7 +92,7 @@ dom1Scale=1.0
 [Outputs]
   # perf_graph = true
   #print_densityear_residuals = false
-  [out_03]
+  [out_04]
     type = Exodus
   []
 []
