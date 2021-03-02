@@ -10,8 +10,8 @@ dom1Scale=1.0
 [Mesh]
   [./geo]
     type = FileMeshGenerator
-    #file = 'mesh01.msh'
-    file = 'mesh02.msh'
+    file = 'mesh01.msh'
+    #file = 'mesh02.msh'
   [../]
 
   [./interface1]
@@ -92,7 +92,7 @@ dom1Scale=1.0
 [Outputs]
   # perf_graph = true
   #print_densityear_residuals = false
-  [out_01]
+  [out_03]
     type = Exodus
   []
 []
@@ -2110,11 +2110,11 @@ dom1Scale=1.0
                  em + Ars -> em + em + Arp                : EEDF [-4.21] (C42_Ar1s5_Ionization_4.21_eV)
                  em + Arss -> em + em + Arp               : EEDF [-4.14] (C29_Ar1s4_Ionization_4.14_eV)
                  #em + Arsss -> em + em + Arp              : EEDF [] (C_Ar_Ionization__eV)
-                 em + Arp -> Arsss                        : {4e-13*Te^(-0.5)}
-                 em + em + Arp -> Arsss + em              : {5e-27*Te^(-4.5)}
-                 em + Ar2s -> Ar2p + em + em              : {9e-8*Te^0.7}
+                 #em + Arp -> Arsss                        : {4e-13*Te^(-0.5)}
+                 #em + em + Arp -> Arsss + em              : {5e-27*Te^(-4.5)}
+                 #em + Ar2s -> Ar2p + em + em              : {9e-8*Te^0.7}
                  em + Ar2s -> Ar + Ar + em                : 1e-7
-                 em + Ar2p -> Arsss + Ar                  : {5.38e-8*Te^(-0.66)}
+                 #em + Ar2p -> Arsss + Ar                  : {5.38e-8*Te^(-0.66)}
                  # Note that some rate coefficients are multiplied by a factor of 2
                  # since Ars and Arss account for multiple excited states
                  Ars + Ar2s -> Arp + Ar + Ar + em         : 5e-10
@@ -2158,19 +2158,19 @@ dom1Scale=1.0
                  em + O2 -> Om + O                : EEDF (C43_O2_Attachment)
                  em + O2s -> Om + O               : EEDF (C51_O20.98_Attachment)
                  em + O2s -> Om + O               : EEDF (C55_O21.63_Attachment)
-                 em + O2p -> O + O                : {1.2e-8*Te^(-0.7)} 
+                 #em + O2p -> O + O                : {1.2e-8*Te^(-0.7)} 
                  em + H -> em + em + Hp           : EEDF [-13.60] (C71_H_Ionization_13.60_eV)
                  # Van Gaens reactions 266-268 -- seem important!
-                 em + H2Op -> O + H2              : {6.27e-9*Te^(-0.5)}
-                 em + H2Op -> O + H + H           : {4.90e-8*Te^(-0.5)}
-                 em + H2Op -> OH + H              : {1.38e-8*Te^(-0.5)}
+                 #em + H2Op -> O + H2              : {6.27e-9*Te^(-0.5)}
+                 #em + H2Op -> O + H + H           : {4.90e-8*Te^(-0.5)}
+                 #em + H2Op -> OH + H              : {1.38e-8*Te^(-0.5)}
                  # H2O2 dissociative attachment
                  # Cross sections originally from D. Nandi, Chem. Phys. Lett. 373 (2003), \cite{Nandi2003}
                  # But the form used here is from 
                  # Liu, D. PSST 19 (2010), \cite{Liu2010a}
                  # (reactions 83-84)
-                 em + H2O2 -> H2O + Om            : {1.57e-10*Te^(-0.55)}
-                 em + H2O2 -> OH + OHm            : {2.7e-10*Te^(-0.5)}  
+                 #em + H2O2 -> H2O + Om            : {1.57e-10*Te^(-0.55)}
+                 #em + H2O2 -> OH + OHm            : {2.7e-10*Te^(-0.5)}  
                  #########################
                  # Argon-heavy particle collisions
                  #########################
