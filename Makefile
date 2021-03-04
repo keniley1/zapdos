@@ -21,8 +21,17 @@ include $(FRAMEWORK_DIR)/moose.mk
 
 ################################## MODULES ####################################
 ALL_MODULES := no
+HEAT_CONDUCTION := yes
+NAVIER_STOKES := yes
 include $(MOOSE_DIR)/modules/modules.mk
 ###############################################################################
+
+ifeq ($(NAVIER_STOKES),yes)
+        FLUID_PROPERTIES            := yes
+				RAY_TRACING                 := yes
+        RDG                         := yes
+        HEAT_CONDUCTION             := yes
+endif
 
 # Use the SQUIRREL submodule if it exists and SQUIRREL_DIR is not set
 SQUIRREL_SUBMODULE    := $(CURDIR)/squirrel
