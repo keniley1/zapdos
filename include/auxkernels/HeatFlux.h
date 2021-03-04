@@ -12,18 +12,20 @@
 
 #include "AuxKernel.h"
 
-template <bool is_ad>
-class HeatFluxTempl : public AuxKernel
+class HeatFlux : public AuxKernel
 {
 public:
-  HeatFluxTempl(const InputParameters & parameters);
-
   static InputParameters validParams();
+
+  HeatFlux(const InputParameters & parameters);
+
+  virtual ~HeatFlux() {}
 
 protected:
   virtual Real computeValue();
 
   Real _r_units;
+  const unsigned _component;
 
   // Coupled variables
   const VariableValue & _temp;
@@ -34,10 +36,7 @@ protected:
 
   // Material properties
 
-  const GenericMaterialProperty<Real, is_ad> & _rho;
-  const GenericMaterialProperty<Real, is_ad> & _k;
-  const GenericMaterialProperty<Real, is_ad> & _cp;
+  const MaterialProperty<Real> & _rho;
+  const MaterialProperty<Real> & _k;
+  const MaterialProperty<Real> & _cp;
 };
-
-typedef HeatFluxTempl<false> HeatFlux;
-typedef HeatFluxTempl<true> ADHeatFlux;
