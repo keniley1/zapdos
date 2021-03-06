@@ -168,6 +168,10 @@ dom1Scale=1.0
 []
 
 [AuxVariables]
+  [Tgas]
+    order = CONSTANT
+    family = MONOMIAL
+  []
   [./Ar]
     block = 0
     order = CONSTANT
@@ -246,6 +250,18 @@ dom1Scale=1.0
 []
 
 [AuxKernels]
+  #[Tgas_interpolate]
+  #  type = InterpolateAlongAxis
+  #  variable = Tgas
+  #  axis = 0
+  #  property_file = 'test.csv'
+  #[]
+  [Tgas_function]
+    #type = InterpolateAlongAxis
+    type = FunctionAux
+    variable = Tgas
+    function = tgas_ic_func
+  []
   [./ADPowerDep_em]
     type = ADPowerDep
     density_log = em
@@ -450,6 +466,10 @@ dom1Scale=1.0
 []
 
 [Functions]
+  [tgas_ic_func]
+    type = ParsedFunction
+    value = '2286.0062644*exp(-2396.74365819*x) + 172.29673897' 
+  []
   [./water_ic_func]
     type = ParsedFunction
     value = 'log(8.6949e23/6.022e23)'
@@ -502,7 +522,7 @@ dom1Scale=1.0
    potential = potential
    mean_en = mean_en
    user_se_coeff = 0.05
-   property_tables_file = '/home/shane/projects/zapdos/problems/argon_cm_test/electron_mobility_diffusion.txt'
+   property_tables_file = 'argon_chemistry_rates/electron_moments.txt'
    block = 0
  [../]
  [gas_constants]
