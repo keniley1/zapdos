@@ -994,15 +994,21 @@ dom1Scale=1.0
 
 [BCs]
   # H2O evaporation boundary condition
-  [H2O_interface]
-    type = DirichletBC
+  #[H2O_interface]
+  #  type = DirichletBC
+  #  variable = H2O
+  #  #value = -1.26279318 # 20 % humidity 
+  #  #value = -0.70316062 # 35 % humidity 
+  #  #value = -0.34647896 # 50 % humidity 
+  #  #value = -0.08411109 # 65 % humidity 
+  #  value = 0.12351586 # 80 % humidity 
+  #  boundary = 'gas_right'
+  #[]
+  [vapor_pressure]
+    type = VaporValueBC
     variable = H2O
-    #value = -1.26279318 # 20 % humidity 
-    #value = -0.70316062 # 35 % humidity 
-    #value = -0.34647896 # 50 % humidity 
-    #value = -0.08411109 # 65 % humidity 
-    value = 0.12351586 # 80 % humidity 
-    boundary = 'gas_right'
+    gas_temperature = Tgas
+    boundary = 'right'
   []
 
   [./Nap_aq_physical]
