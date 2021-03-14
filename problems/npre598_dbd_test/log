@@ -1,0 +1,16 @@
+Info    : Running 'gmsh -1 argon_dbd_mesh.geo' [Gmsh 3.0.4, 1 node, max. 1 thread]
+Info    : Started on Fri Oct 23 08:59:37 2020
+Info    : Reading 'argon_dbd_mesh.geo'...
+Info    : Done reading 'argon_dbd_mesh.geo'
+Info    : Finalized high order topology of periodic connections
+Info    : Meshing 1D...
+Info    : Meshing curve 11 (Line)
+Info    : Meshing curve 21 (Line)
+Info    : Meshing curve 31 (Line)
+Info    : Meshing curve 41 (Line)
+Info    : Done meshing 1D (0.018937 s)
+Info    : 339 vertices 343 elements
+Info    : Writing 'argon_dbd_mesh.msh'...
+Info    : Done writing 'argon_dbd_mesh.msh'
+Info    : Stopped on Fri Oct 23 08:59:38 2020
+Info    : No current model available: creating one
