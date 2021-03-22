@@ -44,6 +44,8 @@ protected:
   const MaterialProperty<Real> * _kb;
 
   Real _r_units;
+  Real _r_ion;
+  Real _r_electron;
   const std::string _potential_units;
 
   const ADVariableGradient & _grad_potential;
@@ -69,8 +71,6 @@ protected:
 
   Real _voltage_scaling;
   Real _q_times_NA;
-  Real _r_ion;
-  Real _r_electron;
   Real _a;
   Real _b;
 };

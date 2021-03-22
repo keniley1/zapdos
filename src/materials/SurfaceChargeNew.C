@@ -60,9 +60,9 @@ SurfaceChargeNew::SurfaceChargeNew(const InputParameters & parameters)
     _se_coeff(_include_secondary_electrons ? &getMaterialProperty<Real>("se_coeff") : nullptr),
     _e(_include_electrons ? &getMaterialProperty<Real>("e") : nullptr),
     _kb(_include_electrons ? &getMaterialProperty<Real>("k_boltz") : nullptr),
+    _r_units(1. / getParam<Real>("position_units")),
     _r_ion(getParam<Real>("r_ion")),
     _r_electron(getParam<Real>("r_electron")),
-    _r_units(1. / getParam<Real>("position_units")),
     _potential_units(getParam<std::string>("potential_units")),
     _grad_potential(adCoupledGradient("potential"))
 {
