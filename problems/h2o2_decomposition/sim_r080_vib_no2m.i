@@ -63,8 +63,8 @@ dom1Scale=1.0
   line_search = 'basic'
   petsc_options = '-snes_converged_reason'
   solve_type = newton
-  petsc_options_iname = '-pc_type -pc_factor_shift-type -pc_factor_shift_amount'
-  petsc_options_value = 'lu NONZERO 1.e-10'
+  petsc_options_iname = '-pc_type -pc_factor_shift-type -pc_factor_shift_amount -pc_factor_mat_solver_package'
+  petsc_options_value = 'lu NONZERO 1.e-10 superlu_dist'
   nl_rel_tol = 1e-5
   nl_abs_tol = 1e-9
   dtmin = 1e-18
@@ -143,11 +143,11 @@ dom1Scale=1.0
 []
 
 [Variables]
-  [NO2m_aq]
+  [NO3m_aq]
     block = 1
     initial_condition = 0.46 
   []
-  [NO2_2m_aq]
+  [NO3_2m_aq]
     block = 1
     initial_condition = -30
   []
@@ -169,7 +169,10 @@ dom1Scale=1.0
     # 100 mM
     #initial_condition = 4.60517
     # 10 mM
-    initial_condition = 2.3026
+    #initial_condition = 2.3026
+
+    # 11 mM - 10 mM of NaCl, 1 mM of NaNO3
+    initial_condition = 3.3978
   [] 
   [Clm_aq]
     block = 1
@@ -340,8 +343,8 @@ dom1Scale=1.0
   [./H3Op_aq]
     block = 1
     #initial_condition = -20
-    #initial_condition = -14
-    initial_condition = 0.46
+    initial_condition = -14
+    #initial_condition = 0.46
   [../]
   [./O2m_aq]
     block = 1
@@ -2458,7 +2461,7 @@ dom1Scale=1.0
 
   [water3]
     name = 'test'
-    species = 'em_aq H2_aq OHm_aq H_aq Om_aq OH_aq NO2m_aq NO2_2m_aq'
+    species = 'em_aq H2_aq OHm_aq H_aq Om_aq OH_aq NO3m_aq NO3_2m_aq'
     aux_species = 'H2O_aq'
     use_log = true
     position_units = ${dom1Scale}
@@ -2473,6 +2476,6 @@ dom1Scale=1.0
                  H2_aq + H2O2_aq -> H_aq + OH_aq + H2O_aq            : 6e3
                  OH_aq + H2_aq -> H_aq + H2O_aq     : 4.2e4
                  Om_aq + H2_aq -> OHm_aq + H_aq       : 8e7
-                 em_aq + NO2m_aq -> NO2_2m_aq         : 5.2e6'
+                 em_aq + NO3m_aq -> NO3_2m_aq         : 7e6'
   []
 []
