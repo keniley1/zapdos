@@ -52,21 +52,25 @@ protected:
   std::vector<const MaterialProperty<Real> *> _mass;
 
   std::string _potential_units;
-  Real _r;
+  Real _r_ion;
+  Real _r_electron;
 
-  ADRealVectorValue _ion_flux;
+  ADReal _ion_flux;
   ADReal _n_gamma;
   ADReal _actual_mean_en;
   ADReal _v_e_th;
   ADReal _v_i_th;
   Real _a;
   Real _b;
+  Real _R_i;
+  Real _R_e;
+  Real _B;
   ADReal _numerator;
   ADReal _denominator;
+  ADReal _ion_advection;
+  ADReal _ion_diffusion;
 
   Real _voltage_scaling;
 
-  ADReal _ion_drift;
-  ADReal _secondary_ion;
   unsigned int _num_ions;
 };

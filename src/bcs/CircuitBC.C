@@ -31,8 +31,8 @@ CircuitBC::validParams()
   params.addRequiredCoupledVar(
       "mean_en", "The log of the product of the mean energy and the electron density.");
   params.addRequiredParam<std::string>("potential_units", "The potential units.");
-  params.addRequiredParam<Real>("r",
-                                "The reflection coefficient applied to both electrons and ions");
+  params.addRequiredParam<Real>("r_ion", "The reflection coefficient applied to ions");
+  params.addRequiredParam<Real>("r_electron", "The reflection coefficient applied to electrons.");
   params.addRequiredParam<Real>("position_units", "Units of position.");
 
   return params;
@@ -54,9 +54,10 @@ CircuitBC::CircuitBC(const InputParameters & parameters)
     _kb(getMaterialProperty<Real>("k_boltz")),
 
     _potential_units(getParam<std::string>("potential_units")),
-    _r(getParam<Real>("r"))
+    _r_ion(getParam<Real>("r_ion")),
+    _r_electron(getParam<Real>("r_electron"))
 {
-  _ion_flux.zero();
+  _ion_flux = 0;
   _n_gamma = 0.0;
   _actual_mean_en = 0.0;
   _v_e_th = 0.0;
@@ -98,6 +99,10 @@ CircuitBC::CircuitBC(const InputParameters & parameters)
     _sgnip[i] = &getMaterialProperty<Real>("sgn" + (*getVar("ip", i)).name());
     _mass[i] = &getMaterialProperty<Real>("mass" + (*getVar("ip", i)).name());
   }
+
+  _R_i = (1 - _r_ion) / (1 + _r_ion);
+  _R_e = (1 - _r_electron) / (1 + _r_electron);
+  _B = 2.0 / (1 + _r_electron);
 }
 
 ADReal
@@ -106,135 +111,54 @@ CircuitBC::computeQpResidual()
   if (_normals[_qp] * -1.0 * -_grad_u[_qp] > 0.0)
   {
     _a = 1.0;
-    _b = 0.;
   }
   else
   {
     _a = 0.0;
-    _b = 1.;
   }
 
-  _ion_flux.zero();
+  _ion_flux = 0;
   _n_gamma = 0;
-  _secondary_ion = 0;
-  _ion_drift = 0;
+  _ion_advection = 0;
+  _ion_diffusion = 0;
 
   ADReal _v_i_th = 0;
   for (unsigned int i = 0; i < _num_ions; ++i)
   {
-    _ion_flux +=
-        (*_sgnip[i])[_qp] * (*_muip[i])[_qp] * -_grad_u[_qp] * _r_units * std::exp((*_ip[i])[_qp]) -
-        (*_Dip[i])[_qp] * std::exp((*_ip[i])[_qp]) * (*_grad_ip[i])[_qp] * _r_units;
+    if (_normals[_qp] * (*_sgnip[i])[_qp] * -_grad_u[_qp] > 0.0)
+      _b = 1.0;
+    else
+      _b = 0.0;
 
-    _secondary_ion += std::exp((*_ip[i])[_qp]) * (*_muip[i])[_qp];
+    _v_i_th = std::sqrt(8 * _kb[_qp] * (*_T_heavy[i])[_qp] / (M_PI * (*_mass[i])[_qp]));
 
-    _ion_drift += std::sqrt(8 * _kb[_qp] * (*_T_heavy[i])[_qp] / (M_PI * (*_mass[i])[_qp])) *
-                  std::exp((*_ip[i])[_qp]);
+    _ion_flux += ((2 * _b - 1) * (*_sgnip[i])[_qp] * (*_muip[i])[_qp] * -_grad_u[_qp] * _r_units *
+                      _normals[_qp] +
+                  0.5 * _v_i_th) *
+                 std::exp((*_ip[i])[_qp]);
 
-    _v_i_th += std::sqrt(8 * _kb[_qp] * (*_T_heavy[i])[_qp] / (M_PI * (*_mass[i])[_qp]));
+    _ion_diffusion += _R_i * 0.5 * _v_i_th * std::exp((*_ip[i])[_qp]);
+    _ion_advection +=
+        _R_i * (*_sgnip[i])[_qp] * (*_muip[i])[_qp] * std::exp((*_ip[i])[_qp]) * (2 * _b - 1);
   }
-  _n_gamma = (1. - _a) * _se_coeff[_qp] * _ion_flux * _normals[_qp] /
+  _ion_diffusion *= 1 + _B * (1 - _a) * _se_coeff[_qp];
+  _ion_advection *= 1 + _B * (1 - _a) * _se_coeff[_qp];
+
+  _n_gamma = (1. - _a) * _se_coeff[_qp] * _ion_flux /
              (_muem[_qp] * -_grad_u[_qp] * _r_units * _normals[_qp]);
 
   _v_e_th = std::sqrt(8 * _data.coulomb_charge() * 2.0 / 3 * std::exp(_mean_en[_qp] - _em[_qp]) /
                       (M_PI * _massem[_qp]));
 
-  Real C, D, q;
-  C = (1 - _r) / (1 + _r);
-  D = 2.0 / (1 + _r);
-  q = 1.602e-19;
+  _numerator = (_V_bat.value(_t, _q_point[_qp]) - _u[_qp]) /
+                   (1.602e-19 * _data.electrode_area() * _data.ballast_resist() / _voltage_scaling) -
+               (_ion_diffusion + _R_e * 0.5 * _v_e_th * (std::exp(_em[_qp]) - _n_gamma)) * _N_A[_qp];
+
+  _denominator = (_ion_advection - _R_e * (1 - 2 * _a) * _muem[_qp] * std::exp(_em[_qp])) * _N_A[_qp];
+
+  return -_test[_i][_qp] * _r_units * _eps[_qp] * _numerator / _denominator;
 
   /*
-  return -_test[_i][_qp] * _r_units * _eps[_qp] *
-         ((-1.0 / (C * _data.electrode_area() * _data.ballast_resist() * 1.602e-19) *
-               (_u[_qp] + _V_bat.value(_t, _q_point[_qp])) +
-           0.5 * _v_i_th * std::exp((*_ip[0])[_qp]) * _N_A[_qp] -
-           0.5 * _v_e_th * (std::exp(_em[_qp]) - _n_gamma) * _N_A[_qp] +
-           D * (1 - _a) * _se_coeff[_qp] * _v_i_th * std::exp((*_ip[0])[_qp]) * _N_A[_qp]) /
-          ((2 * _b - 1) * (*_muip[0])[_qp] * std::exp((*_ip[0])[_qp]) * _N_A[_qp] /
-               _voltage_scaling * (1.0 + D * (1.0 - _a)) +
-           (2 * _a - 1) * _muem[_qp] * std::exp(_em[_qp])) * _N_A[_qp]/
-          _voltage_scaling);
-          */
-
-  /*
-  return -_test[_i][_qp] * _r_units * _eps[_qp] *
-         (-(_u[_qp] + _V_bat.value(_t, _q_point[_qp])) /
-              (C * q * _data.electrode_area() * _data.ballast_resist()) +
-          (_v_i_th * std::exp((*_ip[0])[_qp]) * (1.0 + D * (1 - _a) * _se_coeff[_qp]) -
-           _v_e_th * (std::exp(_em[_qp]) - _n_gamma) * 0.5 * _N_A[_qp]) /
-              ((*_muip[0])[_qp] * std::exp((*_ip[0])[_qp]) *
-                   ((2 * _b - 1) + D * (1 - _a) * _se_coeff[_qp] * (2 * _b - 1)) +
-               (2 * _a - 1) * _muem[_qp] * std::exp(_em[_qp])) / _voltage_scaling * _N_A[_qp]);
-               */
-  /*
-  return -_test[_i][_qp] * _r_units * _eps[_qp] *
-         ((-(_u[_qp] - _V_bat.value(_t, _q_point[_qp])) /
-               (C * q * _data.electrode_area() * _data.ballast_resist()) +
-           (_v_i_th * std::exp((*_ip[0])[_qp]) * (1.0 + D * (1 - _a) * _se_coeff[_qp]) -
-            _v_e_th * (std::exp(_em[_qp]) - _n_gamma)) *
-               0.5 * _N_A[_qp]) /
-          (((*_muip[0])[_qp] * std::exp((*_ip[0])[_qp]) *
-                ((2 * _b - 1) + D * (1 - _a) * _se_coeff[_qp] * (2 * _b - 1)) +
-            (2 * _a - 1) * _muem[_qp] * std::exp(_em[_qp])) /
-           _voltage_scaling * _N_A[_qp]));
-           */
-
-  Real num0, num1, den0, den1, test0, test1;
-
-  num0 = MetaPhysicL::raw_value(
-      -(_u[_qp] - _V_bat.value(_t, _q_point[_qp])) /
-          (C * q * _data.electrode_area() * _data.ballast_resist() / _voltage_scaling) +
-      (_v_i_th * std::exp((*_ip[0])[_qp]) * (1.0 + D * (1 - _a) * _se_coeff[_qp]) -
-       _v_e_th * (std::exp(_em[_qp]) - _n_gamma)) *
-          0.5 * _N_A[_qp]);
-
-  num1 = MetaPhysicL::raw_value((-2. * (1. + _r) * _u[_qp] -
-                                 2. * (1. + _r) * -_V_bat.value(_t, _q_point[_qp]) +
-                                 _data.electrode_area() * _data.coulomb_charge() *
-                                     _data.ballast_resist() / _voltage_scaling * (-1. + _r) *
-                                     ((-1. + (-1. + _a) * _se_coeff[_qp]) * _N_A[_qp] * _ion_drift +
-                                      _N_A[_qp] * (std::exp(_em[_qp]) - _n_gamma) * _v_e_th)));
-
-  den0 = MetaPhysicL::raw_value(((*_muip[0])[_qp] * std::exp((*_ip[0])[_qp]) *
-                                     ((2 * _b - 1) + D * (1 - _a) * _se_coeff[_qp] * (2 * _b - 1)) +
-                                 (2 * _a - 1) * _muem[_qp] * std::exp(_em[_qp])) /
-                                _voltage_scaling * _N_A[_qp]);
-
-  den1 = MetaPhysicL::raw_value((2. * _data.electrode_area() * _data.coulomb_charge() *
-                                 ((-1. + 2. * _a) * _muem[_qp] / _voltage_scaling * _N_A[_qp] *
-                                      (std::exp(_em[_qp]) - _n_gamma) -
-                                  (-1. + 2. * _b) * (-1. + (-1. + _a) * _se_coeff[_qp]) *
-                                      _secondary_ion / _voltage_scaling * _N_A[_qp]) *
-                                 _data.ballast_resist() * (-1. + _r)));
-
-  test0 = MetaPhysicL::raw_value(
-      (((_u[_qp] - _V_bat.value(_t, _q_point[_qp])) /
-            (C * q * _data.electrode_area() * _data.ballast_resist()) +
-        (_v_i_th * std::exp((*_ip[0])[_qp]) * (1.0 + D * (1 - _a) * _se_coeff[_qp]) -
-         _v_e_th * (std::exp(_em[_qp]) - _n_gamma)) *
-            0.5 * _N_A[_qp]) /
-       (((*_muip[0])[_qp] * std::exp((*_ip[0])[_qp]) *
-             ((2 * _b - 1) + D * (1 - _a) * _se_coeff[_qp] * (2 * _b - 1)) +
-         (2 * _a - 1) * _muem[_qp] * std::exp(_em[_qp])) /
-        _voltage_scaling * _N_A[_qp])));
-
-  test1 = MetaPhysicL::raw_value(
-      (-2. * (1. + _r) * _u[_qp] - 2. * (1. + _r) * -_V_bat.value(_t, _q_point[_qp]) +
-       _data.electrode_area() * _data.coulomb_charge() * _data.ballast_resist() / _voltage_scaling *
-           (-1. + _r) *
-           ((-1. + (-1. + _a) * _se_coeff[_qp]) * _N_A[_qp] * _ion_drift +
-            _N_A[_qp] * (std::exp(_em[_qp]) - _n_gamma) * _v_e_th)) /
-      (2. * _data.electrode_area() * _data.coulomb_charge() *
-       ((-1. + 2. * _a) * _muem[_qp] / _voltage_scaling * _N_A[_qp] *
-            (std::exp(_em[_qp]) - _n_gamma) -
-        (-1. + 2. * _b) * (-1. + (-1. + _a) * _se_coeff[_qp]) * _secondary_ion / _voltage_scaling *
-            _N_A[_qp]) *
-       _data.ballast_resist() * (-1. + _r)));
-
-  // std::cout << den0 << ", " << den1 << std::endl;
-  std::cout << test0 << ", " << test1 << std::endl;
-
   return _test[_i][_qp] * _r_units * _eps[_qp] *
          (-2. * (1. + _r) * _u[_qp] - 2. * (1. + _r) * -_V_bat.value(_t, _q_point[_qp]) +
           _data.electrode_area() * _data.coulomb_charge() * _data.ballast_resist() /
@@ -247,5 +171,6 @@ CircuitBC::computeQpResidual()
            (-1. + 2. * _b) * (-1. + (-1. + _a) * _se_coeff[_qp]) * _secondary_ion /
                _voltage_scaling * _N_A[_qp]) *
           _data.ballast_resist() * (-1. + _r));
+          */
 }
 
