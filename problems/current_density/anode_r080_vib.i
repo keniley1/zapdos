@@ -120,7 +120,7 @@ dom1Scale=1.0
   [../]
 
   [./Water]
-    charged_particle = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq'
+    charged_particle = 'H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq'
     Neutrals = 'H_aq H2O2_aq OH_aq O2_aq O_aq H2_aq HO2_aq O3_aq HO3_aq'
     potential = potential
     using_offset = true
@@ -306,16 +306,16 @@ dom1Scale=1.0
 
 
   # Water Species
-  [./em_aq]
-    block = 1
-    #initial_condition = -24
-    #initial_condition = -21
-    # scaling = 1e-5
-    #initial_condition = -14
-    #initial_condition = -24
-    #initial_condition = -20
-    initial_condition = -16
-  [../]
+  #[./em_aq]
+  #  block = 1
+  #  #initial_condition = -24
+  #  #initial_condition = -21
+  #  # scaling = 1e-5
+  #  #initial_condition = -14
+  #  #initial_condition = -24
+  #  #initial_condition = -20
+  #  initial_condition = -16
+  #[../]
 
   [./OHm_aq]
     block = 1
@@ -469,12 +469,12 @@ dom1Scale=1.0
     block = 0
     initial_condition = 0
   [../]
-  [./ADCurrent_em_aq]
-    order = CONSTANT
-    family = MONOMIAL
-    block = 1
-    initial_condition = 0
-  [../]
+  #[./ADCurrent_em_aq]
+  #  order = CONSTANT
+  #  family = MONOMIAL
+  #  block = 1
+  #  initial_condition = 0
+  #[../]
   [./ADCurrent_Arp]
     order = CONSTANT
     family = MONOMIAL
@@ -517,12 +517,12 @@ dom1Scale=1.0
     block = 0
     initial_condition = 0
   [../]
-  [./ADEFieldAdvAux_em_aq]
-    order = CONSTANT
-    family = MONOMIAL
-    block = 1
-    initial_condition = 0
-  [../]
+  #[./ADEFieldAdvAux_em_aq]
+  #  order = CONSTANT
+  #  family = MONOMIAL
+  #  block = 1
+  #  initial_condition = 0
+  #[../]
   [./ADDiffusiveFlux_em_aq]
     order = CONSTANT
     family = MONOMIAL
@@ -641,7 +641,7 @@ dom1Scale=1.0
   [rholiq_calc]
     type = ChargeDensity
     variable = rholiq
-    charged = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq'
+    charged = 'H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq'
     execute_on = 'INITIAL TIMESTEP_END'
     block = 1
   []
@@ -671,16 +671,16 @@ dom1Scale=1.0
     block = 0
     position_units = ${dom0Scale}
   [../]
-  [./ADCurrent_em_aq]
-    type = ADCurrent
-    #potential = potential_liq
-    potential = potential
-    density_log = em_aq
-    variable = ADCurrent_em_aq
-    art_diff = false
-    block = 1
-    position_units = ${dom1Scale}
-  [../]
+  #[./ADCurrent_em_aq]
+  #  type = ADCurrent
+  #  #potential = potential_liq
+  #  potential = potential
+  #  density_log = em_aq
+  #  variable = ADCurrent_em_aq
+  #  art_diff = false
+  #  block = 1
+  #  position_units = ${dom1Scale}
+  #[../]
   [./ADCurrent_Arp]
     type = ADCurrent
     potential = potential
@@ -723,22 +723,6 @@ dom1Scale=1.0
     block = 0
     position_units = ${dom0Scale}
   [../]
-  [./ADEFieldAdvAux_em_aq]
-    type = ADEFieldAdvAux
-    #potential = potential_liq
-    potential = potential
-    density_log = em_aq
-    variable = ADEFieldAdvAux_em_aq
-    block = 1
-    position_units = ${dom1Scale}
-  [../]
-  [./ADDiffusiveFlux_em_aq]
-    type = ADDiffusiveFlux
-    density_log = em_aq
-    variable = ADDiffusiveFlux_em_aq
-    block = 1
-    position_units = ${dom1Scale}
-  [../]
 []
 
 [InterfaceKernels]
@@ -778,22 +762,73 @@ dom1Scale=1.0
   #  neighbor_position_units = ${dom0Scale}
   #  boundary = 'water_left'
   #[]
-  [./em_advection]
+  #[./em_advection]
+  #  type = ADInterfaceAdvection
+  #  mean_en_neighbor = mean_en
+  #  potential_neighbor = potential
+  #  neighbor_var = em
+  #  variable = em_aq
+  #  boundary = water_left
+  #  position_units = ${dom1Scale}
+  #  neighbor_position_units = ${dom0Scale}
+  #[../]
+  #[./em_diffusion]
+  #  #type = InterfaceLogDiffusionElectrons
+  #  type = ADInterfaceLogDiffusion
+  #  mean_en_neighbor = mean_en
+  #  neighbor_var = em
+  #  variable = em_aq
+  #  boundary = water_left
+  #  position_units = ${dom1Scale}
+  #  neighbor_position_units = ${dom0Scale}
+  #[../]
+  [./H2Op_advection]
     type = ADInterfaceAdvection
-    mean_en_neighbor = mean_en
     potential_neighbor = potential
-    neighbor_var = em
-    variable = em_aq
+    neighbor_var = H2Op
+    variable = H2Op_aq
     boundary = water_left
     position_units = ${dom1Scale}
     neighbor_position_units = ${dom0Scale}
   [../]
-  [./em_diffusion]
-    #type = InterfaceLogDiffusionElectrons
+  [./H2Op_diffusion]
     type = ADInterfaceLogDiffusion
-    mean_en_neighbor = mean_en
-    neighbor_var = em
-    variable = em_aq
+    neighbor_var = H2Op
+    variable = H2Op_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+  [./Arp_advection]
+    type = ADInterfaceAdvection
+    potential_neighbor = potential
+    neighbor_var = Arp
+    variable = H2Op_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+  [./Arp_diffusion]
+    type = ADInterfaceLogDiffusion
+    neighbor_var = Arp
+    variable = H2Op_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+  [./Ar2p_advection]
+    type = ADInterfaceAdvection
+    potential_neighbor = potential
+    neighbor_var = Ar2p
+    variable = H2Op_aq
+    boundary = water_left
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+  [../]
+  [./Ar2p_diffusion]
+    type = ADInterfaceLogDiffusion
+    neighbor_var = Ar2p
+    variable = H2Op_aq
     boundary = water_left
     position_units = ${dom1Scale}
     neighbor_position_units = ${dom0Scale}
@@ -1437,64 +1472,82 @@ dom1Scale=1.0
     r = 0
     position_units = ${dom0Scale}
   [../]
-  [./em_aq_right]
-    type = ADDCIonBC
-    variable = em_aq
-    boundary = 'right'
-    #potential = potential_liq
-    potential = potential
-    position_units = ${dom1Scale}
-  [../]
-  [./OHm_aq_physical]
-    type = ADDCIonBC
-    variable = OHm_aq
-    boundary = 'right'
-    #potential = potential_liq
-    potential = potential
-    position_units = ${dom1Scale}
-  [../]
-  [./H3Op_aq_physical]
+
+  # Water BCs
+  #  charged_particle = 'H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq'
+  [./H3Op_aq_right]
     type = ADDCIonBC
     variable = H3Op_aq
     boundary = 'right'
     potential = potential
     position_units = ${dom1Scale}
   [../]
-  [./O2m_aq_physical]
-    type = ADDCIonBC
-    variable = O2m_aq
-    boundary = 'right'
-    potential = potential
-    position_units = ${dom1Scale}
-  [../]
-  [./Om_aq_physical]
-    type = ADDCIonBC
-    variable = Om_aq
-    boundary = 'right'
-    potential = potential
-    position_units = ${dom1Scale}
-  [../]
-  [./HO2m_aq_physical]
-    type = ADDCIonBC
-    variable = HO2m_aq
-    boundary = 'right'
-    potential = potential
-    position_units = ${dom1Scale}
-  [../]
-  [./H2Op_aq_physical]
+  [./H2Op_aq_right]
     type = ADDCIonBC
     variable = H2Op_aq
     boundary = 'right'
     potential = potential
     position_units = ${dom1Scale}
   [../]
-  [./O3m_aq_physical]
-    type = ADDCIonBC
-    variable = O3m_aq
-    boundary = 'right'
-    potential = potential
-    position_units = ${dom1Scale}
-  [../]
+
+  #[./em_aq_right]
+  #  type = ADDCIonBC
+  #  variable = em_aq
+  #  boundary = 'right'
+  #  #potential = potential_liq
+  #  potential = potential
+  #  position_units = ${dom1Scale}
+  #[../]
+  #[./OHm_aq_physical]
+  #  type = ADDCIonBC
+  #  variable = OHm_aq
+  #  boundary = 'right'
+  #  #potential = potential_liq
+  #  potential = potential
+  #  position_units = ${dom1Scale}
+  #[../]
+  #[./H3Op_aq_physical]
+  #  type = ADDCIonBC
+  #  variable = H3Op_aq
+  #  boundary = 'right'
+  #  potential = potential
+  #  position_units = ${dom1Scale}
+  #[../]
+  #[./O2m_aq_physical]
+  #  type = ADDCIonBC
+  #  variable = O2m_aq
+  #  boundary = 'right'
+  #  potential = potential
+  #  position_units = ${dom1Scale}
+  #[../]
+  #[./Om_aq_physical]
+  #  type = ADDCIonBC
+  #  variable = Om_aq
+  #  boundary = 'right'
+  #  potential = potential
+  #  position_units = ${dom1Scale}
+  #[../]
+  #[./HO2m_aq_physical]
+  #  type = ADDCIonBC
+  #  variable = HO2m_aq
+  #  boundary = 'right'
+  #  potential = potential
+  #  position_units = ${dom1Scale}
+  #[../]
+  #[./H2Op_aq_physical]
+  #  type = ADDCIonBC
+  #  variable = H2Op_aq
+  #  boundary = 'right'
+  #  potential = potential
+  #  position_units = ${dom1Scale}
+  #[../]
+  #[./O3m_aq_physical]
+  #  type = ADDCIonBC
+  #  variable = O3m_aq
+  #  boundary = 'right'
+  #  potential = potential
+  #  position_units = ${dom1Scale}
+  #[../]
 []
 
 [ICs]
@@ -1546,10 +1599,10 @@ dom1Scale=1.0
     type = ParsedFunction
     value = '-2.5*tanh(1e9*t)'
   [../]
-  [./em_aq_ic_func]
-    type = ParsedFunction
-    value = '1778 - 1.8e6*x'
-  [../]
+  #[./em_aq_ic_func]
+  #  type = ParsedFunction
+  #  value = '1778 - 1.8e6*x'
+  #[../]
   [./potential_ic_func]
     type = ParsedFunction
     value = '1.65 * (1.001e-3 - x)'
@@ -1862,12 +1915,12 @@ dom1Scale=1.0
     block = 0
   [../]
 
-  [./electron_data]
-    type = ADGenericConstantMaterial
-    prop_names = 'diffem_aq muem_aq Tem_aq'
-    prop_values = '4.5e-9 0.000173913 300'
-    block = 1
-  [../]
+  #[./electron_data]
+  #  type = ADGenericConstantMaterial
+  #  prop_names = 'diffem_aq muem_aq Tem_aq'
+  #  prop_values = '4.5e-9 0.000173913 300'
+  #  block = 1
+  #[../]
   [./electron_sign]
     # I increased the electron mass by a factor of 10 here
     # Not sure what it's really supposed to be
@@ -2488,7 +2541,7 @@ dom1Scale=1.0
   # Taken from Wei Tian's thesis
   # Note the difference in values (1 L = 1000 m^-3)
   [water2]
-    species = 'em_aq H3Op_aq H_aq H2O2_aq OH_aq OHm_aq O2_aq O2m_aq O_aq Om_aq H2_aq HO2_aq HO2m_aq H2Op_aq O3m_aq O3_aq HO3_aq'
+    species = 'H3Op_aq H_aq H2O2_aq OH_aq OHm_aq O2_aq O2m_aq O_aq Om_aq H2_aq HO2_aq HO2m_aq H2Op_aq O3m_aq O3_aq HO3_aq'
     aux_species = 'H2O_aq'
     use_log = true
     position_units = ${dom1Scale}
@@ -2496,26 +2549,19 @@ dom1Scale=1.0
     reaction_coefficient_format = 'rate'
     block = 1
 
-    reactions = 'em_aq + H2O_aq -> H_aq + OHm_aq            : 1.9e-2
-                 #em_aq + H2Op_aq -> H_aq + OH_aq            : 6e-8 
-                 em_aq + H2Op_aq -> H_aq + OH_aq            : 6e8 
-                 # The units on this next one make no sense and have no consistency 
-                 # across literature. This is the Buxton value (halved)
-                 #em_aq + H_aq + H2O_aq -> H2_aq + OHm_aq    : 2.5e7
-                 em_aq + OH_aq -> OHm_aq                    : 3e7
-                 # where does this one come from???
-                 #em_aq + em_aq + H2O_aq -> OHm_aq + OHm_aq  : 2.2e4
-                 em_aq + H3Op_aq -> H_aq + H2O_aq                 : 2.3e7
-                 em_aq + H2O2_aq -> OH_aq + OHm_aq                : 1.1e7 
-                 #em_aq + HO2m_aq + H2O_aq -> OH_aq + OHm_aq + OHm_aq     : 3.5e3
-                 em_aq + HO2m_aq -> OH_aq + OHm_aq + OHm_aq   : 3.5e6
-                 em_aq + O2_aq -> O2m_aq                        : 1.9e7
-                 # Next one is approximated by analogy (probably wrong...)
-                 em_aq + O_aq -> Om_aq                          : 1.9e7
+    #reactions = 'em_aq + H2O_aq -> H_aq + OHm_aq            : 1.9e-2
+    #             em_aq + H2Op_aq -> H_aq + OH_aq            : 6e8 
+    #             em_aq + OH_aq -> OHm_aq                    : 3e7
+    #             em_aq + H3Op_aq -> H_aq + H2O_aq                 : 2.3e7
+    #             em_aq + H2O2_aq -> OH_aq + OHm_aq                : 1.1e7 
+    #             em_aq + HO2m_aq -> OH_aq + OHm_aq + OHm_aq   : 3.5e6
+    #             em_aq + O2_aq -> O2m_aq                        : 1.9e7
+    #             # Next one is approximated by analogy (probably wrong...)
+    #             em_aq + O_aq -> Om_aq                          : 1.9e7
                  # This one is listed as 1e10 in Chens work. Completely different.
                  # I am going with this value because I have seen it in multiple references.
-                 H_aq + OH_aq -> H2O_aq                        : 7e6
-                 H_aq + OHm_aq -> em_aq + H2O_aq                  : 2.2e4
+    reactions = 'H_aq + OH_aq -> H2O_aq                        : 7e6
+                 #H_aq + OHm_aq -> em_aq + H2O_aq                  : 2.2e4
                  H_aq + H2O2_aq -> OH_aq + H2O_aq                 : 9e4
                  H_aq + O2_aq -> HO2_aq                        : 2.1e7
                  H_aq + HO2_aq -> H2O2_aq                      : 1e7
@@ -2556,16 +2602,16 @@ dom1Scale=1.0
                  # for a two body reaction since H2O is already included
                  #################################
                  O_aq + O_aq -> O2_aq          : 2.8e7
-                 #em_aq + O2m_aq + H2O_aq -> HO2m_aq + OHm_aq   : 1.3e4
-                 em_aq + O2m_aq -> HO2m_aq + OHm_aq   : 1.3e7
-                 em_aq + HO2_aq -> HO2m_aq     : 2e7
-                 #em_aq + Om_aq + H2O_aq -> OHm_aq + OHm_aq     : 2.2e4
+                 ##em_aq + O2m_aq + H2O_aq -> HO2m_aq + OHm_aq   : 1.3e4
+                 #em_aq + O2m_aq -> HO2m_aq + OHm_aq   : 1.3e7
+                 #em_aq + HO2_aq -> HO2m_aq     : 2e7
+                 ##em_aq + Om_aq + H2O_aq -> OHm_aq + OHm_aq     : 2.2e4
                  # This one is listed with conflicting units in literature. 
                  # (Three body reaction with a two body reaction rate coefficient.)
-                 em_aq + Om_aq -> OHm_aq + OHm_aq       : 2.2e7
-                 #em_aq + O3m_aq + H2O_aq -> O2_aq + OHm_aq + OHm_aq   : 1.6e4 
-                 em_aq + O3m_aq -> O2_aq + OHm_aq + OHm_aq : 1.6e7
-                 em_aq + O3_aq -> O3m_aq     : 3.6e7
+                 #em_aq + Om_aq -> OHm_aq + OHm_aq       : 2.2e7
+                 ##em_aq + O3m_aq + H2O_aq -> O2_aq + OHm_aq + OHm_aq   : 1.6e4 
+                 #em_aq + O3m_aq -> O2_aq + OHm_aq + OHm_aq : 1.6e7
+                 #em_aq + O3_aq -> O3m_aq     : 3.6e7
                  H_aq + Om_aq -> OHm_aq      : 1.1e7
                  H_aq + HO2m_aq -> OHm_aq + OH_aq   : 9e7 
                  H_aq + O3m_aq -> OHm_aq + O2_aq    : 1e7
@@ -2597,25 +2643,25 @@ dom1Scale=1.0
                  O3m_aq + H3Op_aq -> O2_aq + OH_aq + H2O_aq      : 9e7
                  HO3_aq -> O2_aq + OH_aq          : 1.1e5
                  H2O2_aq -> OH_aq + OH_aq               : 4.4e-9
-                 HO2m_aq -> Om_aq + OH_aq         : 1e-5'
-  []
-
-  [water3]
-    name = 'test'
-    species = 'em_aq H2_aq OHm_aq H_aq Om_aq OH_aq'
-    aux_species = 'H2O_aq'
-    use_log = true
-    position_units = ${dom1Scale}
-    track_rates = true
-    reaction_coefficient_format = 'rate'
-    block = 1
-
-    reactions = 'em_aq + em_aq -> H2_aq + OHm_aq + OHm_aq   : 5.5e6 
-                 em_aq + H_aq -> H2_aq + OHm_aq             : 2.5e7
+                 HO2m_aq -> Om_aq + OH_aq         : 1e-5
                  H_aq + H2O_aq -> H2_aq + OH_aq                   : 1e-2
                  H_aq + H_aq -> H2_aq                          : 7.5e6
                  H2_aq + H2O2_aq -> H_aq + OH_aq + H2O_aq            : 6e3
                  OH_aq + H2_aq -> H_aq + H2O_aq     : 4.2e4
                  Om_aq + H2_aq -> OHm_aq + H_aq       : 8e7'
   []
+
+  #[water3]
+  #  name = 'test'
+  #  species = 'H2_aq OHm_aq H_aq Om_aq OH_aq'
+  #  aux_species = 'H2O_aq'
+  #  use_log = true
+  #  position_units = ${dom1Scale}
+  #  track_rates = true
+  #  reaction_coefficient_format = 'rate'
+  #  block = 1
+  #
+  #  #reactions = 'em_aq + em_aq -> H2_aq + OHm_aq + OHm_aq   : 5.5e6 
+  #  #             em_aq + H_aq -> H2_aq + OHm_aq             : 2.5e7
+  #[]
 []
