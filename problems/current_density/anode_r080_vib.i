@@ -1314,19 +1314,32 @@ dom1Scale=1.0
     r = 0
     position_units = ${dom0Scale}
   [../]
-  [./potential_left]
-    type = ADNeumannCircuitVoltageMoles_KV
+  #[./potential_left]
+  #  type = ADNeumannCircuitVoltageMoles_KV
+  #  variable = potential
+  #  boundary = left
+  #  function = potential_bc_func
+  #  #ip = 'Arp Ar2p H2Op OHp OHm Om O2m O2p'
+  #  ip = 'Arp Ar2p H2Op OHp OHm Om O2m O2p Hp Op'
+  #  data_provider = data_provider
+  #  em = em
+  #  mean_en = mean_en
+  #  r = 0
+  #  position_units = ${dom0Scale}
+  #[../]
+  [potential_left]
+    type = CircuitBC
     variable = potential
     boundary = left
     function = potential_bc_func
-    #ip = 'Arp Ar2p H2Op OHp OHm Om O2m O2p'
-    ip = 'Arp Ar2p H2Op OHp OHm Om O2m O2p Hp Op'
     data_provider = data_provider
+    ip = 'Arp Ar2p H2Op OHp OHm Om O2m O2p Hp Op'
     em = em
     mean_en = mean_en
-    r = 0
+    r_ion = 0
+    r_electron = 0
     position_units = ${dom0Scale}
-  [../]
+  []
   [./potential_dirichlet_right]
     type = DirichletBC
     variable = potential
@@ -1381,7 +1394,7 @@ dom1Scale=1.0
   [./sec_electrons_left]
     type = ADSecondaryElectronBC
     variable = em
-    boundary = 'right'
+    boundary = 'gas_right'
     potential = potential
     #ip = 'Arp Ar2p H2Op OHp OHm Om O2m O2p'
     ip = 'Arp Ar2p H2Op OHp OHm Om O2m O2p Hp Op'
@@ -1392,7 +1405,7 @@ dom1Scale=1.0
   [./sec_electrons_energy_left]
     type = ADSecondaryElectronEnergyBC
     variable = mean_en
-    boundary = 'right'
+    boundary = 'gas_right'
     potential = potential
     #ip = 'Arp Ar2p H2Op OHp OHm Om O2m O2p'
     ip = 'Arp Ar2p H2Op OHp OHm Om O2m O2p Hp Op'
