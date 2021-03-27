@@ -84,7 +84,7 @@ dom1Scale=1.0
 [Outputs]
   # perf_graph = true
   #print_densityear_residuals = false
-  [out_01]
+  [out_02]
     type = Exodus
   []
 []
@@ -857,6 +857,27 @@ dom1Scale=1.0
   # CO, CO(v)  - 2.42e-2
   # CO2, CO2(v)  - 8.23e-1
   # NH        - 1.47e3
+  [O2_diff]
+    type = InterfaceDiffusionTest
+    variable = O2_aq
+    neighbor_var = O2
+    h = 6.48e3
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+    boundary = 'water_left'
+  []
+  [O2_henry]
+    type = InterfaceReactionTest
+    variable = O2_aq
+    neighbor_var = O2
+    #kf = 6.48e3
+    #kb = 1
+    kf = 1
+    kb = 3.24e-2 
+    position_units = ${dom1Scale}
+    neighbor_position_units = ${dom0Scale}
+    boundary = 'water_left'
+  []
 
   [OH_diff]
     type = InterfaceDiffusionTest
