@@ -1287,7 +1287,8 @@ dom1Scale=1.0
   [O2_bc_diffusion]
     type = ADHagelaarIonDiffusionBC
     variable = O2
-    boundary = 'left gas_right'
+    #boundary = 'left gas_right'
+    boundary = 'left'
     r = 0
     position_units = ${dom0Scale}
   []
