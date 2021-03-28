@@ -122,7 +122,7 @@ dom1Scale=1.0
 
   [./Water]
     #charged_particle = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq NO3m_aq NO3_2m_aq'
-    charged_particle = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq'
+    charged_particle = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq NO3m_aq NO3_2m_aq'
     Neutrals = 'H_aq H2O2_aq OH_aq O2_aq O_aq H2_aq HO2_aq O3_aq HO3_aq'
     potential = potential
     using_offset = true
@@ -403,18 +403,18 @@ dom1Scale=1.0
   [../]
 []
 
-[Kernels]
-  [./NO3m_aq_time_deriv]
-    type = ElectronTimeDerivative
-    variable = NO3m_aq 
-    block = 1
-  [../]
-  [./NO3_2m_aq_time_deriv]
-    type = ElectronTimeDerivative
-    variable = NO3_2m_aq 
-    block = 1
-  [../]
-[]
+#[Kernels]
+#  [./NO3m_aq_time_deriv]
+#    type = ElectronTimeDerivative
+#    variable = NO3m_aq 
+#    block = 1
+#  [../]
+#  [./NO3_2m_aq_time_deriv]
+#    type = ElectronTimeDerivative
+#    variable = NO3_2m_aq 
+#    block = 1
+#  [../]
+#[]
 
 [AuxVariables]
   [Tgas]
@@ -869,13 +869,19 @@ dom1Scale=1.0
     boundary = 'gas_right'
   []
 
-  [./NO3m_aq_physical]
-    type = ADDCIonBC
-    variable = NO3m_aq
-    boundary = 'right'
-    potential = potential
-    position_units = ${dom1Scale}
-  [../]
+  #[./NO3m_aq_physical]
+  #  type = ADDCIonBC
+  #  variable = NO3m_aq
+  #  boundary = 'right'
+  #  potential = potential
+  #  position_units = ${dom1Scale}
+  #[../]
+  #[NO3m_aq_right_source]
+  #  type = DirichletBC
+  #  variable = NO3m_aq
+  #  value = 0.46 
+  #  boundary = 'right'
+  #[]
   [./NO3_2m_aq_physical]
     type = ADDCIonBC
     variable = NO3_2m_aq
