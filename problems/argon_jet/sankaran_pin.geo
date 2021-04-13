@@ -11,7 +11,7 @@ dielectric_mult = 4;
 d0scale = 1.0;
 d1scale = 1.0;
 
-domain_x = 0.02 * d0scale;
+domain_x = 0.03 * d0scale;
 
 dielectric_length = 0.01 * d0scale;
 overshoot = 2e-3 * d0scale;  // This is the amount by which the needle is 
@@ -60,7 +60,7 @@ Point(112) = {needle_thickness, water_depth + gap_distance + 0.75e-3, 0, d0m};
 //Point(113) = {9.41083e-5, 0.00206618, 0, 1e-4};
 Point(113) = {9.41083e-05,0.0110662, 0, d0m};
 Point(114) = {0, water_depth + gap_distance + tip_radius, 0, d0m};
-Point(18) = {0, water_depth + gap_distance, 0, d0m};
+Point(18) = {0, water_depth + gap_distance, 0, d0m/4};
 Circle(1115) = {113,114,18};
 
 // Inner needle geometry point -- upper left

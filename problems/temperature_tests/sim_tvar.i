@@ -1007,7 +1007,7 @@ dom1Scale=1.0
     type = VaporValueBC
     variable = H2O
     gas_temperature = Tgas
-    boundary = 'right'
+    boundary = 'gas_right'
   []
 
   [./Nap_aq_physical]

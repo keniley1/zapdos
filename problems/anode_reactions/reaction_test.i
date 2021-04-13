@@ -77,8 +77,8 @@ dom1Scale=1.0
   #resid_vs_jac_scaling_param = 0.5
   line_search = 'basic'
   petsc_options = '-snes_converged_reason'
-  solve_type = newton
-  #solve_type = pjfnk
+  #solve_type = newton
+  solve_type = pjfnk
   #petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount -pc_factor_mat_solver_package'
   #petsc_options_value = 'lu NONZERO 1.e-10 superlu_dist'
   petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount'
@@ -113,7 +113,7 @@ dom1Scale=1.0
 []
 
 [Debug]
-  #show_var_residual_norms = true
+  show_var_residual_norms = true
 []
 
 [UserObjects]
@@ -476,6 +476,17 @@ dom1Scale=1.0
 []
 
 [BCs]
+  [h3op_test]
+    type = WaterCircuitBC
+    variable = H3Op_aq
+    input_current = gamma_e 
+    output_current = gamma_w
+    potential = potential
+    current_carrier = 'em_aq OHm_aq'
+    water_surface_area = 5.02e-7 # Formerly 3.14e-6
+    position_units = ${dom1Scale}
+    boundary = 'right'
+  []
   # H2O evaporation boundary condition
   #[H2O_interface]
   #  type = DirichletBC
@@ -598,6 +609,37 @@ dom1Scale=1.0
     potential = potential
     position_units = ${dom1Scale}
   [../]
+  #[./em_aq_diffusion_bc]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = em_aq
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[../]
+  #[./em_aq_advection_bc]
+  #  type = ADHagelaarIonAdvectionBC
+  #  variable = em_aq
+  #  boundary = 'right'
+  #  potential = potential
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[../]
+  #
+  #[./OHm_aq_diffusion_bc]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = OHm_aq
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[../]
+  #[./OHm_aq_advection_bc]
+  #  type = ADHagelaarIonAdvectionBC
+  #  variable = OHm_aq
+  #  boundary = 'right'
+  #  potential = potential
+  #  r = 0
+  #  position_units = ${dom1Scale}
+  #[../]
   #[H3Op_physical]
   #  type = ADDCIonBC
   #  variable = H3Op_aq
@@ -815,6 +857,14 @@ dom1Scale=1.0
     mean_energy = mean_en
     position_units = ${dom0Scale}
     boundary = 'gas_right'
+  []
+  [gamma_w]
+    type = ADTotalFluxIntegral
+    variable = em_aq
+    ions = 'em_aq OHm_aq'
+    potential = potential
+    position_units = ${dom1Scale}
+    boundary = 'right'
   []
 []
 

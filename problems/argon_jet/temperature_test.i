@@ -85,8 +85,8 @@ dom2Scale=1.0
   [./TimeStepper]
     type = IterationAdaptiveDT
     cutback_factor = 0.4
-    dt = 1e-6
-    growth_factor = 1.2
+    dt = 1e-4
+    growth_factor = 1.4
     optimal_iterations = 10
   [../]
 []
@@ -240,7 +240,7 @@ dom2Scale=1.0
  [temperature_time]
    type = INSTemperatureTimeDerivative
    variable = T
-   block = 0
+   block = '0 1'
  []
  [temperature_space]
    type = INSTemperature
@@ -250,11 +250,11 @@ dom2Scale=1.0
    block = 0
  []
 
-  [temperature_time_w]
-   type = INSTemperatureTimeDerivative
-   variable = T
-   block = 1
-  []
+  #[temperature_time_w]
+  # type = INSTemperatureTimeDerivative
+  # variable = T
+  # block = 1
+  #[]
   [temperature_space_w]
    type = INSTemperature
    variable = T
@@ -278,11 +278,13 @@ dom2Scale=1.0
   [HeatDiff_dielectric]
     type = ADHeatConduction
     variable = T
+    #block = '2 3'
     block = 2
   []
   [HeatTdot_dielectric]
     type = ADHeatConductionTimeDerivative
     variable = T
+    #block = '2 3'
     block = 2
   []
 
@@ -348,14 +350,20 @@ dom2Scale=1.0
     variable = vel_x
     value = 0
   []
+  #[v_in]
+  #  #type = FunctionDirichletBC
+  #  #function = 'inlet_func'
+  #  type = DirichletBC
+  #  boundary = inlet
+  #  variable = vel_y
+  #  value = -0.088
+  #  #value = -1
+  #[]
   [v_in]
-    #type = FunctionDirichletBC
-    #function = 'inlet_func'
-    type = DirichletBC
+    type = FunctionDirichletBC
+    function = 'inlet_function'
     boundary = inlet
     variable = vel_y
-    value = -0.088
-    #value = -1
   []
   [u_axis_and_walls]
     type = DirichletBC
@@ -367,6 +375,7 @@ dom2Scale=1.0
   [v_no_slip]
     type = DirichletBC
     boundary = 'dielectric_left dielectric_right dielectric_tip electrode_side electrode_needle electrode_tip water_surface'
+    #boundary = 'dielectric_left dielectric_right dielectric_tip electrode_side electrode_needle electrode_tip'
     variable = vel_y
     value = 0
   []
@@ -374,7 +383,8 @@ dom2Scale=1.0
   [tip_temperature]
     type = DirichletBC
     variable = T
-    value = 2500
+    #value = 2500
+    value = 1100
     #value = 400
     boundary = 'electrode_tip'
   []
@@ -395,9 +405,9 @@ dom2Scale=1.0
     boundary = 'water_bulk'
   []
 
-  [u_w_noslip]
+  [w_vel_y_noslip]
     type = DirichletBC
-    boundary = 'water_surface'
+    boundary = 'water_top'
     variable = w_vel_y
     value = 0
   []
@@ -418,6 +428,13 @@ dom2Scale=1.0
   []
   
   ## Water no slip boundaries
+  [w_vel_y_top_no_slip]
+    type = DirichletBC
+    boundary = 'water_top'
+    variable = w_vel_y
+    value = 0
+  []
+
   [w_vel_y_no_slip]
     type = DirichletBC
     #boundary = 'water_bulk ground'
@@ -457,25 +474,66 @@ dom2Scale=1.0
 #    type = StressContinuity
 #    variable = w_vel_x
 #    neighbor_var = vel_x
-#    u = vel_x
-#    u_neighbor = w_vel_x
-#    h = 6.48e3
+#    u = w_vel_x
+#    u_neighbor = vel_x
 #    position_units = ${dom1Scale}
 #    neighbor_position_units = ${dom0Scale}
 #    component = 0
 #    boundary = 'water_top'
 #  []
-#  [vel_y_continuity]
-#    type = StressContinuity
-#    variable = w_vel_y
-#    neighbor_var = vel_y
-#    u = vel_x
-#    u_neighbor = w_vel_x
-#    h = 6.48e3
-#    position_units = ${dom1Scale}
-#    neighbor_position_units = ${dom0Scale}
-#    component = 1
-#    boundary = 'water_top'
+#  #[vel_y_continuity]
+#  #  type = StressContinuity
+#  #  variable = w_vel_y
+#  #  neighbor_var = vel_y
+#  #  u = w_vel_y
+#  #  u_neighbor = vel_y
+#  #  position_units = ${dom1Scale}
+#  #  neighbor_position_units = ${dom0Scale}
+#  #  component = 0
+#  #  boundary = 'water_top'
+#  #[]
+#  #[vel_y_continuity]
+#  #  type = StressContinuity
+#  #  variable = w_vel_y
+#  #  neighbor_var = vel_y
+#  #  u = vel_x
+#  #  u_neighbor = w_vel_x
+#  #  position_units = ${dom1Scale}
+#  #  neighbor_position_units = ${dom0Scale}
+#  #  component = 1
+#  #  boundary = 'water_top'
+#  #[]
+#[]
+
+#[GrayDiffuseRadiation]
+#  [cavity]
+#    boundary = 'electrode_tip electrode_needle electrode_side gas_bottom'
+#    emissivity = '0.3 0.3 0.3 0.95'
+#    n_patches = '1 1 1 1'
+#    #adiabatic_boundary = '7 10 11 12'
+#    partitioners = 'metis metis metis metis'
+#    temperature = T
+#    ray_tracing_face_order = SECOND
+#    normalize_view_factor = false
+#    block = 0
+#  []
+#[]
+#
+#[RayBCs]
+#  [kill_right]
+#    type = KillRayBC
+#    boundary = right
+#    rays = 'to_right_bc_kill'
+#  []
+#  [reflect_top_right]
+#    type = ReflectRayBC
+#    boundary = 'top right'
+#    rays = 'to_top_corner'
+#  []
+#  [reflect_all]
+#    type = ReflectRayBC
+#    boundary = 'top right bottom left'
+#    rays = 'reflect_a_lot'
 #  []
 #[]
 
@@ -489,6 +547,13 @@ dom2Scale=1.0
 #[]
 
 [Functions]
+  [inlet_function]
+    type = ParsedFunction
+    vars = 'vmax k r2'
+    # lam = (1.0 - kappa**2.)/(np.log(1.0/kappa))
+    vals = '-0.088 0.125 0.002' 
+    value = '(vmax / (1.0 - (sqrt(0.5*((1.0 - k^2.)/(log(1.0/k))))^2.0)*(1.0 - log(sqrt(0.5*((1.0 - k^2.)/(log(1.0/k))))^2.0))))*(1.0 - (x/r2)^2.0 - ((1.0 - k^2.)/(log(1.0/k))) * log(r2/x))'
+  []
   [water_ic_func]
     type = ParsedFunction
     value = 'log(8.6949e23/6.022e23)'
@@ -498,32 +563,6 @@ dom2Scale=1.0
     type = ParsedFunction
     value = 3
     #value = 10
-  [../]
-  [./test_bc]
-    type = ParsedFunction
-    value = '-2.5*tanh(1e9*t)'
-  [../]
-  [./em_aq_ic_func]
-    type = ParsedFunction
-    #value = 'log(exp(-22)*exp(-x*1e-5))'
-    #value = 'log(exp(-16)*exp(-(x-1e-3)*7e5))'
-    value = '1778 - 1.8e6*x'
-  [../]
-  [./potential_ic_func]
-    type = ParsedFunction
-    value = '-0.01 * (1.001e-3 - x)'
-  [../]
-  [./charged_gas_ic]
-    type = ParsedFunction
-    vars = 'sigma mu'
-    vals = '25e-6 10e-5'
-    value = 'max(log(1/(sigma*sqrt(2*3.14159)) * exp(-0.5*((x - mu)/sigma)^2) / (500000*sqrt(2/3.14159)) * 1e8/6.022e23), -48)'
-  [../]
-  [./mean_en_ic]
-    type = ParsedFunction
-    vars = 'sigma mu'
-    vals = '25e-6 10e-5'
-    value = '(log(1/(sigma*sqrt(2*3.14159)) * exp(-0.5*((x - mu)/sigma)^2)/16000 + 0.0258)) + max(log(1/(sigma*sqrt(2*3.14159)) * exp(-0.5*((x - mu)/sigma)^2) / (500000*sqrt(2/3.14159)) * 1e8/6.022e23), -48)'
   [../]
 []
 

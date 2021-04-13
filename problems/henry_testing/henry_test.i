@@ -129,7 +129,7 @@ dom1Scale=1.0
 [Outputs]
   # perf_graph = true
   #print_densityear_residuals = false
-  [out_10]
+  [out_11]
     type = Exodus
   [../]
 []
@@ -599,8 +599,8 @@ dom1Scale=1.0
     type = InterfaceReactionTest
     variable = OH_aq
     neighbor_var = OH
-    #kf = 1
-    #kb = 1
+    kf = 1
+    kb = 6.48e3
     h = 6.48e3
     position_units = ${dom1Scale}
     neighbor_position_units = ${dom0Scale}

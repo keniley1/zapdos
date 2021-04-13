@@ -106,12 +106,12 @@ ADNeumannCircuitVoltageMoles_KV::computeQpResidual()
   if (_normals[_qp] * -1.0 * -_grad_u[_qp] > 0.0)
   {
     _a = 1.0;
-    _b = 0.;
+    //_b = 0.;
   }
   else
   {
     _a = 0.0;
-    _b = 1.;
+    //_b = 1.;
   }
 
   _ion_flux.zero();
@@ -120,6 +120,10 @@ ADNeumannCircuitVoltageMoles_KV::computeQpResidual()
   _ion_drift = 0;
   for (unsigned int i = 0; i < _num_ions; ++i)
   {
+    if (_normals[_qp] * (*_sgnip[i])[_qp] * -_grad_u[_qp] > 0)
+      _b = 1;
+    else
+      _b = 0;
     _ion_flux +=
         (*_sgnip[i])[_qp] * (*_muip[i])[_qp] * -_grad_u[_qp] * _r_units * std::exp((*_ip[i])[_qp]) -
         (*_Dip[i])[_qp] * std::exp((*_ip[i])[_qp]) * (*_grad_ip[i])[_qp] * _r_units;
@@ -135,16 +139,18 @@ ADNeumannCircuitVoltageMoles_KV::computeQpResidual()
   _v_e_th = std::sqrt(8 * _data.coulomb_charge() * 2.0 / 3 * std::exp(_mean_en[_qp] - _em[_qp]) /
                       (M_PI * _massem[_qp]));
 
-  return _test[_i][_qp] * _r_units * _eps[_qp] *
-         (-2. * (1. + _r) * _u[_qp] - 2. * (1. + _r) * -_V_bat.value(_t, _q_point[_qp]) +
-          _data.electrode_area() * _data.coulomb_charge() * _data.ballast_resist() /
-              _voltage_scaling * (-1. + _r) *
-              ((-1. + (-1. + _a) * _se_coeff[_qp]) * _N_A[_qp] * _ion_drift +
-               _N_A[_qp] * (std::exp(_em[_qp]) - _n_gamma) * _v_e_th)) /
-         (2. * _data.electrode_area() * _data.coulomb_charge() *
-          ((-1. + 2. * _a) * _muem[_qp] / _voltage_scaling * _N_A[_qp] *
-               (std::exp(_em[_qp]) - _n_gamma) -
-           (-1. + 2. * _b) * (-1. + (-1. + _a) * _se_coeff[_qp]) * _secondary_ion /
-               _voltage_scaling * _N_A[_qp]) *
-          _data.ballast_resist() * (-1. + _r));
+
+
+ return _test[_i][_qp] * _r_units * _eps[_qp] *
+        (-2. * (1. + _r) * _u[_qp] - 2. * (1. + _r) * -_V_bat.value(_t, _q_point[_qp]) +
+         _data.electrode_area() * _data.coulomb_charge() * _data.ballast_resist() /
+             _voltage_scaling * (-1. + _r) *
+             ((-1. + (-1. + _a) * _se_coeff[_qp]) * _N_A[_qp] * _ion_drift +
+              _N_A[_qp] * (std::exp(_em[_qp]) - _n_gamma) * _v_e_th)) /
+        (2. * _data.electrode_area() * _data.coulomb_charge() *
+         ((-1. + 2. * _a) * _muem[_qp] / _voltage_scaling * _N_A[_qp] *
+              (std::exp(_em[_qp]) - _n_gamma) -
+          (-1. + 2. * _b) * (-1. + (-1. + _a) * _se_coeff[_qp]) * _secondary_ion /
+              _voltage_scaling * _N_A[_qp]) *
+         _data.ballast_resist() * (-1. + _r));
 }

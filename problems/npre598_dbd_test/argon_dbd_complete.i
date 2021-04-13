@@ -546,18 +546,28 @@ dom2Scale=1
   [../]
 
 
-  [test]
-    #type = SurfaceCharge
-    type = SurfaceChargeNew
-    include_electrons = true
-    potential = potential_dom1
-    em = 'em'
-    mean_en = mean_en
-    #ions = 'Arp'
-    species = 'Arp'
-    position_units = ${dom1Scale}
-    boundary = 'b1_left b1_right'
-  []
+  #[test]
+  #  #type = SurfaceCharge
+  #  type = SurfaceChargeNew
+  #  include_electrons = true
+  #  potential = potential_dom1
+  #  em = 'em'
+  #  mean_en = mean_en
+  #  #ions = 'Arp'
+  #  species = 'Arp'
+  #  position_units = ${dom1Scale}
+  #  boundary = 'b1_left b1_right'
+  #[]
+  #[test]
+  #  type = SurfaceCharge
+  #  potential = potential_dom1
+  #  em = 'em'
+  #  mean_en = mean_en
+  #  ions = 'Arp'
+  #  #species = 'Arp'
+  #  position_units = ${dom1Scale}
+  #  boundary = 'b1_left b1_right'
+  #[]
   #[test]
   #  type = ADGenericConstantMaterial
   #  prop_names = 'surface_charge'
@@ -605,6 +615,7 @@ dom2Scale=1
     heavy_species_mass = 6.64e-26
     heavy_species_charge = 1.0
     diffusivity = 1.6897e-5
+    temperature_scale = 320
     block = 1
   [../]
   [./gas_species_2]
@@ -613,6 +624,7 @@ dom2Scale=1
     heavy_species_mass = 6.64e-26
     heavy_species_charge = 0.0
     diffusivity = 1.6897e-5
+    temperature_scale = 320
     block = 1
   [../]
   [./gas_species_3]
@@ -621,6 +633,7 @@ dom2Scale=1
     heavy_species_mass = 6.64e-26
     heavy_species_charge = 0.0
     diffusivity = 1.6897e-5
+    temperature_scale = 320
     block = 1
   [../]
 []

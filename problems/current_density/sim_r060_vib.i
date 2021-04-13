@@ -84,7 +84,7 @@ dom1Scale=1.0
 [Outputs]
   # perf_graph = true
   #print_densityear_residuals = false
-  [out_01]
+  [out_02]
     type = Exodus
   []
 []
@@ -323,7 +323,7 @@ dom1Scale=1.0
     #initial_condition = -24
     #initial_condition = -21
     #initial_condition = -9.210340
-    initial_condition = -14
+    initial_condition = -18
   [../]
 
   [./OH_aq]
@@ -1440,6 +1440,53 @@ dom1Scale=1.0
     potential = potential
     position_units = ${dom1Scale}
   [../]
+  #[./OHm_aq_physical_left_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = OHm_aq
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom0Scale}
+  #[../]
+  #[./OHm_aq_physical_left_advection]
+  #  type = ADHagelaarIonAdvectionBC
+  #  variable = OHm_aq
+  #  boundary = 'right'
+  #  potential = potential
+  #  r = 0
+  #  position_units = ${dom0Scale}
+  #[../]
+  #[./em_aq_physical_left_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = em_aq
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom0Scale}
+  #[../]
+  #[./em_aq_physical_left_advection]
+  #  type = ADHagelaarIonAdvectionBC
+  #  variable = em_aq
+  #  boundary = 'right'
+  #  potential = potential
+  #  r = 0
+  #  position_units = ${dom0Scale}
+  #[../]
+  #[./Clm_aq_physical_left_diffusion]
+  #  type = ADHagelaarIonDiffusionBC
+  #  variable = Clm_aq
+  #  boundary = 'right'
+  #  r = 0
+  #  position_units = ${dom0Scale}
+  #[../]
+  #[./Clm_aq_physical_left_advection]
+  #  type = ADHagelaarIonAdvectionBC
+  #  variable = Clm_aq
+  #  boundary = 'right'
+  #  potential = potential
+  #  r = 0
+  #  position_units = ${dom0Scale}
+  #[../]
+
+
   [./H3Op_aq_physical]
     type = ADDCIonBC
     variable = H3Op_aq

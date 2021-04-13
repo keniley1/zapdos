@@ -17,10 +17,11 @@ for i in range(nt):
         ars = np.zeros(shape=(nt, len(x1)))
     #else:
     #    break
-    ars[i,:] = np.exp(data['Ar*'][dom1])*6.022e23
+    ars[i,:] = np.exp(data['mean_en'][dom1])*6.022e23
     time[i] = data['Time'][0]
 
 xx, yy = np.meshgrid(x1, time)
 
 plt.contourf(xx, yy, ars, 100)
+plt.colorbar()
 plt.show()

@@ -62,8 +62,8 @@ dom1Scale=1.0
   petsc_options = '-snes_converged_reason'
   solve_type = newton
   #solve_type = pjfnk
-  petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount -pc_factor_mat_solver_package'
-  petsc_options_value = 'lu NONZERO 1.e-10 superlu_dist'
+  petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount'
+  petsc_options_value = 'lu NONZERO 1.e-10'
   #petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount -pc_factor_mat_solver_package -snes_stol'
   #petsc_options_value = 'lu NONZERO 1.e-10 mumps 0'
   #petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount -snes_stol'
@@ -88,8 +88,10 @@ dom1Scale=1.0
 [Outputs]
   # perf_graph = true
   #print_densityear_residuals = false
-  [out_02]
+  [out_03]
     type = Exodus
+    output_material_properties = true
+    show_material_properties = 'diffArp diffAr2p'
   [../]
 []
 
@@ -113,8 +115,8 @@ dom1Scale=1.0
 [DriftDiffusionAction]
   [./Plasma]
     electrons = em
-    #charged_particle = 'Arp Ar2p'
-    charged_particle = 'Arp'
+    charged_particle = 'Arp Ar2p'
+    #charged_particle = 'Arp'
     Neutrals = 'Ar*'
     mean_energy = mean_en
     potential = potential
@@ -142,13 +144,13 @@ dom1Scale=1.0
 
   [./Arp]
     block = 0
-    #initial_condition = -20.693147
-    initial_condition = -20
+    initial_condition = -20.693147
+    #initial_condition = -20
   [../]
-  #[./Ar2p]
-  #  block = 0
-  #  initial_condition = -20.693147
-  #[../]
+  [./Ar2p]
+    block = 0
+    initial_condition = -20.693147
+  [../]
   #[OH]
   #  block = 0
   #  initial_condition = -20
@@ -205,13 +207,19 @@ dom1Scale=1.0
     family = MONOMIAL
     initial_condition = 0
   [../]
-  [./ADCurrent_em]
+  [./Current_em]
     order = CONSTANT
     family = MONOMIAL
     block = 0
     initial_condition = 0
   [../]
-  [./ADCurrent_Arp]
+  [./Current_Arp]
+    order = CONSTANT
+    family = MONOMIAL
+    block = 0
+    initial_condition = 0
+  [../]
+  [./Current_Ar2p]
     order = CONSTANT
     family = MONOMIAL
     block = 0
@@ -223,25 +231,25 @@ dom1Scale=1.0
     block = 0
     initial_condition = 0
   [../]
-  [./ADEFieldAdvAux_em]
+  [./EFieldAdvAux_em]
     order = CONSTANT
     family = MONOMIAL
     block = 0
     initial_condition = 0
   [../]
-  [./ADDiffusiveFlux_em]
+  [./DiffusiveFlux_em]
     order = CONSTANT
     family = MONOMIAL
     block = 0
     initial_condition = 0
   [../]
-  [./ADPowerDep_em]
+  [./PowerDep_em]
    order = CONSTANT
    family = MONOMIAL
    block = 0
     initial_condition = 0
   [../]
-  [./ADPowerDep_Arp]
+  [./PowerDep_Arp]
    order = CONSTANT
    family = MONOMIAL
    block = 0
@@ -262,24 +270,24 @@ dom1Scale=1.0
     variable = Tgas
     function = tgas_ic_func
   []
-  [./ADPowerDep_em]
+  [./PowerDep_em]
     type = ADPowerDep
     density_log = em
     potential = potential
     art_diff = false
     execute_on = 'initial timestep_end'
     potential_units = kV
-    variable = ADPowerDep_em
+    variable = PowerDep_em
     position_units = ${dom0Scale}
     block = 0
   [../]
-  [./ADPowerDep_Arp]
+  [./PowerDep_Arp]
     type = ADPowerDep
     density_log = Arp
     potential = potential
     art_diff = false
     potential_units = kV
-    variable = ADPowerDep_Arp
+    variable = PowerDep_Arp
     execute_on = 'initial timestep_end'
     position_units = ${dom0Scale}
     block = 0
@@ -322,20 +330,29 @@ dom1Scale=1.0
     position_units = ${dom0Scale}
     block = 0
   [../]
-  [./ADCurrent_em]
+  [./Current_em]
     type = ADCurrent
     potential = potential
     density_log = em
-    variable = ADCurrent_em
+    variable = Current_em
     art_diff = false
     block = 0
     position_units = ${dom0Scale}
   [../]
-  [./ADCurrent_Arp]
+  [./Current_Arp]
     type = ADCurrent
     potential = potential
     density_log = Arp
-    variable = ADCurrent_Arp
+    variable = Current_Arp
+    art_diff = false
+    block = 0
+    position_units = ${dom0Scale}
+  [../]
+  [./Current_Ar2p]
+    type = ADCurrent
+    potential = potential
+    density_log = Ar2p
+    variable = Current_Ar2p
     art_diff = false
     block = 0
     position_units = ${dom0Scale}
@@ -344,16 +361,24 @@ dom1Scale=1.0
     type = ADEFieldAdvAux
     potential = potential
     density_log = em
-    variable = ADEFieldAdvAux_em
+    variable = EFieldAdvAux_em
     block = 0
     position_units = ${dom0Scale}
   [../]
   [./ADDiffusiveFlux_em]
     type = ADDiffusiveFlux
     density_log = em
-    variable = ADDiffusiveFlux_em
+    variable = DiffusiveFlux_em
     block = 0
     position_units = ${dom0Scale}
+  [../]
+  [./tot_gas_current]
+    type = ParsedAux
+    variable = tot_gas_current
+    args = 'Current_em Current_Arp Current_Ar2p'
+    function = 'Current_em + Current_Arp + Current_Ar2p'
+    execute_on = 'timestep_end'
+    block = 0
   [../]
 []
 
@@ -365,28 +390,28 @@ dom1Scale=1.0
     r = 0
     position_units = ${dom0Scale}
   [../]
-  #[./Ar2p_physical_diffusion]
-  #  type = ADHagelaarIonDiffusionBC
-  #  variable = Ar2p
-  #  boundary = 'left right'
-  #  r = 0
-  #  position_units = ${dom0Scale}
-  #[../]
-  #[./Ar2p_physical_advection]
-  #  type = ADHagelaarIonAdvectionBC
-  #  variable = Ar2p
-  #  boundary = 'left right'
-  #  potential = potential
-  #  r = 0
-  #  position_units = ${dom0Scale}
-  #[../]
+  [./Ar2p_physical_diffusion]
+    type = ADHagelaarIonDiffusionBC
+    variable = Ar2p
+    boundary = 'left right'
+    r = 0
+    position_units = ${dom0Scale}
+  [../]
+  [./Ar2p_physical_advection]
+    type = ADHagelaarIonAdvectionBC
+    variable = Ar2p
+    boundary = 'left right'
+    potential = potential
+    r = 0
+    position_units = ${dom0Scale}
+  [../]
   [./potential_left]
     type = ADNeumannCircuitVoltageMoles_KV
     variable = potential
     boundary = left
     function = potential_bc_func
-    #ip = 'Arp Ar2p'
-    ip = 'Arp'
+    ip = 'Arp Ar2p'
+    #ip = 'Arp'
     data_provider = data_provider
     em = em
     mean_en = mean_en
@@ -436,9 +461,10 @@ dom1Scale=1.0
     type = ADSecondaryElectronBC
     variable = em
     boundary = 'left'
+    #boundary = 'right'
     potential = potential
-    #ip = 'Arp Ar2p'
-    ip = 'Arp'
+    ip = 'Arp Ar2p'
+    #ip = 'Arp'
     mean_en = mean_en
     r = 0
     position_units = ${dom0Scale}
@@ -447,9 +473,10 @@ dom1Scale=1.0
     type = ADSecondaryElectronEnergyBC
     variable = mean_en
     boundary = 'left'
+    #boundary = 'right'
     potential = potential
-    #ip = 'Arp Ar2p'
-    ip = 'Arp'
+    ip = 'Arp Ar2p'
+    #ip = 'Arp'
     em = em
     r = 0
     position_units = ${dom0Scale}
@@ -511,7 +538,16 @@ dom1Scale=1.0
     prop_names = 'se_coeff'
     prop_values = '0.01'
     boundary = 'left right'
+    #boundary = 'right'
   [../]
+  #[./se_coefficient_l]
+  #  type = GenericConstantMaterial
+  #  prop_names = 'se_coeff'
+  #  prop_values = '0'
+  #  #boundary = 'left right'
+  #  boundary = 'left'
+  #[../]
+
  [./GasBasics]
    type = ADGasElectronMoments
    interp_elastic_coeff = true
@@ -521,7 +557,7 @@ dom1Scale=1.0
    em = em
    potential = potential
    mean_en = mean_en
-   user_se_coeff = 0.05
+   user_se_coeff = 0.01
    property_tables_file = 'argon_chemistry_rates/electron_moments.txt'
    block = 0
  [../]
@@ -534,6 +570,8 @@ dom1Scale=1.0
 
  [H2O_mat]
    type = ADHeavySpeciesMaterial
+   gas_temperature = Tgas
+   temperature_scale = 300
    heavy_species_name = H2O
    heavy_species_mass = 2.9907e-26
    heavy_species_charge = 0
@@ -542,6 +580,8 @@ dom1Scale=1.0
 
   [./gas_species_0]
     type = ADHeavySpeciesMaterial
+    gas_temperature = Tgas
+    temperature_scale = 320
     heavy_species_name = Arp
     heavy_species_mass = 6.64e-26
     heavy_species_charge = 1.0
@@ -549,6 +589,8 @@ dom1Scale=1.0
   [../]
   [./Ar_species]
     type = ADHeavySpeciesMaterial
+    gas_temperature = Tgas
+    temperature_scale = 320
     heavy_species_name = Ar
     heavy_species_mass = 6.64e-26
     heavy_species_charge = 0.0
@@ -556,6 +598,8 @@ dom1Scale=1.0
   [../]
   [./gas_species_1]
     type = ADHeavySpeciesMaterial
+    gas_temperature = Tgas
+    temperature_scale = 320
     heavy_species_name = Ar2p
     heavy_species_mass = 13.28e-26
     heavy_species_charge = 1.0
@@ -563,6 +607,8 @@ dom1Scale=1.0
   [../]
   [./gas_species_2]
     type = ADHeavySpeciesMaterial
+    gas_temperature = Tgas
+    temperature_scale = 320
     heavy_species_name = Ar*
     heavy_species_mass = 6.64e-26
     heavy_species_charge = 0
@@ -572,7 +618,8 @@ dom1Scale=1.0
 
 [Reactions]
   [./Argon]
-    species = 'em Arp Ar*'
+    #species = 'em Arp Ar*'
+    species = 'em Arp Ar* Ar2p'
     aux_species = 'Ar'
     reaction_coefficient_format = 'townsend'
     gas_species = 'Ar'
@@ -580,20 +627,20 @@ dom1Scale=1.0
     electron_density = 'em'
     include_electrons = true
     file_location = 'argon_chemistry_rates'
-    equation_constants = 'Tgas'
-    equation_values = '300'
-    equation_variables = 'e_temp'
+    #equation_constants = 'Tgas'
+    #equation_values = '300'
+    equation_variables = 'e_temp Tgas'
     potential = 'potential'
     use_log = true
     position_units = ${dom0Scale}
     use_ad = true
     block = 0
 
-    reactions = 'em + Ar -> em + Ar               : EEDF [elastic] (reaction1)
-                 em + Ar -> em + Ar*              : EEDF [-11.5]   (reaction2)
-                 em + Ar -> em + em + Arp         : EEDF [-15.76]  (reaction3)
-                 em + Ar* -> em + Ar              : EEDF [11.5]    (reaction4)
-                 em + Ar* -> em + em + Arp        : EEDF [-4.3]    (reaction5)'
+    #reactions = 'em + Ar -> em + Ar               : EEDF [elastic] (reaction1)
+    #             em + Ar -> em + Ar*              : EEDF [-11.5]   (reaction2)
+    #             em + Ar -> em + em + Arp         : EEDF [-15.76]  (reaction3)
+    #             em + Ar* -> em + Ar              : EEDF [11.5]    (reaction4)
+    #             em + Ar* -> em + em + Arp        : EEDF [-4.3]    (reaction5)'
                  #Ar2p + em -> Ar* + Ar            : {5.1187e11 * (e_temp/300)^(-0.67)}
                  #Ar2p + Ar -> Arp + Ar + Ar       : {3.649332e12 / Tgas * exp(-15130/Tgas)}
                  #Ar* + Ar* -> Ar2p + em           : 3.6132e8
@@ -601,5 +648,16 @@ dom1Scale=1.0
                  #Ar* + Ar + Ar -> Ar + Ar + Ar    : 5077.02776
                  #Arp + Ar + Ar -> Ar2p + Ar       : {81595.089 * (Tgas/300)^(-0.4)}'
                  #Ar* + H2O -> Ar + OH + H         : 2.89056e8'
+    reactions = 'em + Ar -> em + Ar               : EEDF [elastic] (reaction1)
+                 em + Ar -> em + Ar*              : EEDF [-11.5]   (reaction2)
+                 em + Ar -> em + em + Arp         : EEDF [-15.76]  (reaction3)
+                 em + Ar* -> em + Ar              : EEDF [11.5]    (reaction4)
+                 em + Ar* -> em + em + Arp        : EEDF [-4.3]    (reaction5)
+                 Ar2p + em -> Ar* + Ar            : {5.1187e11 * (e_temp/300)^(-0.67)}
+                 Ar2p + Ar -> Arp + Ar + Ar       : {3.649332e12 / Tgas * exp(-15130/Tgas)}
+                 Ar* + Ar* -> Ar2p + em           : 3.6132e8
+                 Arp + em + em -> Ar + em         : {3.17314235e9 * (e_temp/11600)^(-4.5)}
+                 Ar* + Ar + Ar -> Ar + Ar + Ar    : 5077.02776
+                 Arp + Ar + Ar -> Ar2p + Ar       : {81595.089 * (Tgas/300)^(-0.4)}'
   [../]
 []

@@ -63,8 +63,10 @@ dom1Scale=1.0
   line_search = 'basic'
   petsc_options = '-snes_converged_reason'
   solve_type = newton
-  petsc_options_iname = '-pc_type -pc_factor_shift-type -pc_factor_shift_amount -pc_factor_mat_solver_package'
-  petsc_options_value = 'lu NONZERO 1.e-10 superlu_dist'
+  #petsc_options_iname = '-pc_type -pc_factor_shift-type -pc_factor_shift_amount -pc_factor_mat_solver_package'
+  #petsc_options_value = 'lu NONZERO 1.e-10 superlu_dist'
+  petsc_options_iname = '-pc_type -pc_factor_shift-type -pc_factor_shift_amount'
+  petsc_options_value = 'lu NONZERO 1.e-10'
   nl_rel_tol = 1e-5
   nl_abs_tol = 1e-9
   dtmin = 1e-18
@@ -84,7 +86,7 @@ dom1Scale=1.0
 [Outputs]
   # perf_graph = true
   #print_densityear_residuals = false
-  [out_01]
+  [out_02]
     type = Exodus
   []
 []
@@ -119,7 +121,8 @@ dom1Scale=1.0
   [../]
 
   [./Water]
-    charged_particle = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq NO2m_aq'
+    #charged_particle = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq NO3m_aq NO3_2m_aq'
+    charged_particle = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq'
     Neutrals = 'H_aq H2O2_aq OH_aq O2_aq O_aq H2_aq HO2_aq O3_aq HO3_aq'
     potential = potential
     using_offset = true
@@ -169,10 +172,10 @@ dom1Scale=1.0
     # 100 mM
     #initial_condition = 4.60517
     # 10 mM
-    #initial_condition = 2.3026
+    initial_condition = 2.3026
 
     # 11 mM - 10 mM of NaCl, 1 mM of NaNO3
-    initial_condition = 3.3978
+    #initial_condition = 2.3978
   [] 
   [Clm_aq]
     block = 1
@@ -397,6 +400,19 @@ dom1Scale=1.0
   [./Om_aq]
     block = 1
     initial_condition = -20
+  [../]
+[]
+
+[Kernels]
+  [./NO3m_aq_time_deriv]
+    type = ElectronTimeDerivative
+    variable = NO3m_aq 
+    block = 1
+  [../]
+  [./NO3_2m_aq_time_deriv]
+    type = ElectronTimeDerivative
+    variable = NO3_2m_aq 
+    block = 1
   [../]
 []
 
@@ -853,6 +869,20 @@ dom1Scale=1.0
     boundary = 'gas_right'
   []
 
+  [./NO3m_aq_physical]
+    type = ADDCIonBC
+    variable = NO3m_aq
+    boundary = 'right'
+    potential = potential
+    position_units = ${dom1Scale}
+  [../]
+  [./NO3_2m_aq_physical]
+    type = ADDCIonBC
+    variable = NO3_2m_aq
+    boundary = 'right'
+    potential = potential
+    position_units = ${dom1Scale}
+  [../]
   [./Nap_aq_physical]
     type = ADDCIonBC
     variable = Nap_aq

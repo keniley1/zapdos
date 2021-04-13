@@ -86,7 +86,7 @@ dom1Scale=1.0
 [Outputs]
   # perf_graph = true
   #print_densityear_residuals = false
-  [out_01]
+  [out_02]
     type = Exodus
   []
 []
@@ -122,8 +122,9 @@ dom1Scale=1.0
 
   [./Water]
     #charged_particle = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq NO3m_aq NO3_2m_aq'
-    charged_particle = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq NO3m_aq NO3_2m_aq'
-    Neutrals = 'H_aq H2O2_aq OH_aq O2_aq O_aq H2_aq HO2_aq O3_aq HO3_aq'
+    charged_particle = 'em_aq H3Op_aq OHm_aq O2m_aq Om_aq HO2m_aq H2Op_aq O3m_aq'
+    #Neutrals = 'H_aq H2O2_aq OH_aq O2_aq O_aq H2_aq HO2_aq O3_aq HO3_aq'
+    Neutrals = 'H_aq H2O2_aq OH_aq O2_aq O_aq H2_aq HO2_aq O3_aq HO3_aq NO3m_aq'
     potential = potential
     using_offset = true
     offset = 45
@@ -150,10 +151,10 @@ dom1Scale=1.0
     block = 1
     initial_condition = 0.46 
   []
-  [NO3_2m_aq]
-    block = 1
-    initial_condition = -30
-  []
+  #[NO3_2m_aq]
+  #  block = 1
+  #  initial_condition = -30
+  #[]
   [H2Ov]
     block = 0
     initial_condition = -30
@@ -876,19 +877,19 @@ dom1Scale=1.0
   #  potential = potential
   #  position_units = ${dom1Scale}
   #[../]
-  #[NO3m_aq_right_source]
-  #  type = DirichletBC
-  #  variable = NO3m_aq
-  #  value = 0.46 
-  #  boundary = 'right'
-  #[]
-  [./NO3_2m_aq_physical]
-    type = ADDCIonBC
-    variable = NO3_2m_aq
+  [NO3m_aq_right_source]
+    type = DirichletBC
+    variable = NO3m_aq
+    value = 0.46 
     boundary = 'right'
-    potential = potential
-    position_units = ${dom1Scale}
-  [../]
+  []
+  #[./NO3_2m_aq_physical]
+  #  type = ADDCIonBC
+  #  variable = NO3_2m_aq
+  #  boundary = 'right'
+  #  potential = potential
+  #  position_units = ${dom1Scale}
+  #[../]
   [./Nap_aq_physical]
     type = ADDCIonBC
     variable = Nap_aq
@@ -2497,7 +2498,8 @@ dom1Scale=1.0
 
   [water3]
     name = 'test'
-    species = 'em_aq H2_aq OHm_aq H_aq Om_aq OH_aq NO3m_aq NO3_2m_aq'
+    #species = 'em_aq H2_aq OHm_aq H_aq Om_aq OH_aq NO3m_aq NO3_2m_aq'
+    species = 'em_aq H2_aq OHm_aq H_aq Om_aq OH_aq'
     aux_species = 'H2O_aq'
     use_log = true
     position_units = ${dom1Scale}

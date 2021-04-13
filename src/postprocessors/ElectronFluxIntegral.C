@@ -28,7 +28,7 @@ template <bool is_ad>
 InputParameters
 ElectronFluxIntegralTempl<is_ad>::validParams()
 {
-  //InputParameters params = validParams<SideIntegralVariablePostprocessor>();
+  // InputParameters params = validParams<SideIntegralVariablePostprocessor>();
   InputParameters params = SideIntegralVariablePostprocessor::validParams();
   params.addRequiredCoupledVar("potential", "The potential that drives the advective flux.");
   params.addRequiredCoupledVar("mean_energy", "The mean electron energy.");
@@ -61,18 +61,25 @@ ElectronFluxIntegralTempl<is_ad>::computeQpIntegral()
 {
   // Output units for base case are: mol / (m^2 * s)
 
-  _v_thermal =
-      std::sqrt(8 * _e[_qp] * 2.0 / 3 * std::exp(raw_value(_mean_en[_qp] - _u[_qp])) / (M_PI * _massem[_qp]));
+  _v_thermal = std::sqrt(8 * _e[_qp] * 2.0 / 3 * std::exp(raw_value(_mean_en[_qp] - _u[_qp])) /
+                         (M_PI * _massem[_qp]));
 
   if (_normals[_qp] * _grad_potential[_qp] > 0.0)
     _a = 1.0;
   else
     _a = 0.0;
 
-  return raw_value((1. - _r) / (1. + _r) *
-         (0.5 * _v_thermal +
-          ((1 - 2 * _a) * _muem[_qp] * -_grad_potential[_qp] * _r_units * _normals[_qp])) *
-         std::exp(_u[_qp]));
+  return ((1. - _r) / (1. + _r) *
+         (0.5 * _v_thermal + ((1 - 2 * _a) * raw_value(_muem[_qp]) * -raw_value(_grad_potential[_qp]) *
+                              _r_units * _normals[_qp])) *
+         std::exp(raw_value(_u[_qp]))) * -1.602e-19 * 6.022e23;
+  /*
+  return -1.602e-19 *
+         raw_value((1. - _r) / (1. + _r) *
+                   (0.5 * _v_thermal + ((1 - 2 * _a) * _muem[_qp] * -_grad_potential[_qp] *
+                                        _r_units * _normals[_qp])) *
+                   std::exp(_u[_qp]));
+                   */
 }
 
 template class ElectronFluxIntegralTempl<false>;
