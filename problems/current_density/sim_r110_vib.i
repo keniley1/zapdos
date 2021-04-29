@@ -84,7 +84,7 @@ dom1Scale=1.0
 [Outputs]
   # perf_graph = true
   #print_densityear_residuals = false
-  [out_01]
+  [out_04]
     type = Exodus
   []
 []
@@ -322,8 +322,8 @@ dom1Scale=1.0
     # scaling = 1e-5
     #initial_condition = -24
     #initial_condition = -21
-    #initial_condition = -9.210340
-    initial_condition = -14
+    initial_condition = -9.210340
+    #initial_condition = -14
   [../]
 
   [./OH_aq]
@@ -333,7 +333,8 @@ dom1Scale=1.0
   [./H3Op_aq]
     block = 1
     #initial_condition = -20
-    initial_condition = -14
+    #initial_condition = -14
+    initial_condition = -9.210340
   [../]
   [./O2m_aq]
     block = 1
@@ -2026,7 +2027,7 @@ dom1Scale=1.0
 [Reactions]
   [./Argon]
     #species = 'em Arp Ar2p Ars Arss Arsss OH H2O O2 O2p O2m O2s Om O Os H2O H2Op H2 H Hs O3 HO2 H2O2 OHm OHp OHs'
-    species = 'em Arp Ar2p Ars Arss Arsss OH H2O O2 O2p O2m O2s Om O Os H2O H2Op H2 H Hs O3 HO2 H2O2 OHm OHp OHs Hp Op H2Ov'
+    species = 'em Arp Ar2p Ars Arss Arsss OH H2O O2 O2p O2m O2s Om O Os H2Op H2 H Hs O3 HO2 H2O2 OHm OHp OHs Hp Op H2Ov Ar2s'
     aux_species = 'Ar'
     reaction_coefficient_format = 'townsend'
     gas_species = 'Ar'
@@ -2258,8 +2259,7 @@ dom1Scale=1.0
                  Arsss + OH -> Ar + O + H                 : 2.1e-10
                  Arsss + H2O -> Ar + OH + H               : 2.1e-10
                  Arp + H -> Ar + Hp                       : 1e-10
-                 #Arp + H2 -> Ar + H2Op                    : 1.1e-9
-                 Arp + H2O -> Ar + H2Op                   : 7e-10
+                 #Arp + H2O -> Ar + H2Op                   : 7e-10
                  Arp + OHm -> Ar + OH                     : {2e-7*(Tgas/300)^(-0.5)}
                  # Next ones excluded because ArHp is not tracked
                  # I should look into ArH molecules -- significant or not?
@@ -2268,7 +2268,8 @@ dom1Scale=1.0
                  Ar2s + H2 -> Ar + Ar + H + H             : 6.6e-11
                  Ar2s + H2O -> Ar + Ar + OH + H           : 1e-10
                  Ar2p + H -> Ar + Ar + Hp                 : 5e-11
-                 Ar2p + H2O -> Ar + Ar + H2Op             : 1.6e-9
+                 # Also got rid of this one
+                 #Ar2p + H2O -> Ar + Ar + H2Op             : 1.6e-9
                  Ar2p + OHm -> Ar + Ar + OH               : 1e-7
                  Ar2p + OHm -> Ar + Ar + O + H            : 1e-7
                  #########################
@@ -2517,7 +2518,10 @@ dom1Scale=1.0
                  OH_aq + HO2m_aq -> OHm_aq + HO2_aq     : 7.5e6
                  # What is with this reaction?
                  H2Op_aq + H2O_aq -> H3Op_aq + OH_aq    : 6
-                 H3Op_aq + OHm_aq -> H_aq + OH_aq + H2O_aq     : 6e7
+                 # pH balancing
+                 #H3Op_aq + OHm_aq -> H_aq + OH_aq + H2O_aq     : 6e7
+                 H3Op_aq + OHm_aq -> H2O_aq + H2O_aq         : 1.4e8
+                 H2O_aq + H2O_aq -> H3Op_aq + OHm_aq         : 4.22044e-10
                  HO2_aq + H2O_aq -> H3Op_aq + O2m_aq        : 2
                  H3Op_aq + O2m_aq -> HO2_aq + H2O_aq        : 6e-2
                  ##################################
@@ -2583,7 +2587,7 @@ dom1Scale=1.0
 
   [water3]
     name = 'test'
-    species = 'em_aq H2_aq OHm_aq H_aq Om_aq OH_aq'
+    species = 'em_aq H2_aq OHm_aq H_aq Om_aq OH_aq H2O2_aq'
     aux_species = 'H2O_aq'
     use_log = true
     position_units = ${dom1Scale}
