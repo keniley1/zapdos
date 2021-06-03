@@ -21,6 +21,8 @@ include $(FRAMEWORK_DIR)/moose.mk
 
 ################################## MODULES ####################################
 ALL_MODULES := no
+HEAT_CONDUCTION := yes
+NAVIER_STOKES := yes
 include $(MOOSE_DIR)/modules/modules.mk
 ###############################################################################
 
