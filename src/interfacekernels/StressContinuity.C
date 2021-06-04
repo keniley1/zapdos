@@ -90,34 +90,14 @@ StressContinuity::computeQpResidual(Moose::DGResidualType type)
     _neighbor_stress(2) = 0;
   }
 
-  /*
-  for (unsigned int i = 0; i < 2; ++i)
-  {
-    std::cout << MetaPhysicL::raw_value(_grad_neighbor_vel_x[_qp](i)) << std::endl;
-  }
-  */
-
-  // ADRealVectorValue s_u, s_n;
-
-  // s_u =  _p[_qp] * _I - _mu[_qp] * _grad_u[_qp];
-  // s_n = _p_neighbor[_qp] * _I - _mu_neighbor[_qp] * _grad_neighbor_value[_qp];
-
-  // Calculate the stress component
-
-  // r = (s_u - s_n) * _normals[_qp];
-  ADRealVectorValue test;
-  test = _stress - _neighbor_stress;
-
   switch (type)
   {
     case Moose::Element:
       r = _test[_i][_qp] * _neighbor_stress * _normals[_qp];
-      //r = _test[_i][_qp] * test * _normals[_qp];
       break;
 
     case Moose::Neighbor:
       r = -_test_neighbor[_i][_qp] * _stress * _normals[_qp];
-      //r = -_test_neighbor[_i][_qp] * test * _normals[_qp];
       break;
   }
 
