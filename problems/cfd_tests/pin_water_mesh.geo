@@ -35,8 +35,8 @@ dielectric_thickness = 1.35e-3 * d0scale;
 // Right wall is electrode
 Point(01) = {0, 0, 0, d1m}; 
 Point(02) = {domain_x, 0, 0, d1m};
-Point(03) = {domain_x, water_depth, 0, d1m/6}; 
-Point(04) = {0, water_depth, 0, d0m/8};
+Point(03) = {domain_x, water_depth, 0, d1m/2}; 
+Point(04) = {0, water_depth, 0, d0m/2};
 
 // Gas domain
 Point(11) = {needle_thickness, domain_y, 0, d0m * needle_mult};
